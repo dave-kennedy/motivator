@@ -1,4 +1,6 @@
 import CustomElement from './CustomElement.js';
+import GoalsData from './data/GoalsData.js';
+import RewardsData from './data/RewardsData.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -30,14 +32,7 @@ export default class HistoryPage extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
-        this.#groups = new Map([
-            ['1/1/2024', [1, 2, 3]],
-            ['1/2/2024', [1, 2, 3]],
-            ['1/3/2024', [1, 2, 3]],
-            ['1/4/2024', [1, 2, 3]],
-            ['1/5/2024', [1, 2, 3]],
-            ['1/6/2024', [1, 2, 3]],
-        ]);
+        this.#groups = this.#load();
 
         for (const [date, items] of this.#groups) {
             const $date = document.createElement('div');
@@ -47,10 +42,43 @@ export default class HistoryPage extends CustomElement {
 
             for (const item of items) {
                 const $item = document.createElement('div');
-                $item.textContent = `item-${item}`;
+                $item.textContent = item.name;
                 this.appendChild($item);
             }
         }
+    }
+
+    #load() {
+        const goals = GoalsData.items
+            .filter(goal => goal.completed)
+            .sort((a, b) => a.completed < b.completed ? 1 : -1);
+
+        const rewards = RewardsData.items
+            .filter(reward => reward.redeemed)
+            .sort((a, b) => a.redeemed < b.redeemed ? 1 : -1);
+
+        return this.#group([...goals, ...rewards], item => {
+            return item.completed
+                ? new Date(item.completed).toLocaleDateString()
+                : new Date(item.redeemed).toLocaleDateString();
+        });
+    }
+
+    #group(items, callback) {
+        const groups = new Map();
+
+        for (const item of items) {
+            let thisList = groups.get(callback(item));
+
+            if (thisList === undefined) {
+                thisList = [];
+                groups.set(callback(item), thisList);
+            }
+
+            thisList.push(item);
+        }
+
+        return groups;
     }
 }
 

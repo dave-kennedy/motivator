@@ -1,4 +1,5 @@
 import CustomElement from './CustomElement.js';
+import GoalsData from './data/GoalsData.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -26,13 +27,19 @@ export default class GoalsPage extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
-        this.#goals = [1, 2, 3];
+        this.#goals = this.#load();
 
         for (const goal of this.#goals) {
             const $goal = document.createElement('div');
-            $goal.textContent = `goal-${goal}`;
+            $goal.textContent = goal.name;
             this.appendChild($goal);
         }
+    }
+
+    #load() {
+        return [...GoalsData.items]
+            .filter(goal => !goal.completed)
+            .sort((a, b) => a.created < b.created ? -1 : 1);
     }
 }
 

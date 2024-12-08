@@ -1,4 +1,5 @@
 import CustomElement from './CustomElement.js';
+import RewardsData from './data/RewardsData.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -26,13 +27,19 @@ export default class RewardsPage extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
-        this.#rewards = [1, 2, 3];
+        this.#rewards = this.#load();
 
         for (const reward of this.#rewards) {
             const $reward = document.createElement('div');
-            $reward.textContent = `reward-${reward}`;
+            $reward.textContent = reward.name;
             this.appendChild($reward);
         }
+    }
+
+    #load() {
+        return [...RewardsData.items]
+            .filter(reward => !reward.redeemed)
+            .sort((a, b) => a.created < b.created ? -1 : 1);
     }
 }
 
