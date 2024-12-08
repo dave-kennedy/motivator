@@ -1,5 +1,6 @@
 import CustomElement from './CustomElement.js';
 import Header from './Header.js';
+import Pager from './Pager.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -13,7 +14,7 @@ app-component header-component {
     height: 10%;
 }
 
-app-component .pager {
+app-component pager-component {
     height: 90%;
 }`);
 
@@ -32,9 +33,7 @@ export default class App extends CustomElement {
         const $header = new Header();
         this.appendChild($header);
 
-        const $pager = document.createElement('div');
-        $pager.className = 'pager';
-        $pager.textContent = 'pager';
+        const $pager = new Pager();
         this.appendChild($pager);
     }
 }
