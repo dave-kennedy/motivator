@@ -1,4 +1,7 @@
 import CustomElement from './CustomElement.js';
+import GoalsPage from './GoalsPage.js';
+import HistoryPage from './HistoryPage.js';
+import RewardsPage from './RewardsPage.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -75,23 +78,19 @@ export default class Pager extends CustomElement {
         this.appendChild($pages);
 
         this.#pages = [
-            'goals',
-            'rewards',
-            'history',
+            new GoalsPage(),
+            new RewardsPage(),
+            new HistoryPage(),
         ];
 
         this.style.setProperty('--num-pages', this.#pages.length);
 
-        for (const page of this.#pages) {
+        for (const $page of this.#pages) {
             const $tab = document.createElement('div');
-            $tab.addEventListener('click', _ => location.hash = `#${page}`);
-            $tab.className = `${page}-tab`;
-            $tab.textContent = `${page}-tab`;
+            $tab.addEventListener('click', _ => location.hash = $page.pageId);
+            $tab.textContent = $page.pageTitle;
             $tabs.appendChild($tab);
 
-            const $page = document.createElement('div');
-            $page.className = `${page}-page`;
-            $page.textContent = `${page}-page`;
             $pages.appendChild($page);
         }
 
@@ -100,10 +99,10 @@ export default class Pager extends CustomElement {
 
     #onHashChange() {
         const pageId = location.hash.slice(1);
-        const pageIndex = this.#pages.indexOf(pageId);
+        const pageIndex = this.#pages.findIndex($page => $page.pageId === pageId);
 
         if (pageIndex === -1) {
-            location.hash = this.#pages[0];
+            location.hash = this.#pages[0].pageId;
             return;
         }
 
