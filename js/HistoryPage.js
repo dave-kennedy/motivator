@@ -1,17 +1,19 @@
 import CustomElement from './CustomElement.js';
+import Goal from './Goal.js';
 import GoalsData from './data/GoalsData.js';
+import Reward from './Reward.js';
 import RewardsData from './data/RewardsData.js';
 
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`history-page-component {
     display: flex;
-    align-items: center;
     flex-direction: column;
     gap: 1em;
 }
 
 history-page-component .date {
+    align-self: center;
     font-weight: bold;
 }`);
 
@@ -41,9 +43,13 @@ export default class HistoryPage extends CustomElement {
             this.appendChild($date);
 
             for (const item of items) {
-                const $item = document.createElement('div');
-                $item.textContent = item.name;
-                this.appendChild($item);
+                if (item.completed) {
+                    const $goal = new Goal(item);
+                    this.appendChild($goal);
+                } else {
+                    const $reward = new Reward(item);
+                    this.appendChild($reward);
+                }
             }
         }
     }

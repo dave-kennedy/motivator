@@ -1,11 +1,11 @@
 import CustomElement from './CustomElement.js';
+import Reward from './Reward.js';
 import RewardsData from './data/RewardsData.js';
 
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`rewards-page-component {
     display: flex;
-    align-items: center;
     flex-direction: column;
     gap: 1em;
 }`);
@@ -30,8 +30,7 @@ export default class RewardsPage extends CustomElement {
         this.#rewards = this.#load();
 
         for (const reward of this.#rewards) {
-            const $reward = document.createElement('div');
-            $reward.textContent = reward.name;
+            const $reward = new Reward(reward);
             this.appendChild($reward);
         }
     }

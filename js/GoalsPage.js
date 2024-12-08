@@ -1,11 +1,11 @@
 import CustomElement from './CustomElement.js';
+import Goal from './Goal.js';
 import GoalsData from './data/GoalsData.js';
 
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`goals-page-component {
     display: flex;
-    align-items: center;
     flex-direction: column;
     gap: 1em;
 }`);
@@ -30,8 +30,7 @@ export default class GoalsPage extends CustomElement {
         this.#goals = this.#load();
 
         for (const goal of this.#goals) {
-            const $goal = document.createElement('div');
-            $goal.textContent = goal.name;
+            const $goal = new Goal(goal);
             this.appendChild($goal);
         }
     }
