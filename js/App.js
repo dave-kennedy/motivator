@@ -1,3 +1,6 @@
+import CustomElement from './CustomElement.js';
+import Header from './Header.js';
+
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`app-component {
@@ -6,7 +9,7 @@ stylesheet.replace(`app-component {
     height: 100%;
 }
 
-app-component .header {
+app-component header-component {
     height: 10%;
 }
 
@@ -14,7 +17,7 @@ app-component .pager {
     height: 90%;
 }`);
 
-export default class App extends HTMLElement {
+export default class App extends CustomElement {
     constructor() {
         super();
     }
@@ -24,13 +27,9 @@ export default class App extends HTMLElement {
     }
 
     #render() {
-        if (!document.adoptedStyleSheets.includes(stylesheet)) {
-            document.adoptedStyleSheets.push(stylesheet);
-        }
+        this.applyStylesheet(stylesheet);
 
-        const $header = document.createElement('div');
-        $header.className = 'header';
-        $header.textContent = 'header';
+        const $header = new Header();
         this.appendChild($header);
 
         const $pager = document.createElement('div');
