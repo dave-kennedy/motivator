@@ -1,4 +1,6 @@
+import Button from './Button.js';
 import CustomElement from './CustomElement.js';
+import RewardsData from './data/RewardsData.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -6,7 +8,9 @@ stylesheet.replace(`reward-component {
     background-color: #eee;
     border-radius: 1em;
     box-sizing: border-box;
-    padding: 1em;
+    margin-left: 1.25em;
+    padding: 1em 1em 1em 2em;
+    position: relative;
 
     display: flex;
     flex-direction: column;
@@ -29,6 +33,12 @@ stylesheet.replace(`reward-component {
 
 reward-component .name {
     font-weight: bold;
+}
+
+reward-component .redeem-button {
+    position: absolute;
+    left: -1.25em;
+    top: 1em;
 }`);
 
 export default class Reward extends CustomElement {
@@ -80,11 +90,56 @@ export default class Reward extends CustomElement {
             this.appendChild($repeat);
         }
 
-        if (this.#redeemed) {
-            const $redeemed = document.createElement('div');
-            $redeemed.textContent = this.#redeemed;
-            this.appendChild($redeemed);
+        const $redeemButton = new Button({
+            className: 'redeem-button round',
+            icon: {
+                alt: this.#redeemed ? 'Unredeem' : 'Redeem',
+                src: this.#redeemed ? 'img/uncheck.svg' : 'img/check.svg',
+            },
+            onClick: _ => this.#redeemed ? this.#unredeem() : this.#redeem(),
+            title: this.#redeemed ? 'Unredeem' : 'Redeem',
+        });
+
+        this.appendChild($redeemButton);
+    }
+
+    async #redeem() {
+        this.#redeemed = new Date().getTime();
+
+        RewardsData.update({
+            id: this.#id,
+            redeemed: this.#redeemed,
+        });
+
+        if (this.#repeat) {
+            const newReward = {
+                id: crypto.randomUUID(),
+                created: new Date().getTime(),
+                name: this.#name,
+                description: this.#description,
+                points: this.#points,
+                repeat: this.#repeat,
+            };
+
+            RewardsData.add(newReward);
+            const $newReward = new Reward(newReward);
+            this.after($newReward);
         }
+
+        await this.animate({opacity: [1, 0]}, 300).finished;
+        this.remove();
+    }
+
+    async #unredeem() {
+        this.#redeemed = undefined;
+
+        RewardsData.update({
+            id: this.#id,
+            redeemed: undefined,
+        });
+
+        await this.animate({opacity: [1, 0]}, 300).finished;
+        this.remove();
     }
 }
 
