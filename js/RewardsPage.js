@@ -1,6 +1,7 @@
 import ActionButton from './ActionButton.js';
 import CustomElement from './CustomElement.js';
 import Reward from './Reward.js';
+import RewardEditor from './RewardEditor.js';
 import RewardsData from './data/RewardsData.js';
 
 const stylesheet = new CSSStyleSheet();
@@ -49,8 +50,8 @@ export default class RewardsPage extends CustomElement {
     }
 
     #newReward() {
-        // TODO
-        console.log('new reward');
+        const $editor = new RewardEditor();
+        this.appendChild($editor);
     }
 }
 

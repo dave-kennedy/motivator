@@ -1,6 +1,7 @@
 import ActionButton from './ActionButton.js';
 import CustomElement from './CustomElement.js';
 import Goal from './Goal.js';
+import GoalEditor from './GoalEditor.js';
 import GoalsData from './data/GoalsData.js';
 
 const stylesheet = new CSSStyleSheet();
@@ -49,8 +50,8 @@ export default class GoalsPage extends CustomElement {
     }
 
     #newGoal() {
-        // TODO
-        console.log('new goal');
+        const $editor = new GoalEditor();
+        this.appendChild($editor);
     }
 }
 
