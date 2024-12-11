@@ -1,20 +1,28 @@
 import Button from './Button.js';
 import CustomElement from './CustomElement.js';
+import RewardEditor from './RewardEditor.js';
 import RewardsData from './data/RewardsData.js';
 
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`reward-component {
-    background-color: #eee;
     border-radius: 1em;
     box-sizing: border-box;
+    cursor: pointer;
     margin-left: 1.25em;
     padding: 1em 1em 1em 2em;
     position: relative;
 
+    background-color: #eee;
+    transition: background-color 300ms;
+
     display: flex;
     flex-direction: column;
     gap: 0.5em;
+}
+
+reward-component:is(:focus, :hover) {
+    background-color: #ddd;
 }
 
 @media (min-width: 400px) {
@@ -96,14 +104,18 @@ export default class Reward extends CustomElement {
                 alt: this.#redeemed ? 'Unredeem' : 'Redeem',
                 src: this.#redeemed ? 'img/uncheck.svg' : 'img/check.svg',
             },
-            onClick: _ => this.#redeemed ? this.#unredeem() : this.#redeem(),
+            onClick: event => this.#redeemed ? this.#unredeem(event) : this.#redeem(event),
             title: this.#redeemed ? 'Unredeem' : 'Redeem',
         });
 
         this.appendChild($redeemButton);
+
+        this.addEventListener('click', _ => this.#edit());
     }
 
-    async #redeem() {
+    async #redeem(event) {
+        event.stopPropagation();
+
         this.#redeemed = new Date().getTime();
 
         RewardsData.update({
@@ -130,7 +142,9 @@ export default class Reward extends CustomElement {
         this.remove();
     }
 
-    async #unredeem() {
+    async #unredeem(event) {
+        event.stopPropagation();
+
         this.#redeemed = undefined;
 
         RewardsData.update({
@@ -140,6 +154,20 @@ export default class Reward extends CustomElement {
 
         await this.animate({opacity: [1, 0]}, 300).finished;
         this.remove();
+    }
+
+    #edit() {
+        const $editor = new RewardEditor({
+            id: this.#id,
+            created: this.#created,
+            name: this.#name,
+            description: this.#description,
+            points: this.#points,
+            repeat: this.#repeat,
+            redeemed: this.#redeemed,
+        });
+
+        this.replaceWith($editor);
     }
 }
 

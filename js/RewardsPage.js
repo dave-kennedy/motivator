@@ -50,7 +50,7 @@ export default class RewardsPage extends CustomElement {
     }
 
     #newReward() {
-        const $editor = new RewardEditor();
+        const $editor = new RewardEditor({});
         this.appendChild($editor);
     }
 }

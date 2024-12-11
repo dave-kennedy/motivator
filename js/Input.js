@@ -23,22 +23,26 @@ input-component.checkbox {
 }`);
 
 export default class Input extends CustomElement {
+    #disabled;
     #id;
     #label;
     #min;
     #required;
     #type;
+    #value;
 
     $input;
 
-    constructor({id, label, min, required, type}) {
+    constructor({disabled, id, label, min, required, type, value}) {
         super();
 
+        this.#disabled = disabled;
         this.#id = id;
         this.#label = label;
         this.#min = min;
         this.#required = required;
         this.#type = type;
+        this.#value = value;
     }
 
     connectedCallback() {
@@ -58,6 +62,7 @@ export default class Input extends CustomElement {
         }
 
         this.$input = document.createElement('input');
+        this.$input.disabled = this.#disabled;
         this.$input.id = this.#id;
         this.$input.required = this.#required;
         this.$input.type = this.#type;
@@ -72,6 +77,10 @@ export default class Input extends CustomElement {
 
         if (this.#required && this.#type === 'text') {
             this.addEventListener('change', _ => this.#validateNonWhitespace());
+        }
+
+        if (this.#value !== undefined) {
+            this.value = this.#value;
         }
 
         this.appendChild(this.$input);
@@ -95,6 +104,25 @@ export default class Input extends CustomElement {
         }
 
         return this.$input.value.trim();
+    }
+
+    set value(value) {
+        if (this.#type === 'checkbox') {
+            this.$input.checked = value;
+            return;
+        }
+
+        if (this.#type === 'datetime-local') {
+            this.$input.valueAsNumber = value - this.#getTZOffsetMS();
+            return;
+        }
+
+        if (this.#type === 'number') {
+            this.$input.valueAsNumber = value;
+            return;
+        }
+
+        this.$input.value = value;
     }
 
     #getTZOffsetMS() {

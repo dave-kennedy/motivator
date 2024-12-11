@@ -1,20 +1,28 @@
 import Button from './Button.js';
 import CustomElement from './CustomElement.js';
+import GoalEditor from './GoalEditor.js';
 import GoalsData from './data/GoalsData.js';
 
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`goal-component {
-    background-color: #eee;
     border-radius: 1em;
     box-sizing: border-box;
+    cursor: pointer;
     margin-left: 1.25em;
     padding: 1em 1em 1em 2em;
     position: relative;
 
+    background-color: #eee;
+    transition: background-color 300ms;
+
     display: flex;
     flex-direction: column;
     gap: 0.5em;
+}
+
+goal-component:is(:focus, :hover) {
+    background-color: #ddd;
 }
 
 @media (min-width: 400px) {
@@ -96,14 +104,18 @@ export default class Goal extends CustomElement {
                 alt: this.#completed ? 'Uncomplete' : 'Complete',
                 src: this.#completed ? 'img/uncheck.svg' : 'img/check.svg',
             },
-            onClick: _ => this.#completed ? this.#uncomplete() : this.#complete(),
+            onClick: event => this.#completed ? this.#uncomplete(event) : this.#complete(event),
             title: this.#completed ? 'Uncomplete' : 'Complete',
         });
 
         this.appendChild($completeButton);
+
+        this.addEventListener('click', _ => this.#edit());
     }
 
-    async #complete() {
+    async #complete(event) {
+        event.stopPropagation();
+
         this.#completed = new Date().getTime();
 
         GoalsData.update({
@@ -130,7 +142,9 @@ export default class Goal extends CustomElement {
         this.remove();
     }
 
-    async #uncomplete() {
+    async #uncomplete(event) {
+        event.stopPropagation();
+
         this.#completed = undefined;
 
         GoalsData.update({
@@ -140,6 +154,20 @@ export default class Goal extends CustomElement {
 
         await this.animate({opacity: [1, 0]}, 300).finished;
         this.remove();
+    }
+
+    #edit() {
+        const $editor = new GoalEditor({
+            id: this.#id,
+            created: this.#created,
+            name: this.#name,
+            description: this.#description,
+            points: this.#points,
+            repeat: this.#repeat,
+            completed: this.#completed,
+        });
+
+        this.replaceWith($editor);
     }
 }
 

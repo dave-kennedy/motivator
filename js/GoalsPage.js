@@ -50,7 +50,7 @@ export default class GoalsPage extends CustomElement {
     }
 
     #newGoal() {
-        const $editor = new GoalEditor();
+        const $editor = new GoalEditor({});
         this.appendChild($editor);
     }
 }
