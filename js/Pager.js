@@ -55,6 +55,7 @@ pager-component .pages > * {
 
 export default class Pager extends CustomElement {
     #pages;
+    #pageIndex;
 
     constructor() {
         super();
@@ -106,7 +107,16 @@ export default class Pager extends CustomElement {
             return;
         }
 
+        if (pageIndex === this.#pageIndex) {
+            return;
+        }
+
         this.style.setProperty('--page-index', pageIndex);
+
+        const $page = this.#pages[pageIndex];
+        $page.onPageVisible();
+
+        this.#pageIndex = pageIndex;
     }
 }
 

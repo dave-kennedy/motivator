@@ -20,7 +20,8 @@ export default class GoalsPage extends CustomElement {
         super();
     }
 
-    connectedCallback() {
+    onPageVisible() {
+        this.replaceChildren();
         this.#render();
     }
 

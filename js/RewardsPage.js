@@ -20,7 +20,8 @@ export default class RewardsPage extends CustomElement {
         super();
     }
 
-    connectedCallback() {
+    onPageVisible() {
+        this.replaceChildren();
         this.#render();
     }
 

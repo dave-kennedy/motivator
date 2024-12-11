@@ -27,7 +27,8 @@ export default class HistoryPage extends CustomElement {
         super();
     }
 
-    connectedCallback() {
+    onPageVisible() {
+        this.replaceChildren();
         this.#render();
     }
 
