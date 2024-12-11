@@ -1,3 +1,4 @@
+import ActionButton from './ActionButton.js';
 import CustomElement from './CustomElement.js';
 import Reward from './Reward.js';
 import RewardsData from './data/RewardsData.js';
@@ -34,12 +35,22 @@ export default class RewardsPage extends CustomElement {
             const $reward = new Reward(reward);
             this.appendChild($reward);
         }
+
+        ActionButton.render({
+            label: 'New Reward',
+            onClick: _ => this.#newReward(),
+        });
     }
 
     #load() {
         return [...RewardsData.items]
             .filter(reward => !reward.redeemed)
             .sort((a, b) => a.created < b.created ? -1 : 1);
+    }
+
+    #newReward() {
+        // TODO
+        console.log('new reward');
     }
 }
 

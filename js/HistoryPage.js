@@ -1,3 +1,4 @@
+import ActionButton from './ActionButton.js';
 import CustomElement from './CustomElement.js';
 import Goal from './Goal.js';
 import GoalsData from './data/GoalsData.js';
@@ -53,6 +54,8 @@ export default class HistoryPage extends CustomElement {
                 }
             }
         }
+
+        ActionButton.remove();
     }
 
     #load() {

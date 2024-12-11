@@ -1,3 +1,4 @@
+import ActionButton from './ActionButton.js';
 import CustomElement from './CustomElement.js';
 import Goal from './Goal.js';
 import GoalsData from './data/GoalsData.js';
@@ -34,12 +35,22 @@ export default class GoalsPage extends CustomElement {
             const $goal = new Goal(goal);
             this.appendChild($goal);
         }
+
+        ActionButton.render({
+            label: 'New Goal',
+            onClick: _ => this.#newGoal(),
+        });
     }
 
     #load() {
         return [...GoalsData.items]
             .filter(goal => !goal.completed)
             .sort((a, b) => a.created < b.created ? -1 : 1);
+    }
+
+    #newGoal() {
+        // TODO
+        console.log('new goal');
     }
 }
 

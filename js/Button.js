@@ -32,6 +32,21 @@ button-component img {
     width: 1.5rem;
 }
 
+button-component.big button {
+    font-size: 2em;
+}
+
+button-component.big img {
+    scale: 2;
+}
+
+button-component.fab {
+    position: fixed;
+    bottom: 0.5em;
+    right: 0.5em;
+    z-index: 1;
+}
+
 button-component.round button {
     border-radius: 50%;
 }`);
