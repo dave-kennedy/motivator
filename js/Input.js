@@ -25,15 +25,19 @@ input-component.checkbox {
 export default class Input extends CustomElement {
     #id;
     #label;
+    #min;
+    #required;
     #type;
 
     $input;
 
-    constructor({id, label, type}) {
+    constructor({id, label, min, required, type}) {
         super();
 
         this.#id = id;
         this.#label = label;
+        this.#min = min;
+        this.#required = required;
         this.#type = type;
     }
 
@@ -55,10 +59,19 @@ export default class Input extends CustomElement {
 
         this.$input = document.createElement('input');
         this.$input.id = this.#id;
+        this.$input.required = this.#required;
         this.$input.type = this.#type;
+
+        if (this.#min !== undefined) {
+            this.$input.min = this.#min;
+        }
 
         if (this.#type === 'datetime-local') {
             this.$input.step = 1;
+        }
+
+        if (this.#required && this.#type === 'text') {
+            this.addEventListener('change', _ => this.#validateNonWhitespace());
         }
 
         this.appendChild(this.$input);
@@ -86,6 +99,18 @@ export default class Input extends CustomElement {
 
     #getTZOffsetMS() {
         return new Date().getTimezoneOffset() * 60 * 1000;
+    }
+
+    validate() {
+        return this.$input.reportValidity();
+    }
+
+    #validateNonWhitespace() {
+        if (this.$input.value.trim()) {
+            this.$input.setCustomValidity('');
+        } else {
+            this.$input.setCustomValidity('Please fill out this field.');
+        }
     }
 }
 

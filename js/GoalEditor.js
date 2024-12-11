@@ -57,6 +57,7 @@ export default class GoalEditor extends CustomElement {
         this.$name = new Input({
             id: 'name-input',
             label: 'Name',
+            required: true,
             type: 'text',
         });
 
@@ -74,6 +75,8 @@ export default class GoalEditor extends CustomElement {
         this.$points = new Input({
             id: 'points-input',
             label: 'Points',
+            min: 0,
+            required: true,
             type: 'number',
         });
 
@@ -107,6 +110,10 @@ export default class GoalEditor extends CustomElement {
     }
 
     #save() {
+        if (!this.#validate()) {
+            return;
+        }
+
         const goal = {
             id: crypto.randomUUID(),
             created: new Date().getTime(),
@@ -120,6 +127,10 @@ export default class GoalEditor extends CustomElement {
 
         const $goal = new Goal(goal);
         this.replaceWith($goal);
+    }
+
+    #validate() {
+        return this.$name.validate() && this.$points.validate();
     }
 }
 
