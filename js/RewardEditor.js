@@ -1,6 +1,7 @@
 import Button from './Button.js';
 import CustomElement from './CustomElement.js';
 import Input from './Input.js';
+import Modal from './Modal.js';
 import Reward from './Reward.js';
 import RewardsData from './data/RewardsData.js';
 
@@ -35,6 +36,10 @@ reward-editor-component .buttons {
     display: flex;
     gap: 1em;
     justify-content: end;
+}
+
+reward-editor-component .delete-button {
+    flex: 1;
 }`);
 
 export default class RewardEditor extends CustomElement {
@@ -130,6 +135,16 @@ export default class RewardEditor extends CustomElement {
         $buttons.className = 'buttons';
         this.appendChild($buttons);
 
+        if (this.#id) {
+            const $deleteButton = new Button({
+                className: 'delete-button red',
+                label: 'Delete',
+                onClick: _ => this.#confirmDelete(),
+            });
+
+            $buttons.appendChild($deleteButton);
+        }
+
         const $cancelButton = new Button({
             label: 'Cancel',
             onClick: _ => this.#cancel(),
@@ -143,6 +158,20 @@ export default class RewardEditor extends CustomElement {
         });
 
         $buttons.appendChild($saveButton);
+    }
+
+    #confirmDelete() {
+        const $modal = new Modal({
+            message: 'Are you sure you want to delete this reward?',
+            onConfirm: _ => this.#delete(),
+        });
+
+        this.appendChild($modal);
+    }
+
+    #delete() {
+        RewardsData.remove({id: this.#id});
+        this.remove();
     }
 
     #cancel() {

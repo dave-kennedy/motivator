@@ -47,6 +47,14 @@ button-component.fab {
     z-index: 1;
 }
 
+button-component.red button {
+    background-color: #c33;
+}
+
+button-component.red button:is(:focus, :hover) {
+    background-color: #a11;
+}
+
 button-component.round button {
     border-radius: 50%;
 }`);
@@ -57,6 +65,8 @@ export default class Button extends CustomElement {
     #label;
     #onClick;
     #title;
+
+    $button;
 
     constructor({className, icon, label, onClick, title}) {
         super();
@@ -79,20 +89,20 @@ export default class Button extends CustomElement {
             this.className = this.#className;
         }
 
-        const $button = document.createElement('button');
-        this.appendChild($button);
+        this.$button = document.createElement('button');
+        this.appendChild(this.$button);
 
         if (this.#icon) {
             const $icon = document.createElement('img');
             $icon.alt = this.#icon.alt;
             $icon.src = this.#icon.src;
-            $button.appendChild($icon);
+            this.$button.appendChild($icon);
         }
 
         if (this.#label) {
             const $label = document.createElement('span');
             $label.textContent = this.#label;
-            $button.appendChild($label);
+            this.$button.appendChild($label);
         }
 
         if (this.#onClick) {
@@ -102,6 +112,10 @@ export default class Button extends CustomElement {
         if (this.#title) {
             this.title = this.#title;
         }
+    }
+
+    focus() {
+        this.$button.focus({focusVisible: true});
     }
 }
 
