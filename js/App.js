@@ -1,6 +1,7 @@
 import CustomElement from './CustomElement.js';
 import Header from './Header.js';
 import Pager from './Pager.js';
+import Tutorial from './Tutorial.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -21,6 +22,8 @@ app-component pager-component {
 export default class App extends CustomElement {
     constructor() {
         super();
+
+        Tutorial.listen();
     }
 
     connectedCallback() {
