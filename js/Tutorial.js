@@ -46,7 +46,7 @@ export default class Tutorial {
 
     static onGoalsPageRendered() {
         return this.showHint({
-            anchor: 'app-component > button-component.fab',
+            anchor: '#action-button',
             position: 'top-left',
             message: 'Click here to create a new goal',
         });
@@ -71,7 +71,7 @@ export default class Tutorial {
 
     static onGoalCompletedHintClosed() {
         return this.showHint({
-            anchor: 'pager-component .tabs :nth-child(2)',
+            anchor: '#rewards-tab',
             position: 'bottom-left',
             message: 'Click here to see your rewards',
         });
@@ -79,7 +79,7 @@ export default class Tutorial {
 
     static onRewardsPageRendered() {
         return this.showHint({
-            anchor: 'app-component > button-component.fab',
+            anchor: '#action-button',
             position: 'top-left',
             message: 'Click here to create a new reward',
         });
@@ -104,7 +104,7 @@ export default class Tutorial {
 
     static onRewardRedeemedHintClosed() {
         return this.showHint({
-            anchor: 'pager-component .tabs :nth-child(3)',
+            anchor: '#history-tab',
             position: 'bottom-left',
             message: 'Click here to see your completed goals and redeemed rewards',
         });

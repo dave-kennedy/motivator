@@ -209,6 +209,9 @@ export default class RewardEditor extends CustomElement {
             redeemed: this.$redeemed?.value,
         };
 
+        const $reward = new Reward(reward);
+        this.replaceWith($reward);
+
         if (!this.#id) {
             RewardsData.add(reward);
             document.dispatchEvent(new Event('RewardCreated'));
@@ -216,9 +219,6 @@ export default class RewardEditor extends CustomElement {
             RewardsData.update(reward);
             document.dispatchEvent(new Event('RewardUpdated'));
         }
-
-        const $reward = new Reward(reward);
-        this.replaceWith($reward);
     }
 
     #validate() {

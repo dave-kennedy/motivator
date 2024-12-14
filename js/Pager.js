@@ -30,11 +30,14 @@ pager-component .tabs::after {
 
 pager-component .tabs > * {
     box-sizing: border-box;
-    color: #0aa;
-    cursor: pointer;
     flex: 0 0 calc(100% / var(--num-pages));
     padding: 0.5em;
     text-align: center;
+}
+
+pager-component .tabs a {
+    color: #0aa;
+    text-decoration: none;
 }
 
 pager-component .pages {
@@ -88,9 +91,13 @@ export default class Pager extends CustomElement {
 
         for (const $page of this.#pages) {
             const $tab = document.createElement('div');
-            $tab.addEventListener('click', _ => location.hash = $page.pageId);
-            $tab.textContent = $page.pageTitle;
             $tabs.appendChild($tab);
+
+            const $label = document.createElement('a');
+            $label.href = `#${$page.pageId}`;
+            $label.id = `${$page.pageId}-tab`;
+            $label.textContent = $page.pageTitle;
+            $tab.appendChild($label);
 
             $pages.appendChild($page);
         }
@@ -114,7 +121,10 @@ export default class Pager extends CustomElement {
         this.style.setProperty('--page-index', pageIndex);
 
         const $page = this.#pages[pageIndex];
-        $page.onPageVisible();
+        $page.onPageTransitionStart();
+
+        const delay = this.#pageIndex === undefined ? 0 : 300;
+        setTimeout(_ => $page.onPageTransitionEnd(), delay);
 
         this.#pageIndex = pageIndex;
     }

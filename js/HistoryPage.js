@@ -28,9 +28,13 @@ export default class HistoryPage extends CustomElement {
         super();
     }
 
-    onPageVisible() {
+    onPageTransitionStart() {
         this.replaceChildren();
         this.#render();
+    }
+
+    onPageTransitionEnd() {
+        document.dispatchEvent(new Event('HistoryPageRendered'));
     }
 
     #render() {
@@ -56,8 +60,6 @@ export default class HistoryPage extends CustomElement {
         }
 
         ActionButton.remove();
-
-        document.dispatchEvent(new Event('HistoryPageRendered'));
     }
 
     #load() {

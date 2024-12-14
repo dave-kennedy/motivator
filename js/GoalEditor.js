@@ -209,6 +209,9 @@ export default class GoalEditor extends CustomElement {
             completed: this.$completed?.value,
         };
 
+        const $goal = new Goal(goal);
+        this.replaceWith($goal);
+
         if (!this.#id) {
             GoalsData.add(goal);
             document.dispatchEvent(new Event('GoalCreated'));
@@ -216,9 +219,6 @@ export default class GoalEditor extends CustomElement {
             GoalsData.update(goal);
             document.dispatchEvent(new Event('GoalUpdated'));
         }
-
-        const $goal = new Goal(goal);
-        this.replaceWith($goal);
     }
 
     #validate() {

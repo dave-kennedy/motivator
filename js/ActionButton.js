@@ -14,6 +14,8 @@ export default class ActionButton {
             title: label,
         });
 
+        $newButton.id = 'action-button';
+
         this.$button?.remove();
         this.$button = $newButton;
 

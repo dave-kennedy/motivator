@@ -22,9 +22,13 @@ export default class RewardsPage extends CustomElement {
         super();
     }
 
-    onPageVisible() {
+    onPageTransitionStart() {
         this.replaceChildren();
         this.#render();
+    }
+
+    onPageTransitionEnd() {
+        document.dispatchEvent(new Event('RewardsPageRendered'));
     }
 
     #render() {
@@ -41,8 +45,6 @@ export default class RewardsPage extends CustomElement {
             label: 'New Reward',
             onClick: _ => this.#newReward(),
         });
-
-        document.dispatchEvent(new Event('RewardsPageRendered'));
     }
 
     #load() {
