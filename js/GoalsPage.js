@@ -41,6 +41,8 @@ export default class GoalsPage extends CustomElement {
             label: 'New Goal',
             onClick: _ => this.#newGoal(),
         });
+
+        document.dispatchEvent(new Event('GoalsPageRendered'));
     }
 
     #load() {

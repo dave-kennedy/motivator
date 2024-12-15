@@ -171,6 +171,7 @@ export default class RewardEditor extends CustomElement {
 
     #delete() {
         RewardsData.remove({id: this.#id});
+        document.dispatchEvent(new Event('RewardDeleted'));
         this.remove();
     }
 
@@ -210,8 +211,10 @@ export default class RewardEditor extends CustomElement {
 
         if (!this.#id) {
             RewardsData.add(reward);
+            document.dispatchEvent(new Event('RewardCreated'));
         } else {
             RewardsData.update(reward);
+            document.dispatchEvent(new Event('RewardUpdated'));
         }
 
         const $reward = new Reward(reward);

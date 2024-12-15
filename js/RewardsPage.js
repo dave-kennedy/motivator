@@ -41,6 +41,8 @@ export default class RewardsPage extends CustomElement {
             label: 'New Reward',
             onClick: _ => this.#newReward(),
         });
+
+        document.dispatchEvent(new Event('RewardsPageRendered'));
     }
 
     #load() {

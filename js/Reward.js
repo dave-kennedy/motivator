@@ -123,6 +123,8 @@ export default class Reward extends CustomElement {
             redeemed: this.#redeemed,
         });
 
+        document.dispatchEvent(new Event('RewardRedeemed'));
+
         if (this.#repeat) {
             const newReward = {
                 id: crypto.randomUUID(),
@@ -151,6 +153,8 @@ export default class Reward extends CustomElement {
             id: this.#id,
             redeemed: undefined,
         });
+
+        document.dispatchEvent(new Event('RewardUnredeemed'));
 
         await this.animate({opacity: [1, 0]}, 300).finished;
         this.remove();

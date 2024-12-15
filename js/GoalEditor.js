@@ -171,6 +171,7 @@ export default class GoalEditor extends CustomElement {
 
     #delete() {
         GoalsData.remove({id: this.#id});
+        document.dispatchEvent(new Event('GoalDeleted'));
         this.remove();
     }
 
@@ -210,8 +211,10 @@ export default class GoalEditor extends CustomElement {
 
         if (!this.#id) {
             GoalsData.add(goal);
+            document.dispatchEvent(new Event('GoalCreated'));
         } else {
             GoalsData.update(goal);
+            document.dispatchEvent(new Event('GoalUpdated'));
         }
 
         const $goal = new Goal(goal);

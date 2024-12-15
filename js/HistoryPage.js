@@ -56,6 +56,8 @@ export default class HistoryPage extends CustomElement {
         }
 
         ActionButton.remove();
+
+        document.dispatchEvent(new Event('HistoryPageRendered'));
     }
 
     #load() {

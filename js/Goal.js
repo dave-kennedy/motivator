@@ -123,6 +123,8 @@ export default class Goal extends CustomElement {
             completed: this.#completed,
         });
 
+        document.dispatchEvent(new Event('GoalCompleted'));
+
         if (this.#repeat) {
             const newGoal = {
                 id: crypto.randomUUID(),
@@ -151,6 +153,8 @@ export default class Goal extends CustomElement {
             id: this.#id,
             completed: undefined,
         });
+
+        document.dispatchEvent(new Event('GoalUncompleted'));
 
         await this.animate({opacity: [1, 0]}, 300).finished;
         this.remove();
