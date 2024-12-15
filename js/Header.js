@@ -1,4 +1,6 @@
 import CustomElement from './CustomElement.js';
+import GoalsData from './data/GoalsData.js';
+import RewardsData from './data/RewardsData.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -33,6 +35,13 @@ export default class Header extends CustomElement {
 
     constructor() {
         super();
+
+        document.addEventListener('GoalCompleted', _ => this.#refresh());
+        document.addEventListener('GoalUncompleted', _ => this.#refresh());
+        document.addEventListener('GoalDeleted', _ => this.#refresh());
+        document.addEventListener('RewardRedeemed', _ => this.#refresh());
+        document.addEventListener('RewardUnredeemed', _ => this.#refresh());
+        document.addEventListener('RewardDeleted', _ => this.#refresh());
     }
 
     connectedCallback() {
@@ -42,12 +51,31 @@ export default class Header extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
-        this.#points = 0;
+        this.#points = this.#load();
 
         const $points = document.createElement('div');
         $points.className = 'points';
         $points.textContent = this.#points;
         this.appendChild($points);
+    }
+
+    #load() {
+        const goals = GoalsData.items
+            .filter(goal => goal.completed);
+
+        const rewards = RewardsData.items
+            .filter(reward => reward.redeemed);
+
+        return [...goals, ...rewards].reduce((total, item) => {
+            return item.completed
+                ? total + item.points
+                : total - item.points;
+        }, 0);
+    }
+
+    #refresh() {
+        this.replaceChildren();
+        this.#render();
     }
 }
 
