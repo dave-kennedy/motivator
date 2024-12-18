@@ -54,7 +54,7 @@ export default class Tutorial {
 
     static onGoalCreated() {
         return this.showHint({
-            anchor: 'goals-page-component .complete-button',
+            anchor: 'check-button-component button',
             position: 'bottom-right',
             message: 'Click here to complete this goal',
         });
@@ -87,7 +87,7 @@ export default class Tutorial {
 
     static onRewardCreated() {
         return this.showHint({
-            anchor: 'rewards-page-component .redeem-button',
+            anchor: 'check-button-component button',
             position: 'bottom-right',
             message: 'Click here to redeem this reward',
         });
@@ -112,7 +112,7 @@ export default class Tutorial {
 
     static onHistoryPageRendered() {
         return this.showHint({
-            anchor: 'history-page-component .complete-button',
+            anchor: 'check-button-component button',
             position: 'bottom-right',
             message: 'Accidentally hit the check button? Click here to undo',
         });

@@ -1,4 +1,4 @@
-import Button from './Button.js';
+import CheckButton from './CheckButton.js';
 import CustomElement from './CustomElement.js';
 import GoalEditor from './GoalEditor.js';
 import GoalsData from './data/GoalsData.js';
@@ -6,23 +6,16 @@ import GoalsData from './data/GoalsData.js';
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`goal-component {
+    background-color: #eee;
     border-radius: 1em;
     box-sizing: border-box;
-    cursor: pointer;
     margin-left: 1.25em;
     padding: 1em 1em 1em 2em;
     position: relative;
 
-    background-color: #eee;
-    transition: background-color 300ms;
-
     display: flex;
     flex-direction: column;
     gap: 0.5em;
-}
-
-goal-component:is(:focus, :hover) {
-    background-color: #ddd;
 }
 
 @media (min-width: 400px) {
@@ -43,10 +36,28 @@ goal-component .name {
     font-weight: bold;
 }
 
-goal-component .complete-button {
+goal-component check-button-component {
+    height: 6.25em;
+    width: 6.25em;
+
     position: absolute;
-    left: -1.25em;
-    top: 1em;
+    left: -3em;
+    top: -1em;
+}
+
+goal-component.completed, goal-component.uncompleted {
+    margin-bottom: calc(var(--height) * -1 - 1em);
+    transition:
+        translate 500ms cubic-bezier(0.5, 0, 0.5, -0.5) 750ms,
+        margin-bottom 250ms 1250ms;
+}
+
+goal-component.completed {
+    translate: 100vw 0;
+}
+
+goal-component.uncompleted {
+    translate: -100vw 0;
 }`);
 
 export default class Goal extends CustomElement {
@@ -98,24 +109,15 @@ export default class Goal extends CustomElement {
             this.appendChild($repeat);
         }
 
-        const $completeButton = new Button({
-            className: 'complete-button round',
-            icon: {
-                alt: this.#completed ? 'Uncomplete' : 'Complete',
-                src: this.#completed ? 'img/uncheck.svg' : 'img/check.svg',
-            },
-            onClick: event => this.#completed ? this.#uncomplete(event) : this.#complete(event),
-            title: this.#completed ? 'Uncomplete' : 'Complete',
+        const $checkButton = new CheckButton({
+            checked: this.#completed,
+            onClick: _ => this.#completed ? this.#uncomplete() : this.#complete(),
         });
 
-        this.appendChild($completeButton);
-
-        this.addEventListener('click', _ => this.#edit());
+        this.appendChild($checkButton);
     }
 
-    async #complete(event) {
-        event.stopPropagation();
-
+    async #complete() {
         this.#completed = new Date().getTime();
 
         GoalsData.update({
@@ -140,13 +142,16 @@ export default class Goal extends CustomElement {
             this.after($newGoal);
         }
 
-        await this.animate({opacity: [1, 0]}, 300).finished;
+        this.classList.add('completed');
+
+        const {height} = this.getBoundingClientRect();
+        this.style.setProperty('--height', `${height}px`);
+
+        await Promise.allSettled(this.getAnimations().map(a => a.finished));
         this.remove();
     }
 
-    async #uncomplete(event) {
-        event.stopPropagation();
-
+    async #uncomplete() {
         this.#completed = undefined;
 
         GoalsData.update({
@@ -156,7 +161,12 @@ export default class Goal extends CustomElement {
 
         document.dispatchEvent(new Event('GoalUncompleted'));
 
-        await this.animate({opacity: [1, 0]}, 300).finished;
+        this.classList.add('uncompleted');
+
+        const {height} = this.getBoundingClientRect();
+        this.style.setProperty('--height', `${height}px`);
+
+        await Promise.allSettled(this.getAnimations().map(a => a.finished));
         this.remove();
     }
 

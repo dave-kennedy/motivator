@@ -1,4 +1,4 @@
-import Button from './Button.js';
+import CheckButton from './CheckButton.js';
 import CustomElement from './CustomElement.js';
 import RewardEditor from './RewardEditor.js';
 import RewardsData from './data/RewardsData.js';
@@ -6,23 +6,16 @@ import RewardsData from './data/RewardsData.js';
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`reward-component {
+    background-color: #eee;
     border-radius: 1em;
     box-sizing: border-box;
-    cursor: pointer;
     margin-left: 1.25em;
     padding: 1em 1em 1em 2em;
     position: relative;
 
-    background-color: #eee;
-    transition: background-color 300ms;
-
     display: flex;
     flex-direction: column;
     gap: 0.5em;
-}
-
-reward-component:is(:focus, :hover) {
-    background-color: #ddd;
 }
 
 @media (min-width: 400px) {
@@ -43,10 +36,28 @@ reward-component .name {
     font-weight: bold;
 }
 
-reward-component .redeem-button {
+reward-component check-button-component {
+    height: 6.25em;
+    width: 6.25em;
+
     position: absolute;
-    left: -1.25em;
-    top: 1em;
+    left: -3em;
+    top: -1em;
+}
+
+reward-component.redeemed, reward-component.unredeemed {
+    margin-bottom: calc(var(--height) * -1 - 1em);
+    transition:
+        translate 500ms cubic-bezier(0.5, 0, 0.5, -0.5) 750ms,
+        margin-bottom 250ms 1250ms;
+}
+
+reward-component.redeemed {
+    translate: 100vw 0;
+}
+
+reward-component.unredeemed {
+    translate: -100vw 0;
 }`);
 
 export default class Reward extends CustomElement {
@@ -98,24 +109,15 @@ export default class Reward extends CustomElement {
             this.appendChild($repeat);
         }
 
-        const $redeemButton = new Button({
-            className: 'redeem-button round',
-            icon: {
-                alt: this.#redeemed ? 'Unredeem' : 'Redeem',
-                src: this.#redeemed ? 'img/uncheck.svg' : 'img/check.svg',
-            },
-            onClick: event => this.#redeemed ? this.#unredeem(event) : this.#redeem(event),
-            title: this.#redeemed ? 'Unredeem' : 'Redeem',
+        const $checkButton = new CheckButton({
+            checked: this.#redeemed,
+            onClick: _ => this.#redeemed ? this.#unredeem() : this.#redeem(),
         });
 
-        this.appendChild($redeemButton);
-
-        this.addEventListener('click', _ => this.#edit());
+        this.appendChild($checkButton);
     }
 
-    async #redeem(event) {
-        event.stopPropagation();
-
+    async #redeem() {
         this.#redeemed = new Date().getTime();
 
         RewardsData.update({
@@ -140,13 +142,16 @@ export default class Reward extends CustomElement {
             this.after($newReward);
         }
 
-        await this.animate({opacity: [1, 0]}, 300).finished;
+        this.classList.add('redeemed');
+
+        const {height} = this.getBoundingClientRect();
+        this.style.setProperty('--height', `${height}px`);
+
+        await Promise.allSettled(this.getAnimations().map(a => a.finished));
         this.remove();
     }
 
-    async #unredeem(event) {
-        event.stopPropagation();
-
+    async #unredeem() {
         this.#redeemed = undefined;
 
         RewardsData.update({
@@ -156,7 +161,12 @@ export default class Reward extends CustomElement {
 
         document.dispatchEvent(new Event('RewardUnredeemed'));
 
-        await this.animate({opacity: [1, 0]}, 300).finished;
+        this.classList.add('unredeemed');
+
+        const {height} = this.getBoundingClientRect();
+        this.style.setProperty('--height', `${height}px`);
+
+        await Promise.allSettled(this.getAnimations().map(a => a.finished));
         this.remove();
     }
 

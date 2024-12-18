@@ -10,6 +10,7 @@ stylesheet.replace(`rewards-page-component {
     display: flex;
     flex-direction: column;
     gap: 1em;
+    overflow-x: hidden;
 }`);
 
 export default class RewardsPage extends CustomElement {
