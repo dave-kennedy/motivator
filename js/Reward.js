@@ -47,29 +47,6 @@ reward-component check-button-component {
     top: -1em;
 }
 
-reward-component.redeemed, reward-component.unredeemed {
-    margin-bottom: calc(var(--height) * -1 - 1em);
-    transition:
-        translate 500ms cubic-bezier(0.5, 0, 0.5, -0.5) 750ms,
-        margin-bottom 250ms 1250ms;
-}
-
-reward-component.redeemed {
-    translate: 100vw 0;
-}
-
-reward-component.unredeemed {
-    translate: -100vw 0;
-}
-
-reward-component.deleted {
-    opacity: 0;
-    margin-bottom: calc(var(--height) * -1 - 1em);
-    transition:
-        opacity 250ms,
-        margin-bottom 250ms ease-in-out 250ms;
-}
-
 reward-component .menu {
     position: absolute;
     bottom: 1em;
@@ -211,13 +188,16 @@ export default class Reward extends CustomElement {
             this.after($newReward);
         }
 
-        this.classList.add('redeemed');
+        await this.animate({
+            translate: [0, '100vw 0'],
+        }, {
+            delay: 750,
+            duration: 500,
+            easing: 'cubic-bezier(0.5, 0, 0.5, -0.5)',
+            fill: 'forwards',
+        }).finished;
 
-        const {height} = this.getBoundingClientRect();
-        this.style.setProperty('--height', `${height}px`);
-
-        await Promise.allSettled(this.getAnimations().map(a => a.finished));
-        this.remove();
+        this.#animateRemove();
     }
 
     async #unredeem() {
@@ -230,13 +210,16 @@ export default class Reward extends CustomElement {
 
         document.dispatchEvent(new Event('RewardUnredeemed'));
 
-        this.classList.add('unredeemed');
+        await this.animate({
+            translate: [0, '-100vw 0'],
+        }, {
+            delay: 750,
+            duration: 500,
+            easing: 'cubic-bezier(0.5, 0, 0.5, -0.5)',
+            fill: 'forwards',
+        }).finished;
 
-        const {height} = this.getBoundingClientRect();
-        this.style.setProperty('--height', `${height}px`);
-
-        await Promise.allSettled(this.getAnimations().map(a => a.finished));
-        this.remove();
+        this.#animateRemove();
     }
 
     #edit() {
@@ -266,12 +249,28 @@ export default class Reward extends CustomElement {
         RewardsData.remove({id: this.#id});
         document.dispatchEvent(new Event('RewardDeleted'));
 
-        this.classList.add('deleted');
+        await this.animate({
+            opacity: [1, 0],
+        }, {
+            duration: 250,
+            easing: 'ease',
+            fill: 'forwards',
+        }).finished;
 
+        this.#animateRemove();
+    }
+
+    async #animateRemove() {
         const {height} = this.getBoundingClientRect();
-        this.style.setProperty('--height', `${height}px`);
 
-        await Promise.allSettled(this.getAnimations().map(a => a.finished));
+        await this.animate({
+            marginBottom: [0, `calc(${height}px * -1 - 1em)`],
+        }, {
+            duration: 250,
+            easing: 'ease',
+            fill: 'forwards',
+        }).finished;
+
         this.remove();
     }
 }

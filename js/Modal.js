@@ -70,7 +70,10 @@ export default class Modal extends CustomElement {
 
         const $confirmButton = new Button({
             label: 'OK',
-            onClick: this.#onConfirm,
+            onClick: _ => {
+                this.#onConfirm();
+                $dialog.close();
+            },
         });
 
         $buttons.appendChild($confirmButton);
