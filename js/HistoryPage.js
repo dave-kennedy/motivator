@@ -63,15 +63,14 @@ export default class HistoryPage extends CustomElement {
     }
 
     #load() {
-        const goals = GoalsData.items
-            .filter(goal => goal.completed)
-            .sort((a, b) => a.completed < b.completed ? 1 : -1);
+        const items = [...GoalsData.completed, ...RewardsData.redeemed]
+            .sort((item1, item2) => {
+                const date1 = item1.completed || item1.redeemed;
+                const date2 = item2.completed || item2.redeemed;
+                return date1 < date2 ? 1 : -1;
+            });
 
-        const rewards = RewardsData.items
-            .filter(reward => reward.redeemed)
-            .sort((a, b) => a.redeemed < b.redeemed ? 1 : -1);
-
-        return this.#group([...goals, ...rewards], item => {
+        return this.#group(items, item => {
             return item.completed
                 ? new Date(item.completed).toLocaleDateString()
                 : new Date(item.redeemed).toLocaleDateString();

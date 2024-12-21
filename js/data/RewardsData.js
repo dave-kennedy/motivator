@@ -14,4 +14,16 @@ export default class RewardsData extends ArrayData {
     static get localStorageKey() {
         return 'rewards';
     }
+
+    static get redeemed() {
+        return this.items.filter(item => item.redeemed);
+    }
+
+    static get redeemedPoints() {
+        return this.redeemed.reduce((total, item) => total + item.points, 0);
+    }
+
+    static get unredeemed() {
+        return this.items.filter(item => !item.redeemed);
+    }
 }

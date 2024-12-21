@@ -49,9 +49,10 @@ export default class RewardsPage extends CustomElement {
     }
 
     #load() {
-        return [...RewardsData.items]
-            .filter(reward => !reward.redeemed)
-            .sort((a, b) => a.created < b.created ? -1 : 1);
+        return RewardsData.unredeemed
+            .sort((reward1, reward2) => {
+                return reward1.created < reward2.created ? -1 : 1;
+            });
     }
 
     #newReward() {

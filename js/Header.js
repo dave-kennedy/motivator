@@ -60,17 +60,7 @@ export default class Header extends CustomElement {
     }
 
     #load() {
-        const goals = GoalsData.items
-            .filter(goal => goal.completed);
-
-        const rewards = RewardsData.items
-            .filter(reward => reward.redeemed);
-
-        return [...goals, ...rewards].reduce((total, item) => {
-            return item.completed
-                ? total + item.points
-                : total - item.points;
-        }, 0);
+        return GoalsData.completedPoints - RewardsData.redeemedPoints;
     }
 
     #refresh() {

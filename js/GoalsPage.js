@@ -49,9 +49,10 @@ export default class GoalsPage extends CustomElement {
     }
 
     #load() {
-        return [...GoalsData.items]
-            .filter(goal => !goal.completed)
-            .sort((a, b) => a.created < b.created ? -1 : 1);
+        return GoalsData.uncompleted
+            .sort((goal1, goal2) => {
+                return goal1.created < goal2.created ? -1 : 1;
+            });
     }
 
     #newGoal() {

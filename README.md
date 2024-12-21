@@ -24,7 +24,6 @@ careful not to destroy your data.
 
 * Action button overlaps editor/menu buttons
 * Able to focus buttons on hidden pages
-* Goals always sorted before rewards on history page
 * Rapid switching between pages causes render issues
 
 ## TODO
