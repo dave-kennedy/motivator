@@ -3,7 +3,6 @@ import CustomElement from './CustomElement.js';
 import Goal from './Goal.js';
 import GoalsData from './data/GoalsData.js';
 import Input from './Input.js';
-import Modal from './Modal.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -36,10 +35,6 @@ goal-editor-component .buttons {
     display: flex;
     gap: 1em;
     justify-content: end;
-}
-
-goal-editor-component .delete-button {
-    flex: 1;
 }`);
 
 export default class GoalEditor extends CustomElement {
@@ -135,16 +130,6 @@ export default class GoalEditor extends CustomElement {
         $buttons.className = 'buttons';
         this.appendChild($buttons);
 
-        if (this.#id) {
-            const $deleteButton = new Button({
-                className: 'delete-button red',
-                label: 'Delete',
-                onClick: _ => this.#confirmDelete(),
-            });
-
-            $buttons.appendChild($deleteButton);
-        }
-
         const $cancelButton = new Button({
             label: 'Cancel',
             onClick: _ => this.#cancel(),
@@ -158,21 +143,6 @@ export default class GoalEditor extends CustomElement {
         });
 
         $buttons.appendChild($saveButton);
-    }
-
-    #confirmDelete() {
-        const $modal = new Modal({
-            message: 'Are you sure you want to delete this goal?',
-            onConfirm: _ => this.#delete(),
-        });
-
-        this.appendChild($modal);
-    }
-
-    #delete() {
-        GoalsData.remove({id: this.#id});
-        document.dispatchEvent(new Event('GoalDeleted'));
-        this.remove();
     }
 
     #cancel() {

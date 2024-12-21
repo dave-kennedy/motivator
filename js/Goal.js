@@ -1,7 +1,9 @@
+import Button from './Button.js';
 import CheckButton from './CheckButton.js';
 import CustomElement from './CustomElement.js';
 import GoalEditor from './GoalEditor.js';
 import GoalsData from './data/GoalsData.js';
+import Modal from './Modal.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -58,6 +60,46 @@ goal-component.completed {
 
 goal-component.uncompleted {
     translate: -100vw 0;
+}
+
+goal-component.deleted {
+    opacity: 0;
+    margin-bottom: calc(var(--height) * -1 - 1em);
+    transition:
+        opacity 250ms,
+        margin-bottom 250ms ease-in-out 250ms;
+}
+
+goal-component .menu {
+    position: absolute;
+    bottom: 1em;
+    right: 1em;
+}
+
+goal-component .menu button-component {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+goal-component .menu .edit-button,
+goal-component .menu .delete-button {
+    visibility: hidden;
+    transition: right 250ms, visibility 250ms;
+}
+
+goal-component .menu.open .edit-button,
+goal-component .menu.open .delete-button {
+    visibility: visible;
+    transition: right 250ms, visibility 0ms;
+}
+
+goal-component .menu.open .edit-button {
+    right: 7em;
+}
+
+goal-component .menu.open .delete-button {
+    right: 3.5em;
 }`);
 
 export default class Goal extends CustomElement {
@@ -115,6 +157,33 @@ export default class Goal extends CustomElement {
         });
 
         this.appendChild($checkButton);
+
+        const $menu = document.createElement('div');
+        $menu.className = 'menu';
+        this.appendChild($menu);
+
+        const $editButton = new Button({
+            className: 'edit-button round',
+            icon: {alt: 'Edit', src: 'img/edit.svg'},
+            onClick: _ => this.#edit(),
+            title: 'Edit',
+        });
+
+        const $deleteButton = new Button({
+            className: 'delete-button round',
+            icon: {alt: 'Delete', src: 'img/delete.svg'},
+            onClick: _ => this.#confirmDelete(),
+            title: 'Delete',
+        });
+
+        const $menuButton = new Button({
+            className: 'menu-button round',
+            icon: {alt: 'Menu', src: 'img/menu.svg'},
+            onClick: _ => $menu.classList.toggle('open'),
+            title: 'Menu',
+        });
+
+        $menu.append($editButton, $deleteButton, $menuButton);
     }
 
     async #complete() {
@@ -182,6 +251,28 @@ export default class Goal extends CustomElement {
         });
 
         this.replaceWith($editor);
+    }
+
+    #confirmDelete() {
+        const $modal = new Modal({
+            message: 'Are you sure you want to delete this goal?',
+            onConfirm: _ => this.#delete(),
+        });
+
+        this.appendChild($modal);
+    }
+
+    async #delete() {
+        GoalsData.remove({id: this.#id});
+        document.dispatchEvent(new Event('GoalDeleted'));
+
+        this.classList.add('deleted');
+
+        const {height} = this.getBoundingClientRect();
+        this.style.setProperty('--height', `${height}px`);
+
+        await Promise.allSettled(this.getAnimations().map(a => a.finished));
+        this.remove();
     }
 }
 
