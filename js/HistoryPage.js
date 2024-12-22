@@ -19,6 +19,7 @@ history-page-component .date {
 }`);
 
 export default class HistoryPage extends CustomElement {
+    #dirty;
     #groups;
 
     pageId = 'history';
@@ -26,20 +27,22 @@ export default class HistoryPage extends CustomElement {
 
     constructor() {
         super();
+
+        document.addEventListener('GoalCompleted', _ => this.#dirty = true);
+        document.addEventListener('RewardRedeemed', _ => this.#dirty = true);
     }
 
-    onPageTransitionStart(direction) {
-        if (direction === 'in') {
+    onPageTransitionStart() {
+        ActionButton.remove();
+
+        if (this.#dirty || !this.#groups) {
+            this.replaceChildren();
             this.#render();
         }
     }
 
-    onPageTransitionEnd(direction) {
-        if (direction === 'in') {
-            document.dispatchEvent(new Event('HistoryPageRendered'));
-        } else {
-            this.replaceChildren();
-        }
+    onPageTransitionEnd() {
+        document.dispatchEvent(new Event('HistoryPageRendered'));
     }
 
     #render() {
@@ -63,8 +66,6 @@ export default class HistoryPage extends CustomElement {
                 }
             }
         }
-
-        ActionButton.remove();
     }
 
     #load() {

@@ -20,10 +20,6 @@ This is still very much in development and subject to breaking changes. If you
 want to use it before I've announced a release, please let me know so I can be
 careful not to destroy your data.
 
-## BUGS
-
-* Rapid switching between pages causes render issues
-
 ## TODO
 
 * Editor

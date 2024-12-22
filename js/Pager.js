@@ -55,6 +55,10 @@ pager-component .pages > * {
     position: relative;
     left: calc(var(--page-index) * -100%);
     transition: left 300ms;
+}
+
+pager-component .pages > .hidden {
+    visibility: hidden;
 }`);
 
 export default class Pager extends CustomElement {
@@ -122,11 +126,13 @@ export default class Pager extends CustomElement {
         this.style.setProperty('--page-index', pageIndex);
 
         for (const $page of this.#pages) {
-            const direction = $page.pageId === pageId ? 'in' : 'out';
-            $page.onPageTransitionStart(direction);
-
-            const delay = this.#pageIndex === undefined ? 0 : 300;
-            setTimeout(_ => $page.onPageTransitionEnd(direction), delay);
+            if ($page.pageId === pageId) {
+                $page.classList.remove('hidden');
+                $page.onPageTransitionStart();
+                $page.afterAnimations(_ => $page.onPageTransitionEnd());
+            } else {
+                $page.afterAnimations(_ => $page.classList.add('hidden'));
+            }
         }
 
         this.#pageIndex = pageIndex;

@@ -13,6 +13,7 @@ stylesheet.replace(`rewards-page-component {
 }`);
 
 export default class RewardsPage extends CustomElement {
+    #dirty;
     #rewards;
 
     pageId = 'rewards';
@@ -20,20 +21,24 @@ export default class RewardsPage extends CustomElement {
 
     constructor() {
         super();
+
+        document.addEventListener('RewardUnredeemed', _ => this.#dirty = true);
     }
 
-    onPageTransitionStart(direction) {
-        if (direction === 'in') {
+    onPageTransitionStart() {
+        ActionButton.render({
+            label: 'New Reward',
+            onClick: _ => this.#newReward(),
+        });
+
+        if (this.#dirty || !this.#rewards) {
+            this.replaceChildren();
             this.#render();
         }
     }
 
-    onPageTransitionEnd(direction) {
-        if (direction === 'in') {
-            document.dispatchEvent(new Event('RewardsPageRendered'));
-        } else {
-            this.replaceChildren();
-        }
+    onPageTransitionEnd() {
+        document.dispatchEvent(new Event('RewardsPageRendered'));
     }
 
     #render() {
@@ -45,11 +50,6 @@ export default class RewardsPage extends CustomElement {
             const $reward = new Reward(reward);
             this.appendChild($reward);
         }
-
-        ActionButton.render({
-            label: 'New Reward',
-            onClick: _ => this.#newReward(),
-        });
     }
 
     #load() {

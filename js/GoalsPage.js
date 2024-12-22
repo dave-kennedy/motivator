@@ -13,6 +13,7 @@ stylesheet.replace(`goals-page-component {
 }`);
 
 export default class GoalsPage extends CustomElement {
+    #dirty;
     #goals;
 
     pageId = 'goals';
@@ -20,20 +21,24 @@ export default class GoalsPage extends CustomElement {
 
     constructor() {
         super();
+
+        document.addEventListener('GoalUncompleted', _ => this.#dirty = true);
     }
 
-    onPageTransitionStart(direction) {
-        if (direction === 'in') {
+    onPageTransitionStart() {
+        ActionButton.render({
+            label: 'New Goal',
+            onClick: _ => this.#newGoal(),
+        });
+
+        if (this.#dirty || !this.#goals) {
+            this.replaceChildren();
             this.#render();
         }
     }
 
-    onPageTransitionEnd(direction) {
-        if (direction === 'in') {
-            document.dispatchEvent(new Event('GoalsPageRendered'));
-        } else {
-            this.replaceChildren();
-        }
+    onPageTransitionEnd() {
+        document.dispatchEvent(new Event('GoalsPageRendered'));
     }
 
     #render() {
@@ -45,11 +50,6 @@ export default class GoalsPage extends CustomElement {
             const $goal = new Goal(goal);
             this.appendChild($goal);
         }
-
-        ActionButton.render({
-            label: 'New Goal',
-            onClick: _ => this.#newGoal(),
-        });
     }
 
     #load() {
