@@ -120,11 +120,13 @@ export default class Pager extends CustomElement {
 
         this.style.setProperty('--page-index', pageIndex);
 
-        const $page = this.#pages[pageIndex];
-        $page.onPageTransitionStart();
+        for (const $page of this.#pages) {
+            const direction = $page.pageId === pageId ? 'in' : 'out';
+            $page.onPageTransitionStart(direction);
 
-        const delay = this.#pageIndex === undefined ? 0 : 300;
-        setTimeout(_ => $page.onPageTransitionEnd(), delay);
+            const delay = this.#pageIndex === undefined ? 0 : 300;
+            setTimeout(_ => $page.onPageTransitionEnd(direction), delay);
+        }
 
         this.#pageIndex = pageIndex;
     }

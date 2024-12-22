@@ -28,13 +28,18 @@ export default class HistoryPage extends CustomElement {
         super();
     }
 
-    onPageTransitionStart() {
-        this.replaceChildren();
-        this.#render();
+    onPageTransitionStart(direction) {
+        if (direction === 'in') {
+            this.#render();
+        }
     }
 
-    onPageTransitionEnd() {
-        document.dispatchEvent(new Event('HistoryPageRendered'));
+    onPageTransitionEnd(direction) {
+        if (direction === 'in') {
+            document.dispatchEvent(new Event('HistoryPageRendered'));
+        } else {
+            this.replaceChildren();
+        }
     }
 
     #render() {

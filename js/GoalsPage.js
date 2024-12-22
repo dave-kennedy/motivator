@@ -23,13 +23,18 @@ export default class GoalsPage extends CustomElement {
         super();
     }
 
-    onPageTransitionStart() {
-        this.replaceChildren();
-        this.#render();
+    onPageTransitionStart(direction) {
+        if (direction === 'in') {
+            this.#render();
+        }
     }
 
-    onPageTransitionEnd() {
-        document.dispatchEvent(new Event('GoalsPageRendered'));
+    onPageTransitionEnd(direction) {
+        if (direction === 'in') {
+            document.dispatchEvent(new Event('GoalsPageRendered'));
+        } else {
+            this.replaceChildren();
+        }
     }
 
     #render() {

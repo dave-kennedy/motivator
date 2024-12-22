@@ -23,13 +23,18 @@ export default class RewardsPage extends CustomElement {
         super();
     }
 
-    onPageTransitionStart() {
-        this.replaceChildren();
-        this.#render();
+    onPageTransitionStart(direction) {
+        if (direction === 'in') {
+            this.#render();
+        }
     }
 
-    onPageTransitionEnd() {
-        document.dispatchEvent(new Event('RewardsPageRendered'));
+    onPageTransitionEnd(direction) {
+        if (direction === 'in') {
+            document.dispatchEvent(new Event('RewardsPageRendered'));
+        } else {
+            this.replaceChildren();
+        }
     }
 
     #render() {

@@ -23,7 +23,6 @@ careful not to destroy your data.
 ## BUGS
 
 * Action button overlaps editor/menu buttons
-* Able to focus buttons on hidden pages
 * Rapid switching between pages causes render issues
 
 ## TODO
