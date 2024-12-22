@@ -42,14 +42,15 @@ pager-component .tabs a {
 
 pager-component .pages {
     display: flex;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 pager-component .pages > * {
     box-sizing: border-box;
     flex: 0 0 100%;
+    overflow-x: hidden;
     overflow-y: auto;
-    padding: 1em;
+    padding: 1em 1em 5em 1em;
 
     position: relative;
     left: calc(var(--page-index) * -100%);
