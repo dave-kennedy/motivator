@@ -81,12 +81,20 @@ export default class Modal extends CustomElement {
         $dialog.showModal();
         $dialog.animate({opacity: [0, 1]}, 300);
 
-        $dialog.animate({
-            opacity: [0, 1],
-        }, {
-            duration: 300,
-            pseudoElement: '::backdrop',
-        });
+        try {
+            $dialog.animate({
+                opacity: [0, 1],
+            }, {
+                duration: 300,
+                pseudoElement: '::backdrop',
+            });
+        } catch (error) {
+            if (error.message.includes('unsupported pseudo-element')) {
+                // Firefox doesn't support this yet, never mind it
+            } else {
+                throw error;
+            }
+        }
 
         $confirmButton.focus();
 

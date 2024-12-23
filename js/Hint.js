@@ -116,12 +116,20 @@ export default class Hint extends CustomElement {
         $popover.showPopover();
         $popover.animate({opacity: [0, 1]}, 300);
 
-        $popover.animate({
-            opacity: [0, 1],
-        }, {
-            duration: 300,
-            pseudoElement: '::backdrop',
-        });
+        try {
+            $popover.animate({
+                opacity: [0, 1],
+            }, {
+                duration: 300,
+                pseudoElement: '::backdrop',
+            });
+        } catch (error) {
+            if (error.message.includes('unsupported pseudo-element')) {
+                // Firefox doesn't support this yet, never mind it
+            } else {
+                throw error;
+            }
+        }
     }
 }
 
