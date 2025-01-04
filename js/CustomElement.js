@@ -15,7 +15,7 @@ export default class CustomElement extends HTMLElement {
                 await Promise.all(this.getAnimations().map(a => a.finished));
                 callback();
             } catch (error) {
-                if (error.message.includes('operation was aborted')) {
+                if (error.name === 'AbortError') {
                     // Animation was canceled, no problem
                 } else {
                     throw error;
