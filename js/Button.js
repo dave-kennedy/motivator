@@ -115,7 +115,7 @@ export default class Button extends CustomElement {
     }
 
     focus() {
-        this.$button.focus({focusVisible: true});
+        this.$button.focus();
     }
 }
 

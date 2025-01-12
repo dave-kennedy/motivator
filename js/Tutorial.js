@@ -37,10 +37,14 @@ export default class Tutorial {
             anchor: $anchor,
             position,
             message,
-            onClose,
         });
 
         document.querySelector('app-component').appendChild($hint);
+
+        if (onClose) {
+            $hint.addEventListener('close', onClose);
+        }
+
         return true;
     }
 

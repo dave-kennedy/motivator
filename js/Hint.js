@@ -4,64 +4,77 @@ const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`hint-component {
     position: fixed;
+    inset: 0;
+    z-index: 10;
 }
 
-hint-component [popover] {
-    border: 1px solid #999;
-    border-radius: 1em;
-    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
-    padding: 1em;
-
-    bottom: var(--popover-bottom);
-    left: var(--popover-left);
-    right: var(--popover-right);
-    top: var(--popover-top);
-}
-
-hint-component.top-left [popover] {
-    border-bottom-right-radius: 0;
-}
-
-hint-component.top-right [popover] {
-    border-bottom-left-radius: 0;
-}
-
-hint-component.bottom-left [popover] {
-    border-top-right-radius: 0;
-}
-
-hint-component.bottom-right [popover] {
-    border-top-left-radius: 0;
-}
-
-hint-component [popover]::backdrop {
+hint-component .backdrop {
     background-image: radial-gradient(
-        var(--backdrop-rx) var(--backdrop-ry)
-        at var(--backdrop-x) var(--backdrop-y),
+        var(--anchor-width) var(--anchor-height)
+        at var(--anchor-x) var(--anchor-y),
         transparent 100%,
-        rgba(0, 0, 0, 0.1) 100%
+        rgba(0, 0, 0, 0.25) 100%
     );
 
     background-repeat: no-repeat;
+
+    position: fixed;
+    inset: 0;
+}
+
+hint-component .hint {
+    background-color: #fff;
+    border: 1px solid #999;
+    border-radius: 1em;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
+    padding: 1em;
+
+    position: fixed;
+    bottom: var(--hint-bottom);
+    left: var(--hint-left);
+    right: var(--hint-right);
+    top: var(--hint-top);
+}
+
+hint-component.top-left .hint {
+    border-bottom-right-radius: 0;
+}
+
+hint-component.top-right .hint {
+    border-bottom-left-radius: 0;
+}
+
+hint-component.bottom-left .hint {
+    border-top-right-radius: 0;
+}
+
+hint-component.bottom-right .hint {
+    border-top-left-radius: 0;
 }`);
 
 export default class Hint extends CustomElement {
     #anchor;
     #position;
     #message;
-    #onClose;
 
-    constructor({anchor, position, message, onClose}) {
+    constructor({anchor, position, message}) {
         super();
 
         this.#anchor = anchor;
         this.#position = position;
         this.#message = message;
-        this.#onClose = onClose;
     }
 
     connectedCallback() {
         this.#render();
+
+        document.addEventListener('keydown', this.#onKeyDown);
+        addEventListener('hashchange', this.close);
+    }
+
+    disconnectedCallback() {
+        document.removeEventListener('keydown', this.#onKeyDown);
+        removeEventListener('hashchange', this.close);
     }
 
     #render() {
@@ -69,23 +82,22 @@ export default class Hint extends CustomElement {
 
         this.className = this.#position;
 
-        const $popover = document.createElement('div');
-        $popover.popover = 'auto';
-        $popover.textContent = this.#message;
+        const $backdrop = document.createElement('div');
+        $backdrop.addEventListener('click', this.close);
+        $backdrop.className = 'backdrop';
+        this.appendChild($backdrop);
 
-        $popover.addEventListener('toggle', ({newState}) => {
-            if (newState !== 'closed') {
-                return;
-            }
+        const $hint = document.createElement('div');
+        $hint.className = 'hint';
+        $hint.textContent = this.#message;
+        this.appendChild($hint);
 
-            if (this.#onClose) {
-                this.#onClose();
-            }
+        this.#anchor.addEventListener('click', this.close);
+        this.#anchor.style.setProperty('z-index', 100);
 
-            this.remove();
-        });
-
-        this.appendChild($popover);
+        if (getComputedStyle(this.#anchor).position === 'static') {
+            this.#anchor.style.setProperty('position', 'relative');
+        }
 
         const {
             bottom: anchorBottom,
@@ -96,41 +108,41 @@ export default class Hint extends CustomElement {
             width: anchorWidth,
         } = this.#anchor.getBoundingClientRect();
 
+        this.style.setProperty('--anchor-x', `${anchorLeft + (anchorWidth / 2)}px`);
+        this.style.setProperty('--anchor-y', `${anchorTop + (anchorHeight / 2)}px`);
+        this.style.setProperty('--anchor-width', `${anchorWidth}px`);
+        this.style.setProperty('--anchor-height', `${anchorHeight}px`);
+
         if (this.#position.endsWith('-left')) {
-            this.style.setProperty('--popover-right', `${innerWidth - anchorLeft}px`);
+            this.style.setProperty('--hint-right', `${innerWidth - anchorLeft}px`);
         } else {
-            this.style.setProperty('--popover-left', `${anchorRight}px`);
+            this.style.setProperty('--hint-left', `${anchorRight}px`);
         }
 
         if (this.#position.startsWith('top-')) {
-            this.style.setProperty('--popover-bottom', `${innerHeight - anchorTop}px`);
+            this.style.setProperty('--hint-bottom', `${innerHeight - anchorTop}px`);
         } else {
-            this.style.setProperty('--popover-top', `${anchorBottom}px`);
+            this.style.setProperty('--hint-top', `${anchorBottom}px`);
         }
 
-        this.style.setProperty('--backdrop-x', `${anchorLeft + (anchorWidth / 2)}px`);
-        this.style.setProperty('--backdrop-y', `${anchorTop + (anchorHeight / 2)}px`);
-        this.style.setProperty('--backdrop-rx', `${anchorWidth}px`);
-        this.style.setProperty('--backdrop-ry', `${anchorHeight}px`);
-
-        $popover.showPopover();
-        $popover.animate({opacity: [0, 1]}, 300);
-
-        try {
-            $popover.animate({
-                opacity: [0, 1],
-            }, {
-                duration: 300,
-                pseudoElement: '::backdrop',
-            });
-        } catch (error) {
-            if (error.message.includes('unsupported pseudo-element')) {
-                // Firefox doesn't support this yet, never mind it
-            } else {
-                throw error;
-            }
-        }
+        this.animate({opacity: [0, 1]}, 300);
     }
+
+    #onKeyDown = event => {
+        if (event.key === 'Escape') {
+            this.close();
+        }
+    };
+
+    close = async _ => {
+        this.#anchor.removeEventListener('click', this.close);
+        this.#anchor.style.removeProperty('position');
+        this.#anchor.style.removeProperty('z-index');
+
+        await this.animate({opacity: [1, 0]}, 300).finished;
+        this.dispatchEvent(new Event('close'));
+        this.remove();
+    };
 }
 
 customElements.define('hint-component', Hint);

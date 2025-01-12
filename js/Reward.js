@@ -237,12 +237,13 @@ export default class Reward extends CustomElement {
     }
 
     #confirmDelete() {
-        const $modal = new Modal({
-            message: 'Are you sure you want to delete this reward?',
-            onConfirm: _ => this.#delete(),
+        Modal.render({
+            content: 'Are you sure you want to delete this reward?',
+            buttons: [
+                {label: 'No'},
+                {focus: true, label: 'Yes', onClick: _ => this.#delete()},
+            ],
         });
-
-        this.appendChild($modal);
     }
 
     async #delete() {

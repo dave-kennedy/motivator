@@ -5,20 +5,43 @@ const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`modal-component {
     position: fixed;
+    inset: 0;
+    z-index: 10;
 }
 
-modal-component dialog {
+modal-component .backdrop {
+    background-color: rgba(0, 0, 0, 0.25);
+
+    position: fixed;
+    inset: 0;
+}
+
+modal-component .modal {
+    background-color: #fff;
     border: 1px solid #999;
     border-radius: 1em;
-    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
-    padding: 0;
-}
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+    max-height: calc(100% - 2em);
+    max-width: calc(100% - 2em);
+    overflow: auto;
+    padding: 1em;
 
-modal-component .inner {
     display: flex;
     flex-direction: column;
     gap: 1em;
-    padding: 1em;
+
+    position: fixed;
+    inset: 0;
+    height: fit-content;
+    width: fit-content;
+    margin: auto;
+}
+
+@media (min-width: 400px) {
+    modal-component .modal {
+        max-width: 25em;
+    }
 }
 
 modal-component .buttons {
@@ -28,81 +51,89 @@ modal-component .buttons {
 }`);
 
 export default class Modal extends CustomElement {
-    #message;
-    #onConfirm;
+    #content;
+    #buttons;
 
-    constructor({message, onConfirm}) {
+    constructor({content, buttons}) {
         super();
 
-        this.#message = message;
-        this.#onConfirm = onConfirm;
+        this.#content = content;
+        this.#buttons = buttons;
     }
 
     connectedCallback() {
         this.#render();
+
+        document.addEventListener('keydown', this.#onKeyDown);
+        addEventListener('hashchange', this.close);
+    }
+
+    disconnectedCallback() {
+        document.removeEventListener('keydown', this.#onKeyDown);
+        removeEventListener('hashchange', this.close);
     }
 
     #render() {
         this.applyStylesheet(stylesheet);
 
-        const $dialog = document.createElement('dialog');
-        $dialog.addEventListener('close', _ => this.remove());
-        this.appendChild($dialog);
+        const $backdrop = document.createElement('div');
+        $backdrop.addEventListener('click', this.close);
+        $backdrop.className = 'backdrop';
+        this.appendChild($backdrop);
 
-        const $inner = document.createElement('div');
-        $inner.className = 'inner';
-        $dialog.appendChild($inner);
+        const $modal = document.createElement('div');
+        $modal.className = 'modal';
+        this.appendChild($modal);
 
-        const $message = document.createElement('div');
-        $message.textContent = this.#message;
-        $inner.appendChild($message);
+        if (this.#content instanceof HTMLElement) {
+            $modal.appendChild(this.#content);
+        } else {
+            const $content = document.createElement('div');
+            $content.innerHTML = this.#content;
+            $modal.appendChild($content);
+        }
 
         const $buttons = document.createElement('div');
         $buttons.className = 'buttons';
-        $inner.appendChild($buttons);
+        $modal.appendChild($buttons);
 
-        const $cancelButton = new Button({
-            label: 'Cancel',
-            onClick: _ => $dialog.close(),
-        });
-
-        $buttons.appendChild($cancelButton);
-
-        const $confirmButton = new Button({
-            label: 'OK',
-            onClick: _ => {
-                this.#onConfirm();
-                $dialog.close();
-            },
-        });
-
-        $buttons.appendChild($confirmButton);
-
-        $dialog.showModal();
-        $dialog.animate({opacity: [0, 1]}, 300);
-
-        try {
-            $dialog.animate({
-                opacity: [0, 1],
-            }, {
-                duration: 300,
-                pseudoElement: '::backdrop',
+        for (const {focus, label, onClick} of this.#buttons) {
+            const $button = new Button({
+                label,
+                onClick: event => {
+                    if (onClick) {
+                        onClick(event) && this.close();
+                    } else {
+                        this.close();
+                    }
+                },
             });
-        } catch (error) {
-            if (error.message.includes('unsupported pseudo-element')) {
-                // Firefox doesn't support this yet, never mind it
-            } else {
-                throw error;
+
+            $buttons.appendChild($button);
+
+            if (focus) {
+                $button.focus();
             }
         }
 
-        $confirmButton.focus();
+        this.animate({opacity: [0, 1]}, 300);
+    }
 
-        this.addEventListener('click', event => {
-            if (event.target === $dialog) {
-                $dialog.close();
-            }
-        });
+    #onKeyDown = event => {
+        if (event.key === 'Escape') {
+            this.close();
+        }
+    };
+
+    close = async _ => {
+        await this.animate({opacity: [1, 0]}, 300).finished;
+        this.dispatchEvent(new Event('close'));
+        this.remove();
+    };
+
+    static render({content, buttons}) {
+        const $modal = new Modal({content, buttons});
+        document.querySelector('app-component').appendChild($modal);
     }
 }
 

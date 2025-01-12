@@ -237,12 +237,13 @@ export default class Goal extends CustomElement {
     }
 
     #confirmDelete() {
-        const $modal = new Modal({
-            message: 'Are you sure you want to delete this goal?',
-            onConfirm: _ => this.#delete(),
+        Modal.render({
+            content: 'Are you sure you want to delete this goal?',
+            buttons: [
+                {label: 'No'},
+                {focus: true, label: 'Yes', onClick: _ => this.#delete()},
+            ],
         });
-
-        this.appendChild($modal);
     }
 
     async #delete() {
