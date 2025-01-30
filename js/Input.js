@@ -27,6 +27,15 @@ input-component input[type^=date].non-blank {
     color: initial;
 }
 
+input-component .error {
+    display: none;
+}
+
+input-component:has(:invalid) .error {
+    color: #c00;
+    display: block;
+}
+
 input-component.row {
     align-items: center;
     flex-direction: row;
@@ -49,6 +58,7 @@ export default class Input extends CustomElement {
     #value;
 
     $input;
+    $error;
 
     constructor({className, disabled, id, label, min, placeholder, required, type, value}) {
         super();
@@ -179,7 +189,18 @@ export default class Input extends CustomElement {
     }
 
     validate() {
-        return this.$input.reportValidity();
+        // Workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1510450
+        this.$error?.remove();
+
+        if (!this.$input.validationMessage) {
+            return true;
+        }
+
+        this.$error = document.createElement('div');
+        this.$error.className = 'error';
+        this.$error.textContent = this.$input.validationMessage;
+        this.appendChild(this.$error);
+        return false;
     }
 }
 

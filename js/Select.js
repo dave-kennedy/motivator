@@ -28,6 +28,15 @@ select-component option:not([value='']) {
     color: initial;
 }
 
+select-component .error {
+    display: none;
+}
+
+select-component:has(:invalid) .error {
+    color: #c00;
+    display: block;
+}
+
 select-component.row {
     align-items: center;
     flex-direction: row;
@@ -49,6 +58,7 @@ export default class Select extends CustomElement {
     #value;
 
     $select;
+    $error;
 
     constructor({className, disabled, id, label, options, placeholder, required, value}) {
         super();
@@ -121,7 +131,18 @@ export default class Select extends CustomElement {
     }
 
     validate() {
-        return this.$select.reportValidity();
+        // Workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1510450
+        this.$error?.remove();
+
+        if (!this.$select.validationMessage) {
+            return true;
+        }
+
+        this.$error = document.createElement('div');
+        this.$error.className = 'error';
+        this.$error.textContent = this.$select.validationMessage;
+        this.appendChild(this.$error);
+        return false;
     }
 }
 
