@@ -233,7 +233,13 @@ export default class Reward extends CustomElement {
             redeemed: this.#redeemed,
         });
 
-        this.replaceWith($editor);
+        Modal.render({
+            content: $editor,
+            buttons: [
+                {label: 'Cancel'},
+                {label: 'Save', onClick: _ => $editor.save()},
+            ],
+        });
     }
 
     #confirmDelete() {

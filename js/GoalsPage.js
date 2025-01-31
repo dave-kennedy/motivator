@@ -3,6 +3,7 @@ import CustomElement from './CustomElement.js';
 import Goal from './Goal.js';
 import GoalEditor from './GoalEditor.js';
 import GoalsData from './data/GoalsData.js';
+import Modal from './Modal.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -61,7 +62,14 @@ export default class GoalsPage extends CustomElement {
 
     #newGoal() {
         const $editor = new GoalEditor({});
-        this.appendChild($editor);
+
+        Modal.render({
+            content: $editor,
+            buttons: [
+                {label: 'Cancel'},
+                {label: 'Save', onClick: _ => $editor.save()},
+            ],
+        });
     }
 }
 

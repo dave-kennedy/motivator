@@ -233,7 +233,13 @@ export default class Goal extends CustomElement {
             completed: this.#completed,
         });
 
-        this.replaceWith($editor);
+        Modal.render({
+            content: $editor,
+            buttons: [
+                {label: 'Cancel'},
+                {label: 'Save', onClick: _ => $editor.save()},
+            ],
+        });
     }
 
     #confirmDelete() {

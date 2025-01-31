@@ -1,40 +1,13 @@
-import Button from './Button.js';
 import CustomElement from './CustomElement.js';
-import Goal from './Goal.js';
 import GoalsData from './data/GoalsData.js';
 import Input from './Input.js';
 
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`goal-editor-component {
-    background-color: #eee;
-    border-radius: 1em;
-    box-sizing: border-box;
-    padding: 1em;
-
     display: flex;
     flex-direction: column;
     gap: 1em;
-}
-
-@media (min-width: 400px) {
-    goal-editor-component {
-        align-self: center;
-        width: 80%;
-    }
-}
-
-@media (min-width: 800px) {
-    goal-editor-component {
-        align-self: center;
-        width: 60%;
-    }
-}
-
-goal-editor-component .buttons {
-    display: flex;
-    gap: 1em;
-    justify-content: end;
 }`);
 
 export default class GoalEditor extends CustomElement {
@@ -125,46 +98,9 @@ export default class GoalEditor extends CustomElement {
 
             this.appendChild(this.$completed);
         }
-
-        const $buttons = document.createElement('div');
-        $buttons.className = 'buttons';
-        this.appendChild($buttons);
-
-        const $cancelButton = new Button({
-            label: 'Cancel',
-            onClick: _ => this.#cancel(),
-        });
-
-        $buttons.appendChild($cancelButton);
-
-        const $saveButton = new Button({
-            label: 'Save',
-            onClick: _ => this.#save(),
-        });
-
-        $buttons.appendChild($saveButton);
     }
 
-    #cancel() {
-        if (!this.#id) {
-            this.remove();
-            return;
-        }
-
-        const $goal = new Goal({
-            id: this.#id,
-            created: this.#created,
-            name: this.#name,
-            description: this.#description,
-            points: this.#points,
-            repeat: this.#repeat,
-            completed: this.#completed,
-        });
-
-        this.replaceWith($goal);
-    }
-
-    #save() {
+    save() {
         if (!this.#validate()) {
             return;
         }
@@ -179,9 +115,6 @@ export default class GoalEditor extends CustomElement {
             completed: this.$completed?.value,
         };
 
-        const $goal = new Goal(goal);
-        this.replaceWith($goal);
-
         if (!this.#id) {
             GoalsData.add(goal);
             document.dispatchEvent(new Event('GoalCreated'));
@@ -189,6 +122,8 @@ export default class GoalEditor extends CustomElement {
             GoalsData.update(goal);
             document.dispatchEvent(new Event('GoalUpdated'));
         }
+
+        return true;
     }
 
     #validate() {

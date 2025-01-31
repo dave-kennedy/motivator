@@ -1,40 +1,13 @@
-import Button from './Button.js';
 import CustomElement from './CustomElement.js';
 import Input from './Input.js';
-import Reward from './Reward.js';
 import RewardsData from './data/RewardsData.js';
 
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`reward-editor-component {
-    background-color: #eee;
-    border-radius: 1em;
-    box-sizing: border-box;
-    padding: 1em;
-
     display: flex;
     flex-direction: column;
     gap: 1em;
-}
-
-@media (min-width: 400px) {
-    reward-editor-component {
-        align-self: center;
-        width: 80%;
-    }
-}
-
-@media (min-width: 800px) {
-    reward-editor-component {
-        align-self: center;
-        width: 60%;
-    }
-}
-
-reward-editor-component .buttons {
-    display: flex;
-    gap: 1em;
-    justify-content: end;
 }`);
 
 export default class RewardEditor extends CustomElement {
@@ -125,46 +98,9 @@ export default class RewardEditor extends CustomElement {
 
             this.appendChild(this.$redeemed);
         }
-
-        const $buttons = document.createElement('div');
-        $buttons.className = 'buttons';
-        this.appendChild($buttons);
-
-        const $cancelButton = new Button({
-            label: 'Cancel',
-            onClick: _ => this.#cancel(),
-        });
-
-        $buttons.appendChild($cancelButton);
-
-        const $saveButton = new Button({
-            label: 'Save',
-            onClick: _ => this.#save(),
-        });
-
-        $buttons.appendChild($saveButton);
     }
 
-    #cancel() {
-        if (!this.#id) {
-            this.remove();
-            return;
-        }
-
-        const $reward = new Reward({
-            id: this.#id,
-            created: this.#created,
-            name: this.#name,
-            description: this.#description,
-            points: this.#points,
-            repeat: this.#repeat,
-            redeemed: this.#redeemed,
-        });
-
-        this.replaceWith($reward);
-    }
-
-    #save() {
+    save() {
         if (!this.#validate()) {
             return;
         }
@@ -179,9 +115,6 @@ export default class RewardEditor extends CustomElement {
             redeemed: this.$redeemed?.value,
         };
 
-        const $reward = new Reward(reward);
-        this.replaceWith($reward);
-
         if (!this.#id) {
             RewardsData.add(reward);
             document.dispatchEvent(new Event('RewardCreated'));
@@ -189,6 +122,8 @@ export default class RewardEditor extends CustomElement {
             RewardsData.update(reward);
             document.dispatchEvent(new Event('RewardUpdated'));
         }
+
+        return true;
     }
 
     #validate() {

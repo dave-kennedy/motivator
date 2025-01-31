@@ -1,5 +1,6 @@
 import ActionButton from './ActionButton.js';
 import CustomElement from './CustomElement.js';
+import Modal from './Modal.js';
 import Reward from './Reward.js';
 import RewardEditor from './RewardEditor.js';
 import RewardsData from './data/RewardsData.js';
@@ -61,7 +62,14 @@ export default class RewardsPage extends CustomElement {
 
     #newReward() {
         const $editor = new RewardEditor({});
-        this.appendChild($editor);
+
+        Modal.render({
+            content: $editor,
+            buttons: [
+                {label: 'Cancel'},
+                {label: 'Save', onClick: _ => $editor.save()},
+            ],
+        });
     }
 }
 
