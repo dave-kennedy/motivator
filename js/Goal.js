@@ -38,6 +38,26 @@ goal-component .name {
     font-weight: bold;
 }
 
+goal-component .points::before,
+goal-component .repeat::before,
+goal-component .completed::before {
+    display: inline-block;
+    margin-right: 0.25em;
+    vertical-align: middle;
+}
+
+goal-component .points::before {
+    content: url('img/star.svg');
+}
+
+goal-component .repeat::before {
+    content: url('img/repeat.svg');
+}
+
+goal-component .completed::before {
+    content: url('img/calendar.svg');
+}
+
 goal-component check-button-component {
     height: 6.25em;
     width: 6.25em;
@@ -109,13 +129,22 @@ export default class Goal extends CustomElement {
         }
 
         const $points = document.createElement('div');
-        $points.textContent = `Points: ${this.#data.points}`;
+        $points.className = 'points';
+        $points.textContent = `${this.#data.points} points`;
         this.appendChild($points);
 
         if (this.#data.repeat) {
             const $repeat = document.createElement('div');
-            $repeat.textContent = `↻ Repeats`;
+            $repeat.className = 'repeat';
+            $repeat.textContent = 'Repeats';
             this.appendChild($repeat);
+        }
+
+        if (this.#data.completed) {
+            const $completed = document.createElement('div');
+            $completed.className = 'completed';
+            $completed.textContent = `Completed ${new Date(this.#data.completed).toLocaleDateString()}`;
+            this.appendChild($completed);
         }
 
         const $checkButton = new CheckButton({

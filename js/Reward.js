@@ -38,6 +38,26 @@ reward-component .name {
     font-weight: bold;
 }
 
+reward-component .points::before,
+reward-component .repeat::before,
+reward-component .redeemed::before {
+    display: inline-block;
+    margin-right: 0.25em;
+    vertical-align: middle;
+}
+
+reward-component .points::before {
+    content: url('img/star.svg');
+}
+
+reward-component .repeat::before {
+    content: url('img/repeat.svg');
+}
+
+reward-component .redeemed::before {
+    content: url('img/calendar.svg');
+}
+
 reward-component check-button-component {
     height: 6.25em;
     width: 6.25em;
@@ -109,13 +129,22 @@ export default class Reward extends CustomElement {
         }
 
         const $points = document.createElement('div');
-        $points.textContent = `Points: ${this.#data.points}`;
+        $points.className = 'points';
+        $points.textContent = `${this.#data.points} points`;
         this.appendChild($points);
 
         if (this.#data.repeat) {
             const $repeat = document.createElement('div');
-            $repeat.textContent = `↻ Repeats`;
+            $repeat.className = 'repeat';
+            $repeat.textContent = 'Repeats';
             this.appendChild($repeat);
+        }
+
+        if (this.#data.redeemed) {
+            const $redeemed = document.createElement('div');
+            $redeemed.className = 'redeemed';
+            $redeemed.textContent = `Redeemed ${new Date(this.#data.redeemed).toLocaleDateString()}`;
+            this.appendChild($redeemed);
         }
 
         const $checkButton = new CheckButton({
