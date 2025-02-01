@@ -1,6 +1,6 @@
-import Button from './Button.js';
 import CheckButton from './CheckButton.js';
 import CustomElement from './CustomElement.js';
+import Menu from './Menu.js';
 import Modal from './Modal.js';
 import RewardEditor from './RewardEditor.js';
 import RewardsData from './data/RewardsData.js';
@@ -70,36 +70,10 @@ reward-component check-button-component {
     top: -1em;
 }
 
-reward-component .menu {
+reward-component menu-component {
     position: absolute;
     bottom: 1em;
     right: 1em;
-}
-
-reward-component .menu button-component {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-}
-
-reward-component .menu .edit-button,
-reward-component .menu .delete-button {
-    visibility: hidden;
-    transition: right 250ms, visibility 250ms;
-}
-
-reward-component .menu.open .edit-button,
-reward-component .menu.open .delete-button {
-    visibility: visible;
-    transition: right 250ms, visibility 0ms;
-}
-
-reward-component .menu.open .edit-button {
-    right: 7em;
-}
-
-reward-component .menu.open .delete-button {
-    right: 3.5em;
 }`);
 
 export default class Reward extends CustomElement {
@@ -176,32 +150,24 @@ export default class Reward extends CustomElement {
 
         this.appendChild($checkButton);
 
-        const $menu = document.createElement('div');
-        $menu.className = 'menu';
+        const $menu = new Menu({
+            handle: {
+                className: 'round',
+                icon: {alt: 'Menu', src: 'img/menu.svg'},
+                title: 'Menu',
+            },
+            items: [{
+                icon: {alt: 'Edit', src: 'img/edit.svg'},
+                label: 'Edit',
+                onClick: _ => this.#edit(),
+            }, {
+                icon: {alt: 'Delete', src: 'img/delete.svg'},
+                label: 'Delete',
+                onClick: _ => this.#confirmDelete(),
+            }],
+        });
+
         this.appendChild($menu);
-
-        const $editButton = new Button({
-            className: 'edit-button round',
-            icon: {alt: 'Edit', src: 'img/edit.svg'},
-            onClick: _ => this.#edit(),
-            title: 'Edit',
-        });
-
-        const $deleteButton = new Button({
-            className: 'delete-button round',
-            icon: {alt: 'Delete', src: 'img/delete.svg'},
-            onClick: _ => this.#confirmDelete(),
-            title: 'Delete',
-        });
-
-        const $menuButton = new Button({
-            className: 'menu-button round',
-            icon: {alt: 'Menu', src: 'img/menu.svg'},
-            onClick: _ => $menu.classList.toggle('open'),
-            title: 'Menu',
-        });
-
-        $menu.append($editButton, $deleteButton, $menuButton);
     }
 
     async #redeem() {

@@ -13,6 +13,7 @@ button-component button {
     cursor: pointer;
     font: inherit;
     padding: 0.5em;
+    width: 100%;
 
     background-color: #0aa;
     transition: background-color 300ms;
@@ -20,7 +21,6 @@ button-component button {
     display: flex;
     align-items: center;
     gap: 0.5em;
-    justify-content: center;
 }
 
 button-component button:is(:focus, :hover) {
@@ -47,6 +47,14 @@ button-component.fab {
     z-index: 1;
 }
 
+button-component.gray button {
+    background-color: #666;
+}
+
+button-component.gray button:is(:focus, :hover) {
+    background-color: #888;
+}
+
 button-component.red button {
     background-color: #c33;
 }
@@ -57,6 +65,10 @@ button-component.red button:is(:focus, :hover) {
 
 button-component.round button {
     border-radius: 50%;
+}
+
+button-component.square button {
+    border-radius: 0;
 }`);
 
 export default class Button extends CustomElement {
