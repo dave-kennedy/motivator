@@ -52,12 +52,14 @@ check-button-component.checked .check-mark {
 export default class CheckButton extends CustomElement {
     #checked;
     #onClick;
+    #upcoming;
 
-    constructor({checked, onClick}) {
+    constructor({checked, onClick, upcoming}) {
         super();
 
         this.#checked = checked;
         this.#onClick = onClick;
+        this.#upcoming = upcoming;
     }
 
     connectedCallback() {
@@ -66,6 +68,11 @@ export default class CheckButton extends CustomElement {
 
     #render() {
         this.applyStylesheet(stylesheet);
+
+        if (this.#upcoming) {
+            this.#renderUpcoming();
+            return;
+        }
 
         if (this.#checked) {
             this.className = 'checked';
@@ -86,7 +93,19 @@ export default class CheckButton extends CustomElement {
         $svg.innerHTML = `
             <circle class="outer-circle" cx="125" cy="125" r="46" fill="#fff" stroke="#0aa" stroke-width="8" />
             <circle class="inner-circle" cx="125" cy="125" r="50" fill="#93c" />
-            <path class="check-mark" d="m90 125 25 25 45-45" fill="none" stroke="#fff" stroke-width="8" />
+            <path class="check-mark" d="m 90,125 25,25 45,-45" fill="none" stroke="#fff" stroke-width="8" />
+        `;
+
+        this.appendChild($svg);
+    }
+
+    #renderUpcoming() {
+        const $svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        $svg.setAttribute('viewBox', '0 0 250 250');
+
+        $svg.innerHTML = `
+            <circle cx="125" cy="125" r="46" fill="#fff" stroke="#999" stroke-width="8" />
+            <path d="m 125,95 0,30 25,25" fill="none" stroke="#999" stroke-width="8" />
         `;
 
         this.appendChild($svg);

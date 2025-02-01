@@ -4,6 +4,7 @@ import CustomElement from './CustomElement.js';
 import GoalEditor from './GoalEditor.js';
 import GoalsData from './data/GoalsData.js';
 import Modal from './Modal.js';
+import repeat from './repeat.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -40,6 +41,7 @@ goal-component .name {
 
 goal-component .points::before,
 goal-component .repeat::before,
+goal-component .start-date::before,
 goal-component .completed::before {
     display: inline-block;
     margin-right: 0.25em;
@@ -54,6 +56,7 @@ goal-component .repeat::before {
     content: url('img/repeat.svg');
 }
 
+goal-component .start-date::before,
 goal-component .completed::before {
     content: url('img/calendar.svg');
 }
@@ -136,8 +139,26 @@ export default class Goal extends CustomElement {
         if (this.#data.repeat) {
             const $repeat = document.createElement('div');
             $repeat.className = 'repeat';
-            $repeat.textContent = 'Repeats';
+
+            const textParts = ['Repeats'];
+
+            if (this.#data.repeatFrequency) {
+                textParts.push(this.#data.repeatFrequency);
+            }
+
+            if (this.#data.repeatDuration) {
+                textParts.push(`x ${this.#data.repeatDuration}`);
+            }
+
+            $repeat.textContent = textParts.join(' ');
             this.appendChild($repeat);
+        }
+
+        if (this.#data.startDate > Date.now()) {
+            const $startDate = document.createElement('div');
+            $startDate.className = 'start-date';
+            $startDate.textContent = `Starts ${new Date(this.#data.startDate).toLocaleDateString()}`;
+            this.appendChild($startDate);
         }
 
         if (this.#data.completed) {
@@ -150,6 +171,7 @@ export default class Goal extends CustomElement {
         const $checkButton = new CheckButton({
             checked: this.#data.completed,
             onClick: _ => this.#data.completed ? this.#uncomplete() : this.#complete(),
+            upcoming: this.#data.startDate > Date.now(),
         });
 
         this.appendChild($checkButton);
@@ -183,7 +205,7 @@ export default class Goal extends CustomElement {
     }
 
     async #complete() {
-        this.#data.completed = new Date().getTime();
+        this.#data.completed = Date.now();
 
         GoalsData.update(this.#data);
         this.raiseEvent('GoalCompleted', this.#data);
@@ -203,14 +225,13 @@ export default class Goal extends CustomElement {
             return;
         }
 
-        const newData = {
-            id: crypto.randomUUID(),
-            created: new Date().getTime(),
+        const newData = repeat({
             name: this.#data.name,
             description: this.#data.description,
             points: this.#data.points,
-            repeat: this.#data.repeat,
-        };
+            repeatDuration: this.#data.repeatDuration,
+            repeatFrequency: this.#data.repeatFrequency,
+        });
 
         GoalsData.add(newData);
         this.raiseEvent('GoalCreated', newData);

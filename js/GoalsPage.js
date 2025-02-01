@@ -70,7 +70,13 @@ export default class GoalsPage extends CustomElement {
 
     #addGoal(data) {
         const $goal = new Goal(data);
-        $goal.style.order = this.#sortOrder(data.created);
+
+        if (data.startDate > Date.now()) {
+            $goal.style.order = this.#sortOrder(data.startDate);
+        } else {
+            $goal.style.order = this.#sortOrder(data.created);
+        }
+
         this.appendChild($goal);
     }
 

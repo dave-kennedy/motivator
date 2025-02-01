@@ -70,7 +70,13 @@ export default class RewardsPage extends CustomElement {
 
     #addReward(data) {
         const $reward = new Reward(data);
-        $reward.style.order = this.#sortOrder(data.created);
+
+        if (data.startDate > Date.now()) {
+            $reward.style.order = this.#sortOrder(data.startDate);
+        } else {
+            $reward.style.order = this.#sortOrder(data.created);
+        }
+
         this.appendChild($reward);
     }
 

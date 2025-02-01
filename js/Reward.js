@@ -1,9 +1,10 @@
 import Button from './Button.js';
 import CheckButton from './CheckButton.js';
 import CustomElement from './CustomElement.js';
+import Modal from './Modal.js';
 import RewardEditor from './RewardEditor.js';
 import RewardsData from './data/RewardsData.js';
-import Modal from './Modal.js';
+import repeat from './repeat.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -40,6 +41,7 @@ reward-component .name {
 
 reward-component .points::before,
 reward-component .repeat::before,
+reward-component .start-date::before,
 reward-component .redeemed::before {
     display: inline-block;
     margin-right: 0.25em;
@@ -54,6 +56,7 @@ reward-component .repeat::before {
     content: url('img/repeat.svg');
 }
 
+reward-component .start-date::before,
 reward-component .redeemed::before {
     content: url('img/calendar.svg');
 }
@@ -136,8 +139,26 @@ export default class Reward extends CustomElement {
         if (this.#data.repeat) {
             const $repeat = document.createElement('div');
             $repeat.className = 'repeat';
-            $repeat.textContent = 'Repeats';
+
+            const textParts = ['Repeats'];
+
+            if (this.#data.repeatFrequency) {
+                textParts.push(this.#data.repeatFrequency);
+            }
+
+            if (this.#data.repeatDuration) {
+                textParts.push(`x ${this.#data.repeatDuration}`);
+            }
+
+            $repeat.textContent = textParts.join(' ');
             this.appendChild($repeat);
+        }
+
+        if (this.#data.startDate > Date.now()) {
+            const $startDate = document.createElement('div');
+            $startDate.className = 'start-date';
+            $startDate.textContent = `Starts ${new Date(this.#data.startDate).toLocaleDateString()}`;
+            this.appendChild($startDate);
         }
 
         if (this.#data.redeemed) {
@@ -150,6 +171,7 @@ export default class Reward extends CustomElement {
         const $checkButton = new CheckButton({
             checked: this.#data.redeemed,
             onClick: _ => this.#data.redeemed ? this.#unredeem() : this.#redeem(),
+            upcoming: this.#data.startDate > Date.now(),
         });
 
         this.appendChild($checkButton);
@@ -183,7 +205,7 @@ export default class Reward extends CustomElement {
     }
 
     async #redeem() {
-        this.#data.redeemed = new Date().getTime();
+        this.#data.redeemed = Date.now();
 
         RewardsData.update(this.#data);
         this.raiseEvent('RewardRedeemed', this.#data);
@@ -203,14 +225,13 @@ export default class Reward extends CustomElement {
             return;
         }
 
-        const newData = {
-            id: crypto.randomUUID(),
-            created: new Date().getTime(),
+        const newData = repeat({
             name: this.#data.name,
             description: this.#data.description,
             points: this.#data.points,
-            repeat: this.#data.repeat,
-        };
+            repeatDuration: this.#data.repeatDuration,
+            repeatFrequency: this.#data.repeatFrequency,
+        });
 
         RewardsData.add(newData);
         this.raiseEvent('RewardCreated', newData);

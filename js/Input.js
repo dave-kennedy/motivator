@@ -6,6 +6,7 @@ stylesheet.replace(`input-component {
     display: flex;
     flex-direction: column;
     gap: 0.25em;
+    justify-content: start;
 }
 
 input-component input {
@@ -16,30 +17,48 @@ input-component input {
     padding: 0.5em;
 }
 
-input-component.checkbox {
+input-component input::placeholder,
+input-component input[disabled],
+input-component input[type^=date] {
+    color: #757575;
+}
+
+input-component input[type^=date].non-blank {
+    color: initial;
+}
+
+input-component.row {
+    align-items: center;
+    flex-direction: row;
+}
+
+input-component.row-reverse {
     align-items: center;
     flex-direction: row-reverse;
-    justify-content: start;
 }`);
 
 export default class Input extends CustomElement {
+    #className;
     #disabled;
     #id;
     #label;
     #min;
+    #placeholder;
     #required;
     #type;
     #value;
 
     $input;
 
-    constructor({disabled, id, label, min, required, type, value}) {
+    constructor({className, disabled, id, label, min, placeholder, required, type, value}) {
         super();
 
+        this.#className = className;
         this.#disabled = disabled;
         this.#id = id;
         this.#label = label;
         this.#min = min;
+        this.#placeholder = placeholder;
         this.#required = required;
         this.#type = type;
         this.#value = value;
@@ -52,7 +71,9 @@ export default class Input extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
-        this.className = this.#type;
+        if (this.#className) {
+            this.className = this.#className;
+        }
 
         if (this.#label) {
             const $label = document.createElement('label');
@@ -71,12 +92,17 @@ export default class Input extends CustomElement {
             this.$input.min = this.#min;
         }
 
-        if (this.#type === 'datetime-local') {
+        if (this.#placeholder !== undefined) {
+            this.$input.placeholder = this.#placeholder;
+        }
+
+        if (this.#type === 'date' || this.#type === 'datetime-local') {
+            this.addEventListener('change', _ => this.#toggleNonBlank());
             this.$input.step = 1;
         }
 
-        if (this.#required && this.#type === 'text') {
-            this.addEventListener('change', _ => this.#validateNonWhitespace());
+        if (this.#type === 'text' && this.#required) {
+            this.addEventListener('change', _ => this.#validateNonBlank());
         }
 
         if (this.#value !== undefined) {
@@ -95,7 +121,7 @@ export default class Input extends CustomElement {
             return this.$input.checked;
         }
 
-        if (this.#type === 'datetime-local') {
+        if (this.#type === 'date' || this.#type === 'datetime-local') {
             // Convert to UTC
             return this.$input.valueAsNumber + this.#getTZOffsetMS();
         }
@@ -113,12 +139,14 @@ export default class Input extends CustomElement {
             return;
         }
 
-        if (this.#type === 'datetime-local') {
+        if (this.#type === 'date' || this.#type === 'datetime-local') {
             // Convert to local timezone
             const localTime = value - this.#getTZOffsetMS();
 
-            // Round to the nearest second
+            // Round to nearest second to avoid displaying milliseconds in UI
             this.$input.valueAsNumber = Math.round(localTime / 1000) * 1000;
+
+            this.#toggleNonBlank();
             return;
         }
 
@@ -134,16 +162,24 @@ export default class Input extends CustomElement {
         return new Date().getTimezoneOffset() * 60 * 1000;
     }
 
-    validate() {
-        return this.$input.reportValidity();
+    #toggleNonBlank() {
+        if (this.$input.value.trim()) {
+            this.$input.classList.add('non-blank');
+        } else {
+            this.$input.classList.remove('non-blank');
+        }
     }
 
-    #validateNonWhitespace() {
+    #validateNonBlank() {
         if (this.$input.value.trim()) {
             this.$input.setCustomValidity('');
         } else {
             this.$input.setCustomValidity('Please fill out this field.');
         }
+    }
+
+    validate() {
+        return this.$input.reportValidity();
     }
 }
 
