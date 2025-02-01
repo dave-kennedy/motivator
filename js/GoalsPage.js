@@ -14,17 +14,20 @@ stylesheet.replace(`goals-page-component {
 }`);
 
 export default class GoalsPage extends CustomElement {
-    #dirty;
-    #goals;
+    #loaded;
 
     pageId = 'goals';
     pageTitle = 'Goals';
 
     connectedCallback() {
+        document.addEventListener('GoalCreated', this.#onDataChange);
+        document.addEventListener('GoalEdited', this.#onDataChange);
         document.addEventListener('GoalUncompleted', this.#onDataChange);
     }
 
     disconnectedCallback() {
+        document.removeEventListener('GoalCreated', this.#onDataChange);
+        document.removeEventListener('GoalEdited', this.#onDataChange);
         document.removeEventListener('GoalUncompleted', this.#onDataChange);
     }
 
@@ -34,8 +37,7 @@ export default class GoalsPage extends CustomElement {
             onClick: _ => this.#newGoal(),
         });
 
-        if (this.#dirty || !this.#goals) {
-            this.replaceChildren();
+        if (!this.#loaded) {
             this.#render();
         }
     }
@@ -47,19 +49,38 @@ export default class GoalsPage extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
-        this.#goals = this.#load();
+        this.#loaded = true;
 
-        for (const goal of this.#goals) {
-            const $goal = new Goal(goal);
-            this.appendChild($goal);
+        for (const data of GoalsData.uncompleted) {
+            this.#addGoal(data);
         }
     }
 
-    #load() {
-        return GoalsData.uncompleted
-            .sort((goal1, goal2) => {
-                return goal1.created < goal2.created ? -1 : 1;
-            });
+    #onDataChange = event => {
+        if (!this.#loaded) {
+            return;
+        }
+
+        if (event.type === 'GoalCreated' || event.type === 'GoalUncompleted') {
+            this.#addGoal(event.detail);
+        } else if (!this.classList.contains('hidden')) {
+            this.#updateGoal(event.detail);
+        }
+    };
+
+    #addGoal(data) {
+        const $goal = new Goal(data);
+        $goal.style.order = this.#sortOrder(data.created);
+        this.appendChild($goal);
+    }
+
+    #updateGoal(data) {
+        document.getElementById(data.id).remove();
+        this.#addGoal(data);
+    }
+
+    #sortOrder(date) {
+        return `${date - 1734930000000}`.slice(0, -3);
     }
 
     #newGoal() {
@@ -73,8 +94,6 @@ export default class GoalsPage extends CustomElement {
             ],
         });
     }
-
-    #onDataChange = _ => this.#dirty = true;
 }
 
 customElements.define('goals-page-component', GoalsPage);

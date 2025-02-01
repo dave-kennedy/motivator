@@ -14,17 +14,20 @@ stylesheet.replace(`rewards-page-component {
 }`);
 
 export default class RewardsPage extends CustomElement {
-    #dirty;
-    #rewards;
+    #loaded;
 
     pageId = 'rewards';
     pageTitle = 'Rewards';
 
     connectedCallback() {
+        document.addEventListener('RewardCreated', this.#onDataChange);
+        document.addEventListener('RewardEdited', this.#onDataChange);
         document.addEventListener('RewardUnredeemed', this.#onDataChange);
     }
 
     disconnectedCallback() {
+        document.removeEventListener('RewardCreated', this.#onDataChange);
+        document.removeEventListener('RewardEdited', this.#onDataChange);
         document.removeEventListener('RewardUnredeemed', this.#onDataChange);
     }
 
@@ -34,8 +37,7 @@ export default class RewardsPage extends CustomElement {
             onClick: _ => this.#newReward(),
         });
 
-        if (this.#dirty || !this.#rewards) {
-            this.replaceChildren();
+        if (!this.#loaded) {
             this.#render();
         }
     }
@@ -47,19 +49,38 @@ export default class RewardsPage extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
-        this.#rewards = this.#load();
+        this.#loaded = true;
 
-        for (const reward of this.#rewards) {
-            const $reward = new Reward(reward);
-            this.appendChild($reward);
+        for (const data of RewardsData.unredeemed) {
+            this.#addReward(data);
         }
     }
 
-    #load() {
-        return RewardsData.unredeemed
-            .sort((reward1, reward2) => {
-                return reward1.created < reward2.created ? -1 : 1;
-            });
+    #onDataChange = event => {
+        if (!this.#loaded) {
+            return;
+        }
+
+        if (event.type === 'RewardCreated' || event.type === 'RewardUnredeemed') {
+            this.#addReward(event.detail);
+        } else if (!this.classList.contains('hidden')) {
+            this.#updateReward(event.detail);
+        }
+    };
+
+    #addReward(data) {
+        const $reward = new Reward(data);
+        $reward.style.order = this.#sortOrder(data.created);
+        this.appendChild($reward);
+    }
+
+    #updateReward(data) {
+        document.getElementById(data.id).remove();
+        this.#addReward(data);
+    }
+
+    #sortOrder(date) {
+        return `${date - 1734930000000}`.slice(0, -3);
     }
 
     #newReward() {
@@ -73,8 +94,6 @@ export default class RewardsPage extends CustomElement {
             ],
         });
     }
-
-    #onDataChange = _ => this.#dirty = true;
 }
 
 customElements.define('rewards-page-component', RewardsPage);

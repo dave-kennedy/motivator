@@ -11,35 +11,32 @@ stylesheet.replace(`history-page-component {
     display: flex;
     flex-direction: column;
     gap: 1em;
-}
-
-history-page-component .date {
-    align-self: center;
-    font-weight: bold;
 }`);
 
 export default class HistoryPage extends CustomElement {
-    #dirty;
-    #groups;
+    #loaded;
 
     pageId = 'history';
     pageTitle = 'History';
 
     connectedCallback() {
         document.addEventListener('GoalCompleted', this.#onDataChange);
+        document.addEventListener('GoalEdited', this.#onDataChange);
         document.addEventListener('RewardRedeemed', this.#onDataChange);
+        document.addEventListener('RewardEdited', this.#onDataChange);
     }
 
     disconnectedCallback() {
         document.removeEventListener('GoalCompleted', this.#onDataChange);
+        document.removeEventListener('GoalEdited', this.#onDataChange);
         document.removeEventListener('RewardRedeemed', this.#onDataChange);
+        document.removeEventListener('RewardEdited', this.#onDataChange);
     }
 
     onPageTransitionStart() {
         ActionButton.remove();
 
-        if (this.#dirty || !this.#groups) {
-            this.replaceChildren();
+        if (!this.#loaded) {
             this.#render();
         }
     }
@@ -51,59 +48,45 @@ export default class HistoryPage extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
-        this.#groups = this.#load();
+        this.#loaded = true;
 
-        for (const [date, items] of this.#groups) {
-            const $date = document.createElement('div');
-            $date.className = 'date';
-            $date.textContent = date;
-            this.appendChild($date);
-
-            for (const item of items) {
-                if (item.completed) {
-                    const $goal = new Goal(item);
-                    this.appendChild($goal);
-                } else {
-                    const $reward = new Reward(item);
-                    this.appendChild($reward);
-                }
-            }
+        for (const data of [...GoalsData.completed, ...RewardsData.redeemed]) {
+            this.#addItem(data);
         }
     }
 
-    #load() {
-        const items = [...GoalsData.completed, ...RewardsData.redeemed]
-            .sort((item1, item2) => {
-                const date1 = item1.completed || item1.redeemed;
-                const date2 = item2.completed || item2.redeemed;
-                return date1 < date2 ? 1 : -1;
-            });
-
-        return this.#group(items, item => {
-            return item.completed
-                ? new Date(item.completed).toLocaleDateString()
-                : new Date(item.redeemed).toLocaleDateString();
-        });
-    }
-
-    #group(items, callback) {
-        const groups = new Map();
-
-        for (const item of items) {
-            let thisList = groups.get(callback(item));
-
-            if (thisList === undefined) {
-                thisList = [];
-                groups.set(callback(item), thisList);
-            }
-
-            thisList.push(item);
+    #onDataChange = event => {
+        if (!this.#loaded) {
+            return;
         }
 
-        return groups;
+        if (event.type === 'GoalCompleted' || event.type === 'RewardRedeemed') {
+            this.#addItem(event.detail);
+        } else if (!this.classList.contains('hidden')) {
+            this.#updateItem(event.detail);
+        }
+    };
+
+    #addItem(data) {
+        if (data.completed) {
+            const $goal = new Goal(data);
+            $goal.style.order = this.#sortOrder(data.completed);
+            this.appendChild($goal);
+        } else {
+            const $reward = new Reward(data);
+            $reward.style.order = this.#sortOrder(data.redeemed);
+            this.appendChild($reward);
+        }
     }
 
-    #onDataChange = _ => this.#dirty = true;
+    #updateItem(data) {
+        document.getElementById(data.id).remove();
+        this.#addItem(data);
+    }
+
+    #sortOrder(date) {
+        return `${1734930000000 - date}`.slice(0, -3);
+    }
 }
 
 customElements.define('history-page-component', HistoryPage);

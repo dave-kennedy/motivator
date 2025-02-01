@@ -31,7 +31,7 @@ header-component .points::after {
 }`);
 
 export default class Header extends CustomElement {
-    #points;
+    $points;
 
     connectedCallback() {
         this.#render();
@@ -56,21 +56,16 @@ export default class Header extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
-        this.#points = this.#load();
-
-        const $points = document.createElement('div');
-        $points.className = 'points';
-        $points.textContent = this.#points;
-        this.appendChild($points);
-    }
-
-    #load() {
-        return GoalsData.completedPoints - RewardsData.redeemedPoints;
+        const points = GoalsData.completedPoints - RewardsData.redeemedPoints;
+        this.$points = document.createElement('div');
+        this.$points.className = 'points';
+        this.$points.textContent = points;
+        this.appendChild(this.$points);
     }
 
     #onDataChange = _ => {
-        this.replaceChildren();
-        this.#render();
+        const points = GoalsData.completedPoints - RewardsData.redeemedPoints;
+        this.$points.textContent = points;
     };
 }
 

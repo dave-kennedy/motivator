@@ -95,6 +95,8 @@ export default class Goal extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
+        this.id = this.#data.id;
+
         const $name = document.createElement('div');
         $name.className = 'name';
         $name.textContent = this.#data.name;
