@@ -1,5 +1,8 @@
+import About from './About.js';
 import CustomElement from './CustomElement.js';
 import GoalsData from './data/GoalsData.js';
+import Menu from './Menu.js';
+import Modal from './Modal.js';
 import RewardsData from './data/RewardsData.js';
 
 const stylesheet = new CSSStyleSheet();
@@ -12,6 +15,7 @@ stylesheet.replace(`header-component {
 
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
 header-component .points {
@@ -65,12 +69,34 @@ export default class Header extends CustomElement {
         this.$points.className = 'points';
         this.$points.textContent = points;
         this.appendChild(this.$points);
+
+        const $menu = new Menu({
+            handle: {
+                className: 'gray round',
+                icon: {alt: 'Menu', src: 'img/menu.svg'},
+                title: 'Menu',
+            },
+            items: [{
+                icon: {src: 'img/info.svg'},
+                label: 'About',
+                onClick: _ => this.#showAbout(),
+            }],
+        });
+
+        this.appendChild($menu);
     }
 
     #onDataChange = _ => {
         const points = GoalsData.completedPoints - RewardsData.redeemedPoints;
         this.$points.textContent = points;
     };
+
+    #showAbout() {
+        Modal.render({
+            content: new About(),
+            buttons: [{focus: true, label: 'OK'}],
+        });
+    }
 }
 
 customElements.define('header-component', Header);

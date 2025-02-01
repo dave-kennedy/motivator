@@ -153,7 +153,7 @@ export default class Goal extends CustomElement {
         const $menu = new Menu({
             handle: {
                 className: 'round',
-                icon: {alt: 'Menu', src: 'img/menu.svg'},
+                icon: {alt: 'Menu', src: 'img/more.svg'},
                 title: 'Menu',
             },
             items: [{

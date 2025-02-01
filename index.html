@@ -10,6 +10,16 @@
                 height: 100%;
                 margin: 0;
             }
+
+            a {
+                color: #0aa;
+                text-decoration: none;
+                transition: color 300ms;
+            }
+
+            a:is(:focus, :hover) {
+                color: #088;
+            }
         </style>
         <script src="js/App.js" type="module"></script>
     </head>

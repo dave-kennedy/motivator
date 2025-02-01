@@ -35,11 +35,6 @@ pager-component .tabs > * {
     text-align: center;
 }
 
-pager-component .tabs a {
-    color: #0aa;
-    text-decoration: none;
-}
-
 pager-component .pages {
     display: flex;
     overflow: hidden;
