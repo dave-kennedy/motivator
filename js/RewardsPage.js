@@ -20,10 +20,12 @@ export default class RewardsPage extends CustomElement {
     pageId = 'rewards';
     pageTitle = 'Rewards';
 
-    constructor() {
-        super();
+    connectedCallback() {
+        document.addEventListener('RewardUnredeemed', this.#onDataChange);
+    }
 
-        document.addEventListener('RewardUnredeemed', _ => this.#dirty = true);
+    disconnectedCallback() {
+        document.removeEventListener('RewardUnredeemed', this.#onDataChange);
     }
 
     onPageTransitionStart() {
@@ -71,6 +73,8 @@ export default class RewardsPage extends CustomElement {
             ],
         });
     }
+
+    #onDataChange = _ => this.#dirty = true;
 }
 
 customElements.define('rewards-page-component', RewardsPage);

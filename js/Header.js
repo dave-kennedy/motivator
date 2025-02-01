@@ -33,19 +33,24 @@ header-component .points::after {
 export default class Header extends CustomElement {
     #points;
 
-    constructor() {
-        super();
-
-        document.addEventListener('GoalCompleted', _ => this.#refresh());
-        document.addEventListener('GoalUncompleted', _ => this.#refresh());
-        document.addEventListener('GoalDeleted', _ => this.#refresh());
-        document.addEventListener('RewardRedeemed', _ => this.#refresh());
-        document.addEventListener('RewardUnredeemed', _ => this.#refresh());
-        document.addEventListener('RewardDeleted', _ => this.#refresh());
-    }
-
     connectedCallback() {
         this.#render();
+
+        document.addEventListener('GoalCompleted', this.#onDataChange);
+        document.addEventListener('GoalUncompleted', this.#onDataChange);
+        document.addEventListener('GoalDeleted', this.#onDataChange);
+        document.addEventListener('RewardRedeemed', this.#onDataChange);
+        document.addEventListener('RewardUnredeemed', this.#onDataChange);
+        document.addEventListener('RewardDeleted', this.#onDataChange);
+    }
+
+    disconnectedCallback() {
+        document.removeEventListener('GoalCompleted', this.#onDataChange);
+        document.removeEventListener('GoalUncompleted', this.#onDataChange);
+        document.removeEventListener('GoalDeleted', this.#onDataChange);
+        document.removeEventListener('RewardRedeemed', this.#onDataChange);
+        document.removeEventListener('RewardUnredeemed', this.#onDataChange);
+        document.removeEventListener('RewardDeleted', this.#onDataChange);
     }
 
     #render() {
@@ -63,10 +68,10 @@ export default class Header extends CustomElement {
         return GoalsData.completedPoints - RewardsData.redeemedPoints;
     }
 
-    #refresh() {
+    #onDataChange = _ => {
         this.replaceChildren();
         this.#render();
-    }
+    };
 }
 
 customElements.define('header-component', Header);

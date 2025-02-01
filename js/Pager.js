@@ -65,14 +65,14 @@ export default class Pager extends CustomElement {
     #pages;
     #pageIndex;
 
-    constructor() {
-        super();
-
-        addEventListener('hashchange', _ => this.#onHashChange());
-    }
-
     connectedCallback() {
         this.#render();
+
+        addEventListener('hashchange', this.#onHashChange);
+    }
+
+    disconnectedCallback() {
+        removeEventListener('hashchange', this.#onHashChange);
     }
 
     #render() {
@@ -110,7 +110,7 @@ export default class Pager extends CustomElement {
         this.#onHashChange();
     }
 
-    #onHashChange() {
+    #onHashChange = _ => {
         const pageId = location.hash.slice(1);
         const pageIndex = this.#pages.findIndex($page => $page.pageId === pageId);
 
@@ -136,7 +136,7 @@ export default class Pager extends CustomElement {
         }
 
         this.#pageIndex = pageIndex;
-    }
+    };
 }
 
 customElements.define('pager-component', Pager);

@@ -25,11 +25,14 @@ export default class HistoryPage extends CustomElement {
     pageId = 'history';
     pageTitle = 'History';
 
-    constructor() {
-        super();
+    connectedCallback() {
+        document.addEventListener('GoalCompleted', this.#onDataChange);
+        document.addEventListener('RewardRedeemed', this.#onDataChange);
+    }
 
-        document.addEventListener('GoalCompleted', _ => this.#dirty = true);
-        document.addEventListener('RewardRedeemed', _ => this.#dirty = true);
+    disconnectedCallback() {
+        document.removeEventListener('GoalCompleted', this.#onDataChange);
+        document.removeEventListener('RewardRedeemed', this.#onDataChange);
     }
 
     onPageTransitionStart() {
@@ -99,6 +102,8 @@ export default class HistoryPage extends CustomElement {
 
         return groups;
     }
+
+    #onDataChange = _ => this.#dirty = true;
 }
 
 customElements.define('history-page-component', HistoryPage);

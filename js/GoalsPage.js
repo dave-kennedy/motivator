@@ -20,10 +20,12 @@ export default class GoalsPage extends CustomElement {
     pageId = 'goals';
     pageTitle = 'Goals';
 
-    constructor() {
-        super();
+    connectedCallback() {
+        document.addEventListener('GoalUncompleted', this.#onDataChange);
+    }
 
-        document.addEventListener('GoalUncompleted', _ => this.#dirty = true);
+    disconnectedCallback() {
+        document.removeEventListener('GoalUncompleted', this.#onDataChange);
     }
 
     onPageTransitionStart() {
@@ -71,6 +73,8 @@ export default class GoalsPage extends CustomElement {
             ],
         });
     }
+
+    #onDataChange = _ => this.#dirty = true;
 }
 
 customElements.define('goals-page-component', GoalsPage);
