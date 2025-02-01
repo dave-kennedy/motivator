@@ -39,7 +39,7 @@ export default class RewardsPage extends CustomElement {
     }
 
     onPageTransitionEnd() {
-        document.dispatchEvent(new Event('RewardsPageRendered'));
+        this.raiseEvent('RewardsPageRendered');
     }
 
     #render() {
@@ -61,7 +61,7 @@ export default class RewardsPage extends CustomElement {
     }
 
     #newReward() {
-        const $editor = new RewardEditor({});
+        const $editor = new RewardEditor();
 
         Modal.render({
             content: $editor,

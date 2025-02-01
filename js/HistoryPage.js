@@ -42,7 +42,7 @@ export default class HistoryPage extends CustomElement {
     }
 
     onPageTransitionEnd() {
-        document.dispatchEvent(new Event('HistoryPageRendered'));
+        this.raiseEvent('HistoryPageRendered');
     }
 
     #render() {

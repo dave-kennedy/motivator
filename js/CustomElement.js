@@ -23,4 +23,8 @@ export default class CustomElement extends HTMLElement {
             }
         });
     }
+
+    raiseEvent(name, detail) {
+        document.dispatchEvent(new CustomEvent(name, {detail}));
+    }
 }

@@ -11,13 +11,7 @@ stylesheet.replace(`reward-editor-component {
 }`);
 
 export default class RewardEditor extends CustomElement {
-    #id;
-    #created;
-    #name;
-    #description;
-    #points;
-    #repeat;
-    #redeemed;
+    #data;
 
     $name;
     $description;
@@ -25,16 +19,10 @@ export default class RewardEditor extends CustomElement {
     $repeat;
     $redeemed;
 
-    constructor({id, created, name, description, points, repeat, redeemed}) {
+    constructor(data = {}) {
         super();
 
-        this.#id = id;
-        this.#created = created;
-        this.#name = name;
-        this.#description = description;
-        this.#points = points;
-        this.#repeat = repeat;
-        this.#redeemed = redeemed;
+        this.#data = data;
     }
 
     connectedCallback() {
@@ -45,55 +33,55 @@ export default class RewardEditor extends CustomElement {
         this.applyStylesheet(stylesheet);
 
         this.$name = new Input({
-            disabled: this.#redeemed,
+            disabled: this.#data.redeemed,
             id: 'name-input',
             label: 'Name',
             required: true,
             type: 'text',
-            value: this.#name,
+            value: this.#data.name,
         });
 
         this.appendChild(this.$name);
         this.$name.focus();
 
         this.$description = new Input({
-            disabled: this.#redeemed,
+            disabled: this.#data.redeemed,
             id: 'description-input',
             label: 'Description',
             type: 'text',
-            value: this.#description,
+            value: this.#data.description,
         });
 
         this.appendChild(this.$description);
 
         this.$points = new Input({
-            disabled: this.#redeemed,
+            disabled: this.#data.redeemed,
             id: 'points-input',
             label: 'Points',
             min: 0,
             required: true,
             type: 'number',
-            value: this.#points,
+            value: this.#data.points,
         });
 
         this.appendChild(this.$points);
 
         this.$repeat = new Input({
-            disabled: this.#redeemed,
+            disabled: this.#data.redeemed,
             id: 'repeat-input',
             label: 'Repeat this reward when redeemed',
             type: 'checkbox',
-            value: this.#repeat,
+            value: this.#data.repeat,
         });
 
         this.appendChild(this.$repeat);
 
-        if (this.#redeemed) {
+        if (this.#data.redeemed) {
             this.$redeemed = new Input({
                 id: 'redeemed-input',
                 label: 'Redeemed',
                 type: 'datetime-local',
-                value: this.#redeemed,
+                value: this.#data.redeemed,
             });
 
             this.appendChild(this.$redeemed);
@@ -105,9 +93,9 @@ export default class RewardEditor extends CustomElement {
             return;
         }
 
-        const reward = {
-            id: this.#id || crypto.randomUUID(),
-            created: this.#created || new Date().getTime(),
+        const data = {
+            id: this.#data.id || crypto.randomUUID(),
+            created: this.#data.created || new Date().getTime(),
             name: this.$name.value,
             description: this.$description.value,
             points: this.$points.value,
@@ -115,12 +103,12 @@ export default class RewardEditor extends CustomElement {
             redeemed: this.$redeemed?.value,
         };
 
-        if (!this.#id) {
-            RewardsData.add(reward);
-            document.dispatchEvent(new Event('RewardCreated'));
+        if (!this.#data.id) {
+            RewardsData.add(data);
+            this.raiseEvent('RewardCreated', data);
         } else {
-            RewardsData.update(reward);
-            document.dispatchEvent(new Event('RewardUpdated'));
+            RewardsData.update(data);
+            this.raiseEvent('RewardEdited', data);
         }
 
         return true;

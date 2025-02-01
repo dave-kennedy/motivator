@@ -39,7 +39,7 @@ export default class GoalsPage extends CustomElement {
     }
 
     onPageTransitionEnd() {
-        document.dispatchEvent(new Event('GoalsPageRendered'));
+        this.raiseEvent('GoalsPageRendered');
     }
 
     #render() {
@@ -61,7 +61,7 @@ export default class GoalsPage extends CustomElement {
     }
 
     #newGoal() {
-        const $editor = new GoalEditor({});
+        const $editor = new GoalEditor();
 
         Modal.render({
             content: $editor,

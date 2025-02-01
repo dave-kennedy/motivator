@@ -80,24 +80,12 @@ goal-component .menu.open .delete-button {
 }`);
 
 export default class Goal extends CustomElement {
-    #id;
-    #created;
-    #name;
-    #description;
-    #points;
-    #repeat;
-    #completed;
+    #data;
 
-    constructor({id, created, name, description, points, repeat, completed}) {
+    constructor(data = {}) {
         super();
 
-        this.#id = id;
-        this.#created = created;
-        this.#name = name;
-        this.#description = description;
-        this.#points = points;
-        this.#repeat = repeat;
-        this.#completed = completed;
+        this.#data = data;
     }
 
     connectedCallback() {
@@ -109,28 +97,28 @@ export default class Goal extends CustomElement {
 
         const $name = document.createElement('div');
         $name.className = 'name';
-        $name.textContent = this.#name;
+        $name.textContent = this.#data.name;
         this.appendChild($name);
 
-        if (this.#description) {
+        if (this.#data.description) {
             const $description = document.createElement('div');
-            $description.textContent = this.#description;
+            $description.textContent = this.#data.description;
             this.appendChild($description);
         }
 
         const $points = document.createElement('div');
-        $points.textContent = `Points: ${this.#points}`;
+        $points.textContent = `Points: ${this.#data.points}`;
         this.appendChild($points);
 
-        if (this.#repeat) {
+        if (this.#data.repeat) {
             const $repeat = document.createElement('div');
             $repeat.textContent = `↻ Repeats`;
             this.appendChild($repeat);
         }
 
         const $checkButton = new CheckButton({
-            checked: this.#completed,
-            onClick: _ => this.#completed ? this.#uncomplete() : this.#complete(),
+            checked: this.#data.completed,
+            onClick: _ => this.#data.completed ? this.#uncomplete() : this.#complete(),
         });
 
         this.appendChild($checkButton);
@@ -164,29 +152,10 @@ export default class Goal extends CustomElement {
     }
 
     async #complete() {
-        this.#completed = new Date().getTime();
+        this.#data.completed = new Date().getTime();
 
-        GoalsData.update({
-            id: this.#id,
-            completed: this.#completed,
-        });
-
-        document.dispatchEvent(new Event('GoalCompleted'));
-
-        if (this.#repeat) {
-            const newGoal = {
-                id: crypto.randomUUID(),
-                created: new Date().getTime(),
-                name: this.#name,
-                description: this.#description,
-                points: this.#points,
-                repeat: this.#repeat,
-            };
-
-            GoalsData.add(newGoal);
-            const $newGoal = new Goal(newGoal);
-            this.after($newGoal);
-        }
+        GoalsData.update(this.#data);
+        this.raiseEvent('GoalCompleted', this.#data);
 
         await this.animate({
             translate: [0, '100vw 0'],
@@ -198,17 +167,29 @@ export default class Goal extends CustomElement {
         }).finished;
 
         this.#animateRemove();
+
+        if (!this.#data.repeat) {
+            return;
+        }
+
+        const newData = {
+            id: crypto.randomUUID(),
+            created: new Date().getTime(),
+            name: this.#data.name,
+            description: this.#data.description,
+            points: this.#data.points,
+            repeat: this.#data.repeat,
+        };
+
+        GoalsData.add(newData);
+        this.raiseEvent('GoalCreated', newData);
     }
 
     async #uncomplete() {
-        this.#completed = undefined;
+        this.#data.completed = undefined;
 
-        GoalsData.update({
-            id: this.#id,
-            completed: undefined,
-        });
-
-        document.dispatchEvent(new Event('GoalUncompleted'));
+        GoalsData.update(this.#data);
+        this.raiseEvent('GoalUncompleted', this.#data);
 
         await this.animate({
             translate: [0, '-100vw 0'],
@@ -223,15 +204,7 @@ export default class Goal extends CustomElement {
     }
 
     #edit() {
-        const $editor = new GoalEditor({
-            id: this.#id,
-            created: this.#created,
-            name: this.#name,
-            description: this.#description,
-            points: this.#points,
-            repeat: this.#repeat,
-            completed: this.#completed,
-        });
+        const $editor = new GoalEditor(this.#data);
 
         Modal.render({
             content: $editor,
@@ -253,8 +226,8 @@ export default class Goal extends CustomElement {
     }
 
     async #delete() {
-        GoalsData.remove({id: this.#id});
-        document.dispatchEvent(new Event('GoalDeleted'));
+        GoalsData.remove(this.#data);
+        this.raiseEvent('GoalDeleted', this.#data);
 
         await this.animate({
             opacity: [1, 0],

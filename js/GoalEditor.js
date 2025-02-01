@@ -11,13 +11,7 @@ stylesheet.replace(`goal-editor-component {
 }`);
 
 export default class GoalEditor extends CustomElement {
-    #id;
-    #created;
-    #name;
-    #description;
-    #points;
-    #repeat;
-    #completed;
+    #data;
 
     $name;
     $description;
@@ -25,16 +19,10 @@ export default class GoalEditor extends CustomElement {
     $repeat;
     $completed;
 
-    constructor({id, created, name, description, points, repeat, completed}) {
+    constructor(data = {}) {
         super();
 
-        this.#id = id;
-        this.#created = created;
-        this.#name = name;
-        this.#description = description;
-        this.#points = points;
-        this.#repeat = repeat;
-        this.#completed = completed;
+        this.#data = data;
     }
 
     connectedCallback() {
@@ -45,55 +33,55 @@ export default class GoalEditor extends CustomElement {
         this.applyStylesheet(stylesheet);
 
         this.$name = new Input({
-            disabled: this.#completed,
+            disabled: this.#data.completed,
             id: 'name-input',
             label: 'Name',
             required: true,
             type: 'text',
-            value: this.#name,
+            value: this.#data.name,
         });
 
         this.appendChild(this.$name);
         this.$name.focus();
 
         this.$description = new Input({
-            disabled: this.#completed,
+            disabled: this.#data.completed,
             id: 'description-input',
             label: 'Description',
             type: 'text',
-            value: this.#description,
+            value: this.#data.description,
         });
 
         this.appendChild(this.$description);
 
         this.$points = new Input({
-            disabled: this.#completed,
+            disabled: this.#data.completed,
             id: 'points-input',
             label: 'Points',
             min: 0,
             required: true,
             type: 'number',
-            value: this.#points,
+            value: this.#data.points,
         });
 
         this.appendChild(this.$points);
 
         this.$repeat = new Input({
-            disabled: this.#completed,
+            disabled: this.#data.completed,
             id: 'repeat-input',
             label: 'Repeat this goal when completed',
             type: 'checkbox',
-            value: this.#repeat,
+            value: this.#data.repeat,
         });
 
         this.appendChild(this.$repeat);
 
-        if (this.#completed) {
+        if (this.#data.completed) {
             this.$completed = new Input({
                 id: 'completed-input',
                 label: 'Completed',
                 type: 'datetime-local',
-                value: this.#completed,
+                value: this.#data.completed,
             });
 
             this.appendChild(this.$completed);
@@ -105,9 +93,9 @@ export default class GoalEditor extends CustomElement {
             return;
         }
 
-        const goal = {
-            id: this.#id || crypto.randomUUID(),
-            created: this.#created || new Date().getTime(),
+        const data = {
+            id: this.#data.id || crypto.randomUUID(),
+            created: this.#data.created || new Date().getTime(),
             name: this.$name.value,
             description: this.$description.value,
             points: this.$points.value,
@@ -115,12 +103,12 @@ export default class GoalEditor extends CustomElement {
             completed: this.$completed?.value,
         };
 
-        if (!this.#id) {
-            GoalsData.add(goal);
-            document.dispatchEvent(new Event('GoalCreated'));
+        if (!this.#data.id) {
+            GoalsData.add(data);
+            this.raiseEvent('GoalCreated', data);
         } else {
-            GoalsData.update(goal);
-            document.dispatchEvent(new Event('GoalUpdated'));
+            GoalsData.update(data);
+            this.raiseEvent('GoalEdited', data);
         }
 
         return true;

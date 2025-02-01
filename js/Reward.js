@@ -80,24 +80,12 @@ reward-component .menu.open .delete-button {
 }`);
 
 export default class Reward extends CustomElement {
-    #id;
-    #created;
-    #name;
-    #description;
-    #points;
-    #repeat;
-    #redeemed;
+    #data;
 
-    constructor({id, created, name, description, points, repeat, redeemed}) {
+    constructor(data = {}) {
         super();
 
-        this.#id = id;
-        this.#created = created;
-        this.#name = name;
-        this.#description = description;
-        this.#points = points;
-        this.#repeat = repeat;
-        this.#redeemed = redeemed;
+        this.#data = data;
     }
 
     connectedCallback() {
@@ -109,28 +97,28 @@ export default class Reward extends CustomElement {
 
         const $name = document.createElement('div');
         $name.className = 'name';
-        $name.textContent = this.#name;
+        $name.textContent = this.#data.name;
         this.appendChild($name);
 
-        if (this.#description) {
+        if (this.#data.description) {
             const $description = document.createElement('div');
-            $description.textContent = this.#description;
+            $description.textContent = this.#data.description;
             this.appendChild($description);
         }
 
         const $points = document.createElement('div');
-        $points.textContent = `Points: ${this.#points}`;
+        $points.textContent = `Points: ${this.#data.points}`;
         this.appendChild($points);
 
-        if (this.#repeat) {
+        if (this.#data.repeat) {
             const $repeat = document.createElement('div');
             $repeat.textContent = `↻ Repeats`;
             this.appendChild($repeat);
         }
 
         const $checkButton = new CheckButton({
-            checked: this.#redeemed,
-            onClick: _ => this.#redeemed ? this.#unredeem() : this.#redeem(),
+            checked: this.#data.redeemed,
+            onClick: _ => this.#data.redeemed ? this.#unredeem() : this.#redeem(),
         });
 
         this.appendChild($checkButton);
@@ -164,29 +152,10 @@ export default class Reward extends CustomElement {
     }
 
     async #redeem() {
-        this.#redeemed = new Date().getTime();
+        this.#data.redeemed = new Date().getTime();
 
-        RewardsData.update({
-            id: this.#id,
-            redeemed: this.#redeemed,
-        });
-
-        document.dispatchEvent(new Event('RewardRedeemed'));
-
-        if (this.#repeat) {
-            const newReward = {
-                id: crypto.randomUUID(),
-                created: new Date().getTime(),
-                name: this.#name,
-                description: this.#description,
-                points: this.#points,
-                repeat: this.#repeat,
-            };
-
-            RewardsData.add(newReward);
-            const $newReward = new Reward(newReward);
-            this.after($newReward);
-        }
+        RewardsData.update(this.#data);
+        this.raiseEvent('RewardRedeemed', this.#data);
 
         await this.animate({
             translate: [0, '100vw 0'],
@@ -198,17 +167,29 @@ export default class Reward extends CustomElement {
         }).finished;
 
         this.#animateRemove();
+
+        if (!this.#data.repeat) {
+            return;
+        }
+
+        const newData = {
+            id: crypto.randomUUID(),
+            created: new Date().getTime(),
+            name: this.#data.name,
+            description: this.#data.description,
+            points: this.#data.points,
+            repeat: this.#data.repeat,
+        };
+
+        RewardsData.add(newData);
+        this.raiseEvent('RewardCreated', newData);
     }
 
     async #unredeem() {
-        this.#redeemed = undefined;
+        this.#data.redeemed = undefined;
 
-        RewardsData.update({
-            id: this.#id,
-            redeemed: undefined,
-        });
-
-        document.dispatchEvent(new Event('RewardUnredeemed'));
+        RewardsData.update(this.#data);
+        this.raiseEvent('RewardUnredeemed', this.#data);
 
         await this.animate({
             translate: [0, '-100vw 0'],
@@ -223,15 +204,7 @@ export default class Reward extends CustomElement {
     }
 
     #edit() {
-        const $editor = new RewardEditor({
-            id: this.#id,
-            created: this.#created,
-            name: this.#name,
-            description: this.#description,
-            points: this.#points,
-            repeat: this.#repeat,
-            redeemed: this.#redeemed,
-        });
+        const $editor = new RewardEditor(this.#data);
 
         Modal.render({
             content: $editor,
@@ -253,8 +226,8 @@ export default class Reward extends CustomElement {
     }
 
     async #delete() {
-        RewardsData.remove({id: this.#id});
-        document.dispatchEvent(new Event('RewardDeleted'));
+        RewardsData.remove(this.#data);
+        this.raiseEvent('RewardDeleted', this.#data);
 
         await this.animate({
             opacity: [1, 0],
