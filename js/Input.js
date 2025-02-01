@@ -96,6 +96,7 @@ export default class Input extends CustomElement {
         }
 
         if (this.#type === 'datetime-local') {
+            // Convert to UTC
             return this.$input.valueAsNumber + this.#getTZOffsetMS();
         }
 
@@ -113,7 +114,11 @@ export default class Input extends CustomElement {
         }
 
         if (this.#type === 'datetime-local') {
-            this.$input.valueAsNumber = value - this.#getTZOffsetMS();
+            // Convert to local timezone
+            const localTime = value - this.#getTZOffsetMS();
+
+            // Round to the nearest second
+            this.$input.valueAsNumber = Math.round(localTime / 1000) * 1000;
             return;
         }
 

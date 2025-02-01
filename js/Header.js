@@ -39,18 +39,22 @@ export default class Header extends CustomElement {
         document.addEventListener('GoalCompleted', this.#onDataChange);
         document.addEventListener('GoalUncompleted', this.#onDataChange);
         document.addEventListener('GoalDeleted', this.#onDataChange);
+        document.addEventListener('GoalEdited', this.#onDataChange);
         document.addEventListener('RewardRedeemed', this.#onDataChange);
         document.addEventListener('RewardUnredeemed', this.#onDataChange);
         document.addEventListener('RewardDeleted', this.#onDataChange);
+        document.addEventListener('RewardEdited', this.#onDataChange);
     }
 
     disconnectedCallback() {
         document.removeEventListener('GoalCompleted', this.#onDataChange);
         document.removeEventListener('GoalUncompleted', this.#onDataChange);
         document.removeEventListener('GoalDeleted', this.#onDataChange);
+        document.removeEventListener('GoalEdited', this.#onDataChange);
         document.removeEventListener('RewardRedeemed', this.#onDataChange);
         document.removeEventListener('RewardUnredeemed', this.#onDataChange);
         document.removeEventListener('RewardDeleted', this.#onDataChange);
+        document.removeEventListener('RewardEdited', this.#onDataChange);
     }
 
     #render() {

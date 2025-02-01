@@ -33,7 +33,6 @@ export default class GoalEditor extends CustomElement {
         this.applyStylesheet(stylesheet);
 
         this.$name = new Input({
-            disabled: this.#data.completed,
             id: 'name-input',
             label: 'Name',
             required: true,
@@ -45,7 +44,6 @@ export default class GoalEditor extends CustomElement {
         this.$name.focus();
 
         this.$description = new Input({
-            disabled: this.#data.completed,
             id: 'description-input',
             label: 'Description',
             type: 'text',
@@ -55,7 +53,6 @@ export default class GoalEditor extends CustomElement {
         this.appendChild(this.$description);
 
         this.$points = new Input({
-            disabled: this.#data.completed,
             id: 'points-input',
             label: 'Points',
             min: 0,
@@ -66,8 +63,20 @@ export default class GoalEditor extends CustomElement {
 
         this.appendChild(this.$points);
 
+        if (this.#data.completed) {
+            this.$completed = new Input({
+                id: 'completed-input',
+                label: 'Completed',
+                required: true,
+                type: 'datetime-local',
+                value: this.#data.completed,
+            });
+
+            this.appendChild(this.$completed);
+            return;
+        }
+
         this.$repeat = new Input({
-            disabled: this.#data.completed,
             id: 'repeat-input',
             label: 'Repeat this goal when completed',
             type: 'checkbox',
@@ -75,17 +84,6 @@ export default class GoalEditor extends CustomElement {
         });
 
         this.appendChild(this.$repeat);
-
-        if (this.#data.completed) {
-            this.$completed = new Input({
-                id: 'completed-input',
-                label: 'Completed',
-                type: 'datetime-local',
-                value: this.#data.completed,
-            });
-
-            this.appendChild(this.$completed);
-        }
     }
 
     save() {
@@ -97,11 +95,16 @@ export default class GoalEditor extends CustomElement {
             id: this.#data.id || crypto.randomUUID(),
             created: this.#data.created || new Date().getTime(),
             name: this.$name.value,
-            description: this.$description.value,
+            description: this.$description.value || undefined,
             points: this.$points.value,
-            repeat: this.$repeat.value,
-            completed: this.$completed?.value,
         };
+
+        if (this.#data.completed) {
+            data.repeat = this.#data.repeat;
+            data.completed = this.$completed.value;
+        } else {
+            data.repeat = this.$repeat.value || undefined;
+        }
 
         if (!this.#data.id) {
             GoalsData.add(data);
@@ -115,7 +118,11 @@ export default class GoalEditor extends CustomElement {
     }
 
     #validate() {
-        return this.$name.validate() && this.$points.validate();
+        return ![
+            this.$name.validate(),
+            this.$points.validate(),
+            this.$completed?.validate(),
+        ].includes(false);
     }
 }
 
