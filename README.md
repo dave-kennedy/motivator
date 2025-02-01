@@ -22,15 +22,23 @@ careful not to destroy your data.
 
 ## TODO
 
-* Editor
-    * Cancel on escape key
-    * Hide milliseconds from datetime-local fields
-    * Save on enter key
-* Settings
-    * Import/export JSON
-    * Reset tutorial
-* Tutorial
-    * Add option to skip
+* Analytics
+* Better data
+    * Cloud storage
+    * Incremental loading
 * Better favicon
-* Daily streaks w/ bonus points for completion
-* Unit tests
+* Better repeat animation
+    * Flip instead of swipe?
+* Goal repeat streaks
+    * Repeats immediately: 3 times in a day
+    * Repeats daily/weekly/etc.: 3 days/weeks/etc. in a row
+    * Double streak: 6 times/days/etc. in a row
+    * Triple streak: 12 times/days/etc. in a row
+    * Do something neat when duration is met
+        * Bonus points?
+        * Fancy animation?
+        * Only if duration > 3, or what?
+* Import/export JSON
+* More unit tests
+* Option to reduce animations
+* User defined sorting
