@@ -20,10 +20,6 @@ app-component pager-component {
 }`);
 
 export default class App extends CustomElement {
-    constructor() {
-        super();
-    }
-
     connectedCallback() {
         this.#render();
     }
