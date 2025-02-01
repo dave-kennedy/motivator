@@ -1,36 +1,118 @@
 import ConfigData from './data/ConfigData.js';
 import Hint from './Hint.js';
+import Modal from './Modal.js';
 
 export default class Tutorial {
-    static events = [
-        'GoalsPageRendered',
-        'GoalCreated',
-        'GoalCompleted',
-        'RewardsPageRendered',
-        'RewardCreated',
-        'RewardRedeemed',
-        'HistoryPageRendered',
-    ];
+    static hints = {
+        newGoal: {
+            anchor: '#action-button',
+            position: 'top-left',
+            message: 'Click here to create a new goal',
+        },
+        completeGoal: {
+            anchor: 'goals-page-component check-button-component button',
+            position: 'bottom-right',
+            message: 'Click here to complete this goal',
+        },
+        rewardsTab: {
+            anchor: '#rewards-tab',
+            position: 'bottom-left',
+            message: 'Click here to see your rewards',
+        },
+        newReward: {
+            anchor: '#action-button',
+            position: 'top-left',
+            message: 'Click here to create a new reward',
+        },
+        redeemReward: {
+            anchor: 'rewards-page-component check-button-component button',
+            position: 'bottom-right',
+            message: 'Click here to redeem this reward',
+        },
+        historyTab: {
+            anchor: '#history-tab',
+            position: 'bottom-left',
+            message: 'Click here to see your completed goals and redeemed rewards',
+        },
+        undoCheck: {
+            anchor: 'history-page-component check-button-component button',
+            position: 'bottom-right',
+            message: 'Accidentally hit the check button? Click here to undo',
+        },
+    };
 
-    static listen() {
-        for (const name of this.events) {
-            document.addEventListener(name, _ => {
-                if (ConfigData.get(`${name}HintShown`)) {
-                    return;
-                }
+    static hintsDisplayed = [];
 
-                if (this[`on${name}`]()) {
-                    ConfigData.set(`${name}HintShown`, true);
-                }
-            });
+    static prompt() {
+        if (ConfigData.get('tutorialSkipped') || ConfigData.get('tutorialStarted')) {
+            return;
         }
+
+        Modal.render({
+            content: 'Would you like to start the tutorial?',
+            buttons: [
+                {label: 'No', onClick: _ => this.skip()},
+                {focus: true, label: 'Yes', onClick: _ => this.start()},
+            ],
+        });
     }
 
-    static showHint({anchor, position, message, onClose}) {
+    static skip() {
+        ConfigData.set('tutorialSkipped', true);
+        return true;
+    }
+
+    static start() {
+        ConfigData.set('tutorialStarted', true);
+        this.listen();
+
+        if (location.hash !== '#goals') {
+            location.hash = '#goals';
+        } else {
+            this.onGoalsPageRendered();
+        }
+
+        return true;
+    }
+
+    static restart() {
+        this.hintsDisplayed = [];
+        this.start();
+    }
+
+    static listen() {
+        document.addEventListener('GoalsPageRendered', this.onGoalsPageRendered);
+        document.addEventListener('GoalCreated', this.onGoalCreated);
+        document.addEventListener('GoalCompleted', this.onGoalCompleted);
+        document.addEventListener('RewardsPageRendered', this.onRewardsPageRendered);
+        document.addEventListener('RewardCreated', this.onRewardCreated);
+        document.addEventListener('RewardRedeemed', this.onRewardRedeemed);
+        document.addEventListener('HistoryPageRendered', this.onHistoryPageRendered);
+    }
+
+    static onGoalsPageRendered = _ => this.displayHint('newGoal');
+    static onGoalCreated = _ => this.displayHint('completeGoal');
+    static onGoalCompleted = _ => this.displayHint('rewardsTab');
+    static onRewardsPageRendered = _ => this.displayHint('newReward');
+    static onRewardCreated = _ => this.displayHint('redeemReward');
+    static onRewardRedeemed = _ => this.displayHint('historyTab');
+    static onHistoryPageRendered = _ => this.displayHint('undoCheck');
+
+    static displayHint(hint) {
+        if (this.hintsDisplayed.includes(hint)) {
+            return;
+        }
+
+        const {
+            anchor,
+            position,
+            message,
+        } = this.hints[hint];
+
         const $anchor = document.querySelector(anchor);
 
         if (!$anchor) {
-            return false;
+            return;
         }
 
         const $hint = new Hint({
@@ -40,85 +122,22 @@ export default class Tutorial {
         });
 
         document.querySelector('app-component').appendChild($hint);
+        this.hintsDisplayed.push(hint);
 
-        if (onClose) {
-            $hint.addEventListener('close', onClose);
-        }
-
-        return true;
-    }
-
-    static onGoalsPageRendered() {
-        return this.showHint({
-            anchor: '#action-button',
-            position: 'top-left',
-            message: 'Click here to create a new goal',
+        $hint.addEventListener('close', _ => {
+            if (Object.keys(this.hints).every(hint => this.hintsDisplayed.includes(hint))) {
+                this.complete();
+            }
         });
     }
 
-    static onGoalCreated() {
-        return this.showHint({
-            anchor: 'check-button-component button',
-            position: 'bottom-right',
-            message: 'Click here to complete this goal',
-        });
-    }
-
-    static onGoalCompleted() {
-        return this.showHint({
-            anchor: 'header-component .points',
-            position: 'bottom-right',
-            message: 'When you complete a goal, its points are added to your total',
-            onClose: _ => this.onGoalCompletedHintClosed(),
-        });
-    }
-
-    static onGoalCompletedHintClosed() {
-        return this.showHint({
-            anchor: '#rewards-tab',
-            position: 'bottom-left',
-            message: 'Click here to see your rewards',
-        });
-    }
-
-    static onRewardsPageRendered() {
-        return this.showHint({
-            anchor: '#action-button',
-            position: 'top-left',
-            message: 'Click here to create a new reward',
-        });
-    }
-
-    static onRewardCreated() {
-        return this.showHint({
-            anchor: 'check-button-component button',
-            position: 'bottom-right',
-            message: 'Click here to redeem this reward',
-        });
-    }
-
-    static onRewardRedeemed() {
-        return this.showHint({
-            anchor: 'header-component .points',
-            position: 'bottom-right',
-            message: 'When you redeem a reward, its points are deducted from your total',
-            onClose: _ => this.onRewardRedeemedHintClosed(),
-        });
-    }
-
-    static onRewardRedeemedHintClosed() {
-        return this.showHint({
-            anchor: '#history-tab',
-            position: 'bottom-left',
-            message: 'Click here to see your completed goals and redeemed rewards',
-        });
-    }
-
-    static onHistoryPageRendered() {
-        return this.showHint({
-            anchor: 'check-button-component button',
-            position: 'bottom-right',
-            message: 'Accidentally hit the check button? Click here to undo',
+    static complete() {
+        Modal.render({
+            content: `That's the end of the tutorial. If you missed anything,
+                you can restart it from the settings menu in the top-right corner.`,
+            buttons: [
+                {focus: true, label: 'OK'},
+            ],
         });
     }
 }

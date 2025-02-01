@@ -22,8 +22,6 @@ app-component pager-component {
 export default class App extends CustomElement {
     constructor() {
         super();
-
-        Tutorial.listen();
     }
 
     connectedCallback() {
@@ -38,6 +36,10 @@ export default class App extends CustomElement {
 
         const $pager = new Pager();
         this.appendChild($pager);
+
+        // The prompt is dismissed on hashchange, so wait a split second
+        // for initial redirect from default, hash-less URL
+        setTimeout(_ => Tutorial.prompt(), 100);
     }
 }
 

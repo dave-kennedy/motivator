@@ -4,6 +4,7 @@ import GoalsData from './data/GoalsData.js';
 import Menu from './Menu.js';
 import Modal from './Modal.js';
 import RewardsData from './data/RewardsData.js';
+import Tutorial from './Tutorial.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -80,6 +81,10 @@ export default class Header extends CustomElement {
                 icon: {src: 'img/info.svg'},
                 label: 'About',
                 onClick: _ => this.#showAbout(),
+            }, {
+                icon: {src: 'img/lightbulb.svg'},
+                label: 'Tutorial',
+                onClick: _ => Tutorial.restart(),
             }],
         });
 
