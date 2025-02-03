@@ -1,5 +1,7 @@
 import CustomElement from './CustomElement.js';
 
+import {fade} from './animation.js';
+
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`hint-component {
@@ -125,7 +127,7 @@ export default class Hint extends CustomElement {
             this.style.setProperty('--hint-top', `${anchorBottom}px`);
         }
 
-        this.animate({opacity: [0, 1]}, 300);
+        fade({element: this, direction: 'in', duration: 250});
     }
 
     #onKeyDown = event => {
@@ -139,7 +141,7 @@ export default class Hint extends CustomElement {
         this.#anchor.style.removeProperty('position');
         this.#anchor.style.removeProperty('z-index');
 
-        await this.animate({opacity: [1, 0]}, 300).finished;
+        await fade({element: this, direction: 'out', duration: 250});
         this.dispatchEvent(new Event('close'));
         this.remove();
     };

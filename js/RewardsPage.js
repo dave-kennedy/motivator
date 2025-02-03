@@ -10,7 +10,6 @@ const stylesheet = new CSSStyleSheet();
 stylesheet.replace(`rewards-page-component {
     display: flex;
     flex-direction: column;
-    gap: 1em;
 }`);
 
 export default class RewardsPage extends CustomElement {

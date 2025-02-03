@@ -4,14 +4,24 @@ import Menu from './Menu.js';
 import Modal from './Modal.js';
 import RewardEditor from './RewardEditor.js';
 import RewardsData from './data/RewardsData.js';
+
+import {fade, peelOut, shrink} from './animation.js';
 import repeat from './repeat.js';
 
 const stylesheet = new CSSStyleSheet();
 
-stylesheet.replace(`reward-component {
+stylesheet.replace(`@media (min-width: 544px) {
+    reward-component {
+        align-self: center;
+        width: 32em;
+    }
+}
+
+reward-component .content {
     background-color: #eee;
     border-radius: 1em;
     box-sizing: border-box;
+    margin-bottom: 1em;
     margin-left: 1.25em;
     padding: 1em 1em 1em 2em;
     position: relative;
@@ -19,20 +29,6 @@ stylesheet.replace(`reward-component {
     display: flex;
     flex-direction: column;
     gap: 0.5em;
-}
-
-@media (min-width: 400px) {
-    reward-component {
-        align-self: center;
-        width: 80%;
-    }
-}
-
-@media (min-width: 800px) {
-    reward-component {
-        align-self: center;
-        width: 60%;
-    }
 }
 
 reward-component .name {
@@ -94,21 +90,25 @@ export default class Reward extends CustomElement {
 
         this.id = this.#data.id;
 
+        const $content = document.createElement('div');
+        $content.className = 'content';
+        this.appendChild($content);
+
         const $name = document.createElement('div');
         $name.className = 'name';
         $name.textContent = this.#data.name;
-        this.appendChild($name);
+        $content.appendChild($name);
 
         if (this.#data.description) {
             const $description = document.createElement('div');
             $description.textContent = this.#data.description;
-            this.appendChild($description);
+            $content.appendChild($description);
         }
 
         const $points = document.createElement('div');
         $points.className = 'points';
         $points.textContent = `${this.#data.points} points`;
-        this.appendChild($points);
+        $content.appendChild($points);
 
         if (this.#data.repeat) {
             const $repeat = document.createElement('div');
@@ -125,21 +125,21 @@ export default class Reward extends CustomElement {
             }
 
             $repeat.textContent = textParts.join(' ');
-            this.appendChild($repeat);
+            $content.appendChild($repeat);
         }
 
         if (this.#data.startDate > Date.now()) {
             const $startDate = document.createElement('div');
             $startDate.className = 'start-date';
             $startDate.textContent = `Starts ${new Date(this.#data.startDate).toLocaleDateString()}`;
-            this.appendChild($startDate);
+            $content.appendChild($startDate);
         }
 
         if (this.#data.redeemed) {
             const $redeemed = document.createElement('div');
             $redeemed.className = 'redeemed';
             $redeemed.textContent = `Redeemed ${new Date(this.#data.redeemed).toLocaleDateString()}`;
-            this.appendChild($redeemed);
+            $content.appendChild($redeemed);
         }
 
         const $checkButton = new CheckButton({
@@ -148,7 +148,7 @@ export default class Reward extends CustomElement {
             upcoming: this.#data.startDate > Date.now(),
         });
 
-        this.appendChild($checkButton);
+        $content.appendChild($checkButton);
 
         const $menu = new Menu({
             handle: {
@@ -167,7 +167,7 @@ export default class Reward extends CustomElement {
             }],
         });
 
-        this.appendChild($menu);
+        $content.appendChild($menu);
     }
 
     async #redeem() {
@@ -176,16 +176,9 @@ export default class Reward extends CustomElement {
         RewardsData.update(this.#data);
         this.raiseEvent('RewardRedeemed', this.#data);
 
-        await this.animate({
-            translate: [0, '100vw 0'],
-        }, {
-            delay: 750,
-            duration: 500,
-            easing: 'cubic-bezier(0.5, 0, 0.5, -0.5)',
-            fill: 'forwards',
-        }).finished;
-
-        this.#animateRemove();
+        await peelOut({element: this, direction: 'right', delay: 750, duration: 500});
+        await shrink({element: this, dimension: 'height', duration: 250});
+        this.remove();
 
         if (!this.#data.repeat) {
             return;
@@ -209,16 +202,9 @@ export default class Reward extends CustomElement {
         RewardsData.update(this.#data);
         this.raiseEvent('RewardUnredeemed', this.#data);
 
-        await this.animate({
-            translate: [0, '-100vw 0'],
-        }, {
-            delay: 750,
-            duration: 500,
-            easing: 'cubic-bezier(0.5, 0, 0.5, -0.5)',
-            fill: 'forwards',
-        }).finished;
-
-        this.#animateRemove();
+        await peelOut({element: this, direction: 'left', delay: 750, duration: 500});
+        await shrink({element: this, dimension: 'height', duration: 250});
+        this.remove();
     }
 
     #edit() {
@@ -247,28 +233,8 @@ export default class Reward extends CustomElement {
         RewardsData.remove(this.#data);
         this.raiseEvent('RewardDeleted', this.#data);
 
-        await this.animate({
-            opacity: [1, 0],
-        }, {
-            duration: 250,
-            easing: 'ease',
-            fill: 'forwards',
-        }).finished;
-
-        this.#animateRemove();
-    }
-
-    async #animateRemove() {
-        const {height} = this.getBoundingClientRect();
-
-        await this.animate({
-            marginBottom: [0, `calc(${height}px * -1 - 1em)`],
-        }, {
-            duration: 250,
-            easing: 'ease',
-            fill: 'forwards',
-        }).finished;
-
+        await fade({element: this, direction: 'out', duration: 250});
+        await shrink({element: this, dimension: 'height', duration: 250});
         this.remove();
     }
 }

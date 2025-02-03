@@ -25,7 +25,7 @@ pager-component .tabs::after {
     position: absolute;
     bottom: 0;
     left: calc(var(--page-index) / var(--num-pages) * 100%);
-    transition: left 300ms;
+    transition: left 250ms;
 }
 
 pager-component .tabs > * {
@@ -45,11 +45,11 @@ pager-component .pages > * {
     flex: 0 0 100%;
     overflow-x: hidden;
     overflow-y: auto;
-    padding: 1em 1em 5em 1em;
+    padding: 1em 1em 8em 1em;
 
     position: relative;
     left: calc(var(--page-index) * -100%);
-    transition: left 300ms;
+    transition: left 250ms;
 }
 
 pager-component .pages > .hidden {

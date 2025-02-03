@@ -1,6 +1,8 @@
 import Button from './Button.js';
 import CustomElement from './CustomElement.js';
 
+import {grow, shrink} from './animation.js';
+
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`menu-component {
@@ -74,7 +76,7 @@ export default class Menu extends CustomElement {
         document.removeEventListener('click', this.close);
         document.removeEventListener('keydown', this.#onKeyDown);
 
-        await this.$items.animate({opacity: [1, 0]}, 300).finished;
+        await shrink({element: this.$items, dimension: 'height', duration: 250});
         this.dispatchEvent(new Event('close'));
         this.classList.remove('open');
     };
@@ -82,7 +84,7 @@ export default class Menu extends CustomElement {
     open = async _ => {
         this.classList.add('open');
         this.dispatchEvent(new Event('open'));
-        await this.$items.animate({opacity: [0, 1]}, 300).finished;
+        await grow({element: this.$items, dimension: 'height', duration: 250});
 
         addEventListener('hashchange', this.close);
         document.addEventListener('click', this.close);

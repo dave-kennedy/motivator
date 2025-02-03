@@ -16,7 +16,7 @@ button-component button {
     width: 100%;
 
     background-color: #0aa;
-    transition: background-color 300ms;
+    transition: background-color 250ms;
 
     display: flex;
     align-items: center;

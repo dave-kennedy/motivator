@@ -40,5 +40,4 @@ careful not to destroy your data.
         * Only if duration > 3, or what?
 * Import/export JSON
 * More unit tests
-* Option to reduce animations
 * User defined sorting
