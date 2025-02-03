@@ -47,6 +47,10 @@ button-component.fab {
     z-index: 1;
 }
 
+button-component.fab button {
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
+}
+
 button-component.gray button {
     background-color: #666;
 }
