@@ -19,7 +19,7 @@ export default class About extends CustomElement {
         this.applyStylesheet(stylesheet);
 
         this.innerHTML = `<h1>Motivator</h1>
-            <p>Version 2.0.0 © ${new Date().getFullYear()}</p>
+            <p>Version 2.1.0 © ${new Date().getFullYear()}</p>
             <p>
                 <a href="https://github.com/dave-kennedy/motivator">
                     <img alt="GitHub" src="img/github.svg" /> dave-kennedy/motivator
