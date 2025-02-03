@@ -1,3 +1,4 @@
+import ConfigData from './data/ConfigData.js';
 import CustomElement from './CustomElement.js';
 
 const stylesheet = new CSSStyleSheet();
@@ -47,6 +48,16 @@ check-button-component.checked .inner-circle {
 check-button-component.checked .check-mark {
     stroke-dasharray: 100, 0;
     transition: stroke-dasharray 500ms 500ms;
+}
+
+check-button-component.checked .stars {
+    color: transparent;
+    height: 5px;
+    width: 5px;
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
 }`);
 
 export default class CheckButton extends CustomElement {
@@ -81,8 +92,11 @@ export default class CheckButton extends CustomElement {
         const $button = document.createElement('button');
 
         $button.addEventListener('click', _ => {
-            this.classList.toggle('checked');
             this.#onClick();
+
+            if (this.classList.toggle('checked') && ConfigData.get('animations') === 'fancy') {
+                this.#renderStars();
+            }
         });
 
         this.appendChild($button);
@@ -109,6 +123,29 @@ export default class CheckButton extends CustomElement {
         `;
 
         this.appendChild($svg);
+    }
+
+    async #renderStars() {
+        const stars = document.createElement('div');
+        stars.className = 'stars';
+        stars.textContent = '✦';
+        this.appendChild(stars);
+
+        await stars.animate({
+            opacity: [1, 1, 1, 0],
+            textShadow: [`
+                -49px -33px #00f,-12px -76px #ff0,-34px 68px #ff0,-32px -19px #0ff,
+                -97px 35px #ff0,-22px -4px #f00,61px -69px #0f0,20px 79px #f00,
+                70px 14px #ff0,100px -18px #f00,-39px -17px #0ff,68px 80px #00f,
+                83px 7px #ff0,46px 0px #ff0,-8px -89px #0ff,-70px 4px #f00,
+                -65px 10px #ff0,-25px -44px #ff0,-7px -26px #ff0,25px 56px #ff0
+            `],
+        }, {
+            duration: 1000,
+            easing: 'ease-out'
+        }).finished;
+
+        stars.remove();
     }
 }
 
