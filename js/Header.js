@@ -4,6 +4,7 @@ import GoalsData from './data/GoalsData.js';
 import Menu from './Menu.js';
 import Modal from './Modal.js';
 import RewardsData from './data/RewardsData.js';
+import SettingsEditor from './SettingsEditor.js';
 import Tutorial from './Tutorial.js';
 
 const stylesheet = new CSSStyleSheet();
@@ -82,6 +83,10 @@ export default class Header extends CustomElement {
                 label: 'About',
                 onClick: _ => this.#showAbout(),
             }, {
+                icon: {src: 'img/settings.svg'},
+                label: 'Settings',
+                onClick: _ => this.#showSettings(),
+            }, {
                 icon: {src: 'img/lightbulb.svg'},
                 label: 'Tutorial',
                 onClick: _ => Tutorial.restart(),
@@ -100,6 +105,18 @@ export default class Header extends CustomElement {
         Modal.render({
             content: new About(),
             buttons: [{focus: true, label: 'OK'}],
+        });
+    }
+
+    #showSettings() {
+        const $editor = new SettingsEditor();
+
+        Modal.render({
+            content: $editor,
+            buttons: [
+                {label: 'Cancel'},
+                {label: 'Save', onClick: _ => $editor.save()},
+            ],
         });
     }
 }
