@@ -1,233 +1,167 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import repeat from './repeat.js';
+import {getNextRepeatStreak, getNextStartDate, repeat} from './repeat.js';
 
-test('No duration, no frequency, repeats indefinitely, starts immediately', _ => {
-    const item = {
+function repeatTest(data) {
+    data = {
+        completed: Date.parse('1/20/2025, 11:59:59 PM MST'),
         name: 'Test',
         description: 'This is a test',
         points: 3,
         repeat: true,
+        ...data
     };
 
-    const newItem = repeat(item);
+    const newData = repeat(data);
+    assert.equal(newData.id.length, 36);
+    assert.equal(newData.created, data.completed);
+    assert.equal(newData.name, data.name);
+    assert.equal(newData.description, data.description);
+    assert.equal(newData.points, data.points);
+    return newData;
+}
 
-    assert(newItem.id.length === 36);
-    assert(newItem.created > 0);
-    assert(newItem.name === item.name);
-    assert(newItem.description === item.description);
-    assert(newItem.points === item.points);
-    assert(newItem.repeat === item.repeat);
-    assert(newItem.repeatDuration === undefined);
-    assert(newItem.repeatFrequency === undefined);
-    assert(newItem.startDate === undefined);
+test('repeat goal repeats indefinitely', _ => {
+    const newData = repeatTest();
+    assert.equal(newData.repeat, true);
+    assert.equal(newData.repeatDuration, undefined);
+    assert.equal(newData.repeatFrequency, undefined);
+    assert.equal(newData.startDate, undefined);
 });
 
-test('Duration = 3, no frequency, repeats 2 more times, starts immediately', _ => {
-    const item = {
-        name: 'Test',
-        description: 'This is a test',
-        points: 3,
-        repeat: true,
-        repeatDuration: 3,
-    };
-
-    const newItem = repeat(item);
-
-    assert(newItem.id.length === 36);
-    assert(newItem.created > 0);
-    assert(newItem.name === item.name);
-    assert(newItem.description === item.description);
-    assert(newItem.points === item.points);
-    assert(newItem.repeat === item.repeat);
-    assert(newItem.repeatDuration === 2);
-    assert(newItem.repeatFrequency === undefined);
-    assert(newItem.startDate === undefined);
+test('repeat goal decrements duration', _ => {
+    const newData = repeatTest({repeatDuration: 3});
+    assert.equal(newData.repeat, true);
+    assert.equal(newData.repeatDuration, 2);
+    assert.equal(newData.repeatFrequency, undefined);
+    assert.equal(newData.startDate, undefined);
 });
 
-test('Duration = 2, no frequency, does not repeat, starts immediately', _ => {
-    const item = {
-        name: 'Test',
-        description: 'This is a test',
-        points: 3,
-        repeat: true,
-        repeatDuration: 2,
-    };
-
-    const newItem = repeat(item);
-
-    assert(newItem.id.length === 36);
-    assert(newItem.created > 0);
-    assert(newItem.name === item.name);
-    assert(newItem.description === item.description);
-    assert(newItem.points === item.points);
-    assert(newItem.repeat === undefined);
-    assert(newItem.repeatDuration === undefined);
-    assert(newItem.repeatFrequency === undefined);
-    assert(newItem.startDate === undefined);
+test('repeat goal does not repeat after duration', _ => {
+    const newData = repeatTest({repeatDuration: 2});
+    assert.equal(newData.repeat, undefined);
+    assert.equal(newData.repeatDuration, undefined);
+    assert.equal(newData.repeatFrequency, undefined);
+    assert.equal(newData.startDate, undefined);
 });
 
-test('No duration, frequency = daily, repeats indefinitely, starts tomorrow', context => {
-    const item = {
-        name: 'Test',
-        description: 'This is a test',
-        points: 3,
-        repeat: true,
-        repeatFrequency: 'daily',
-    };
-
-    context.mock.timers.enable({
-        apis: ['Date'],
-        now: Date.parse('1/20/2025, 11:59:59 PM MST'),
-    });
-
-    const newItem = repeat(item);
-
-    assert(newItem.id.length === 36);
-    assert(newItem.created > 0);
-    assert(newItem.name === item.name);
-    assert(newItem.description === item.description);
-    assert(newItem.points === item.points);
-    assert(newItem.repeat === item.repeat);
-    assert(newItem.repeatDuration === undefined);
-    assert(newItem.repeatFrequency === 'daily');
-    assert(newItem.startDate === Date.parse('1/21/2025, 12:00:00 AM MST'));
+test('repeat daily goal repeats indefinitely, starts next day', _ => {
+    const newData = repeatTest({repeatFrequency: 'daily'});
+    assert.equal(newData.repeat, true);
+    assert.equal(newData.repeatDuration, undefined);
+    assert.equal(newData.repeatFrequency, 'daily');
+    assert.equal(newData.startDate, Date.parse('1/21/2025, 12:00:00 AM MST'));
 });
 
-test('Duration = 3, frequency = daily, repeats 2 more times, starts tomorrow', context => {
-    const item = {
-        name: 'Test',
-        description: 'This is a test',
-        points: 3,
-        repeat: true,
+test('repeat daily goal decrements duration, starts next day', _ => {
+    const newData = repeatTest({
         repeatDuration: 3,
         repeatFrequency: 'daily',
-    };
-
-    context.mock.timers.enable({
-        apis: ['Date'],
-        now: Date.parse('1/20/2025, 11:59:59 PM MST'),
     });
 
-    const newItem = repeat(item);
-
-    assert(newItem.id.length === 36);
-    assert(newItem.created > 0);
-    assert(newItem.name === item.name);
-    assert(newItem.description === item.description);
-    assert(newItem.points === item.points);
-    assert(newItem.repeat === item.repeat);
-    assert(newItem.repeatDuration === 2);
-    assert(newItem.repeatFrequency === 'daily');
-    assert(newItem.startDate === Date.parse('1/21/2025, 12:00:00 AM MST'));
+    assert.equal(newData.repeat, true);
+    assert.equal(newData.repeatDuration, 2);
+    assert.equal(newData.repeatFrequency, 'daily');
+    assert.equal(newData.startDate, Date.parse('1/21/2025, 12:00:00 AM MST'));
 });
 
-test('Duration = 2, frequency = daily, does not repeat, starts tomorrow', context => {
-    const item = {
-        name: 'Test',
-        description: 'This is a test',
-        points: 3,
-        repeat: true,
+test('repeat daily goal does not repeat after duration, starts next day', _ => {
+    const newData = repeatTest({
         repeatDuration: 2,
         repeatFrequency: 'daily',
-    };
-
-    context.mock.timers.enable({
-        apis: ['Date'],
-        now: Date.parse('1/20/2025, 11:59:59 PM MST'),
     });
 
-    const newItem = repeat(item);
-
-    assert(newItem.id.length === 36);
-    assert(newItem.created > 0);
-    assert(newItem.name === item.name);
-    assert(newItem.description === item.description);
-    assert(newItem.points === item.points);
-    assert(newItem.repeat === undefined);
-    assert(newItem.repeatDuration === undefined);
-    assert(newItem.repeatFrequency === undefined);
-    assert(newItem.startDate === Date.parse('1/21/2025, 12:00:00 AM MST'));
+    assert.equal(newData.repeat, undefined);
+    assert.equal(newData.repeatDuration, undefined);
+    assert.equal(newData.repeatFrequency, undefined);
+    assert.equal(newData.startDate, Date.parse('1/21/2025, 12:00:00 AM MST'));
 });
 
-test('No duration, frequency = weekly, repeats indefinitely, starts next week', context => {
-    const item = {
-        name: 'Test',
-        description: 'This is a test',
-        points: 3,
-        repeat: true,
+test('getNextRepeatStreak starts new streak', _ => {
+    const data = {
+        created: Date.parse('1/20/2025, 12:00:00 PM MST'),
+        completed: Date.parse('1/20/2025, 11:59:59 PM MST'),
+    };
+
+    const result = getNextRepeatStreak(data);
+    assert.equal(result, 1);
+});
+
+test('getNextRepeatStreak completed after end date resets streak', _ => {
+    const data = {
+        created: Date.parse('1/20/2025, 12:00:00 PM MST'),
+        completed: Date.parse('1/21/2025, 12:00:01 AM MST'),
+        repeatStreak: 1,
+    };
+
+    const result = getNextRepeatStreak(data);
+    assert.equal(result, 1);
+});
+
+test('getNextRepeatStreak completed before end date increments streak', _ => {
+    const data = {
+        created: Date.parse('1/20/2025, 12:00:00 PM MST'),
+        completed: Date.parse('1/20/2025, 11:59:59 PM MST'),
+        repeatStreak: 1,
+    };
+
+    const result = getNextRepeatStreak(data);
+    assert.equal(result, 2);
+});
+
+test('getNextRepeatStreak weekly completed after end date resets streak', _ => {
+    const data = {
+        created: Date.parse('1/20/2025, 12:00:00 PM MST'),
+        startDate: Date.parse('1/26/2025, 12:00:00 AM MST'),
+        completed: Date.parse('2/2/2025, 12:00:01 AM MST'),
         repeatFrequency: 'weekly',
+        repeatStreak: 1,
     };
 
-    context.mock.timers.enable({
-        apis: ['Date'],
-        now: Date.parse('1/20/2025, 11:59:59 PM MST'),
-    });
-
-    const newItem = repeat(item);
-
-    assert(newItem.id.length === 36);
-    assert(newItem.created > 0);
-    assert(newItem.name === item.name);
-    assert(newItem.description === item.description);
-    assert(newItem.points === item.points);
-    assert(newItem.repeat === item.repeat);
-    assert(newItem.repeatDuration === undefined);
-    assert(newItem.repeatFrequency === 'weekly');
-    assert(newItem.startDate === Date.parse('1/26/2025, 12:00:00 AM MST'));
+    const result = getNextRepeatStreak(data);
+    assert.equal(result, 1);
 });
 
-test('No duration, frequency = monthly, repeats indefinitely, starts next month', context => {
-    const item = {
-        name: 'Test',
-        description: 'This is a test',
-        points: 3,
-        repeat: true,
-        repeatFrequency: 'monthly',
+test('getNextRepeatStreak weekly completed before end date increments streak', _ => {
+    const data = {
+        created: Date.parse('1/20/2025, 12:00:00 PM MST'),
+        startDate: Date.parse('1/26/2025, 12:00:00 AM MST'),
+        completed: Date.parse('2/1/2025, 11:59:59 PM MST'),
+        repeatFrequency: 'weekly',
+        repeatStreak: 1,
     };
 
-    context.mock.timers.enable({
-        apis: ['Date'],
-        now: Date.parse('1/20/2025, 11:59:59 PM MST'),
-    });
-
-    const newItem = repeat(item);
-
-    assert(newItem.id.length === 36);
-    assert(newItem.created > 0);
-    assert(newItem.name === item.name);
-    assert(newItem.description === item.description);
-    assert(newItem.points === item.points);
-    assert(newItem.repeat === item.repeat);
-    assert(newItem.repeatDuration === undefined);
-    assert(newItem.repeatFrequency === 'monthly');
-    assert(newItem.startDate === Date.parse('2/1/2025, 12:00:00 AM MST'));
+    const result = getNextRepeatStreak(data);
+    assert.equal(result, 2);
 });
 
-test('No duration, frequency = yearly, repeats indefinitely, starts next year', context => {
-    const item = {
-        name: 'Test',
-        description: 'This is a test',
-        points: 3,
-        repeat: true,
-        repeatFrequency: 'yearly',
-    };
+test('getNextStartDate returns next day', _ => {
+    const date = Date.parse('1/20/2025, 11:59:59 PM MST');
+    const result = getNextStartDate(date);
+    assert.equal(result, Date.parse('1/21/2025, 12:00:00 AM MST'));
+});
 
-    context.mock.timers.enable({
-        apis: ['Date'],
-        now: Date.parse('1/20/2025, 11:59:59 PM MST'),
-    });
+test('getNextStartDate daily returns next day', _ => {
+    const date = Date.parse('1/20/2025, 11:59:59 PM MST');
+    const result = getNextStartDate(date, 'daily');
+    assert.equal(result, Date.parse('1/21/2025, 12:00:00 AM MST'));
+});
 
-    const newItem = repeat(item);
+test('getNextStartDate weekly returns next week', _ => {
+    const date = Date.parse('1/20/2025, 11:59:59 PM MST');
+    const result = getNextStartDate(date, 'weekly');
+    assert.equal(result, Date.parse('1/26/2025, 12:00:00 AM MST'));
+});
 
-    assert(newItem.id.length === 36);
-    assert(newItem.created > 0);
-    assert(newItem.name === item.name);
-    assert(newItem.description === item.description);
-    assert(newItem.points === item.points);
-    assert(newItem.repeat === item.repeat);
-    assert(newItem.repeatDuration === undefined);
-    assert(newItem.repeatFrequency === 'yearly');
-    assert(newItem.startDate === Date.parse('1/1/2026, 12:00:00 AM MST'));
+test('getNextStartDate monthly returns next month', _ => {
+    const date = Date.parse('1/20/2025, 11:59:59 PM MST');
+    const result = getNextStartDate(date, 'monthly');
+    assert.equal(result, Date.parse('2/1/2025, 12:00:00 AM MST'));
+});
+
+test('getNextStartDate yearly returns next year', _ => {
+    const date = Date.parse('1/20/2025, 11:59:59 PM MST');
+    const result = getNextStartDate(date, 'yearly');
+    assert.equal(result, Date.parse('1/1/2026, 12:00:00 AM MST'));
 });

@@ -6,7 +6,7 @@ import RewardEditor from './RewardEditor.js';
 import RewardsData from './data/RewardsData.js';
 
 import {fade, peelOut, shrink} from './animation.js';
-import repeat from './repeat.js';
+import {repeat} from './repeat.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -172,7 +172,6 @@ export default class Reward extends CustomElement {
 
     async #redeem() {
         this.#data.redeemed = Date.now();
-
         RewardsData.update(this.#data);
         this.raiseEvent('RewardRedeemed', this.#data);
 
@@ -184,21 +183,13 @@ export default class Reward extends CustomElement {
             return;
         }
 
-        const newData = repeat({
-            name: this.#data.name,
-            description: this.#data.description,
-            points: this.#data.points,
-            repeatDuration: this.#data.repeatDuration,
-            repeatFrequency: this.#data.repeatFrequency,
-        });
-
+        const newData = repeat(this.#data);
         RewardsData.add(newData);
         this.raiseEvent('RewardCreated', newData);
     }
 
     async #unredeem() {
         this.#data.redeemed = undefined;
-
         RewardsData.update(this.#data);
         this.raiseEvent('RewardUnredeemed', this.#data);
 

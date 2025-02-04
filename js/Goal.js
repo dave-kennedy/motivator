@@ -6,7 +6,7 @@ import Menu from './Menu.js';
 import Modal from './Modal.js';
 
 import {fade, peelOut, shrink} from './animation.js';
-import repeat from './repeat.js';
+import {getNextRepeatStreak, repeat} from './repeat.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -37,6 +37,7 @@ goal-component .name {
 
 goal-component .points::before,
 goal-component .repeat::before,
+goal-component .repeat-streak::before,
 goal-component .start-date::before,
 goal-component .completed::before {
     display: inline-block;
@@ -50,6 +51,10 @@ goal-component .points::before {
 
 goal-component .repeat::before {
     content: url('img/repeat.svg');
+}
+
+goal-component .repeat-streak::before {
+    content: url('img/trend.svg');
 }
 
 goal-component .start-date::before,
@@ -128,6 +133,27 @@ export default class Goal extends CustomElement {
             $content.appendChild($repeat);
         }
 
+        if (this.#data.repeatStreak > 1) {
+            if (this.#data.completed || getNextRepeatStreak(this.#data) > this.#data.repeatStreak) {
+                const $repeatStreak = document.createElement('div');
+                $repeatStreak.className = 'repeat-streak';
+
+                if (!this.#data.repeatFrequency) {
+                    $repeatStreak.textContent = `Completed ${this.#data.repeatStreak} times in a day`;
+                } else if (this.#data.repeatFrequency === 'daily') {
+                    $repeatStreak.textContent = `Completed ${this.#data.repeatStreak} days in a row`;
+                } else if (this.#data.repeatFrequency === 'weekly') {
+                    $repeatStreak.textContent = `Completed ${this.#data.repeatStreak} weeks in a row`;
+                } else if (this.#data.repeatFrequency === 'monthly') {
+                    $repeatStreak.textContent = `Completed ${this.#data.repeatStreak} months in a row`;
+                } else if (this.#data.repeatFrequency === 'yearly') {
+                    $repeatStreak.textContent = `Completed ${this.#data.repeatStreak} years in a row`;
+                }
+
+                $content.appendChild($repeatStreak);
+            }
+        }
+
         if (this.#data.startDate > Date.now()) {
             const $startDate = document.createElement('div');
             $startDate.className = 'start-date';
@@ -172,7 +198,6 @@ export default class Goal extends CustomElement {
 
     async #complete() {
         this.#data.completed = Date.now();
-
         GoalsData.update(this.#data);
         this.raiseEvent('GoalCompleted', this.#data);
 
@@ -184,21 +209,14 @@ export default class Goal extends CustomElement {
             return;
         }
 
-        const newData = repeat({
-            name: this.#data.name,
-            description: this.#data.description,
-            points: this.#data.points,
-            repeatDuration: this.#data.repeatDuration,
-            repeatFrequency: this.#data.repeatFrequency,
-        });
-
+        const newData = repeat(this.#data);
+        newData.repeatStreak = getNextRepeatStreak(this.#data);
         GoalsData.add(newData);
         this.raiseEvent('GoalCreated', newData);
     }
 
     async #uncomplete() {
         this.#data.completed = undefined;
-
         GoalsData.update(this.#data);
         this.raiseEvent('GoalUncompleted', this.#data);
 

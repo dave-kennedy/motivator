@@ -33,15 +33,6 @@ if people are actually using it. So please give me your feedback!
 * Better favicon
 * Better repeat animation
     * Flip instead of swipe?
-* Goal repeat streaks
-    * Repeats immediately: 3 times in a day
-    * Repeats daily/weekly/etc.: 3 days/weeks/etc. in a row
-    * Double streak: 6 times/days/etc. in a row
-    * Triple streak: 12 times/days/etc. in a row
-    * Do something neat when duration is met
-        * Bonus points?
-        * Fancy animation?
-        * Only if duration > 3, or what?
 * Import/export JSON
 * More unit tests
 * User defined sorting
