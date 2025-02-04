@@ -47,7 +47,11 @@ export default class Menu extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
-        const $handle = new Button(this.#handle);
+        const $handle = new Button({
+            className: 'transparent',
+            ...this.#handle
+        });
+
         $handle.addEventListener('click', this.toggle);
         this.appendChild($handle);
 

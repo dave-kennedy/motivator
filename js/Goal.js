@@ -73,8 +73,8 @@ goal-component check-button-component {
 
 goal-component menu-component {
     position: absolute;
-    bottom: 1em;
-    right: 1em;
+    right: 0.25em;
+    top: 0.25em;
 }`);
 
 export default class Goal extends CustomElement {
@@ -178,7 +178,6 @@ export default class Goal extends CustomElement {
 
         const $menu = new Menu({
             handle: {
-                className: 'round',
                 icon: {alt: 'Menu', src: 'img/more.svg'},
                 title: 'Menu',
             },

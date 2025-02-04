@@ -68,8 +68,8 @@ reward-component check-button-component {
 
 reward-component menu-component {
     position: absolute;
-    bottom: 1em;
-    right: 1em;
+    right: 0.25em;
+    top: 0.25em;
 }`);
 
 export default class Reward extends CustomElement {
@@ -152,7 +152,6 @@ export default class Reward extends CustomElement {
 
         const $menu = new Menu({
             handle: {
-                className: 'round',
                 icon: {alt: 'Menu', src: 'img/more.svg'},
                 title: 'Menu',
             },

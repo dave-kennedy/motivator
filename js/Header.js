@@ -74,7 +74,6 @@ export default class Header extends CustomElement {
 
         const $menu = new Menu({
             handle: {
-                className: 'gray round',
                 icon: {alt: 'Menu', src: 'img/menu.svg'},
                 title: 'Menu',
             },

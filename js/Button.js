@@ -73,6 +73,10 @@ button-component.round button {
 
 button-component.square button {
     border-radius: 0;
+}
+
+button-component.transparent button {
+    background-color: transparent;
 }`);
 
 export default class Button extends CustomElement {
