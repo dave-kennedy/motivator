@@ -1,29 +1,51 @@
-import ArrayData from './ArrayData.js';
+import ListData from './ListData.js';
+import LocalStorage from './LocalStorage.js';
 
-export default class RewardsData extends ArrayData {
-    static #items;
+export default class RewardsData {
+    static #data;
 
-    static get items() {
-        if (this.#items === undefined) {
-            this.#items = this.load();
+    static get data() {
+        if (this.#data === undefined) {
+            this.#data = this.#load();
         }
 
-        return this.#items;
+        return this.#data;
     }
 
-    static get localStorageKey() {
-        return 'rewards';
+    static #load() {
+        const items = LocalStorage.load('rewards');
+        return new ListData(items);
     }
 
-    static get redeemed() {
-        return this.items.filter(item => item.redeemed);
+    static #save() {
+        const items = this.data.getItems();
+        LocalStorage.save('rewards', items);
     }
 
-    static get redeemedPoints() {
-        return this.redeemed.reduce((total, item) => total + item.points, 0);
+    static add(item) {
+        this.data.add(item);
+        this.#save();
     }
 
-    static get unredeemed() {
-        return this.items.filter(item => !item.redeemed);
+    static delete(item) {
+        this.data.delete(item);
+        this.#save();
+    }
+
+    static update(item) {
+        this.data.update(item);
+        this.#save();
+    }
+
+    static getItems({filter, sort, start, count}) {
+        return this.data.getItems({filter, sort, start, count});
+    }
+
+    static getPage({filter, sort, start, count}) {
+        return this.data.getPage({filter, sort, start, count});
+    }
+
+    static getPosition({filter, sort, item}) {
+        return this.data.getPosition({filter, sort, item});
     }
 }

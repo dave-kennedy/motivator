@@ -5,24 +5,20 @@ import Modal from './Modal.js';
 import RewardEditor from './RewardEditor.js';
 import RewardsData from './data/RewardsData.js';
 
-import {peelOutLeft, peelOutRight, popOut, shiftUp} from './animation.js';
 import {repeat} from './repeat.js';
 
 const stylesheet = new CSSStyleSheet();
 
-stylesheet.replace(`@media (min-width: 544px) {
-    reward-component {
-        align-self: center;
-        width: 32em;
-    }
+stylesheet.replace(`reward-component {
+    display: block;
+    padding-bottom: 1em;
+    padding-left: 1.25em;
 }
 
 reward-component .content {
     background-color: #eee;
     border-radius: 1em;
     box-sizing: border-box;
-    margin-bottom: 1em;
-    margin-left: 1.25em;
     padding: 1em 1em 1em 2em;
     position: relative;
 
@@ -172,29 +168,21 @@ export default class Reward extends CustomElement {
     async #redeem() {
         this.#data.redeemed = Date.now();
         RewardsData.update(this.#data);
-        this.raiseEvent('RewardRedeemed', this.#data);
-
-        await peelOutRight({element: this, delay: 750, duration: 500, fill: 'forwards'});
-        await shiftUp({element: this, duration: 250});
-        this.remove();
 
         if (!this.#data.repeat) {
+            this.raiseEvent('RewardRedeemed', this.#data);
             return;
         }
 
         const newData = repeat(this.#data);
         RewardsData.add(newData);
-        this.raiseEvent('RewardCreated', newData);
+        this.raiseEvent('RewardRepeated', {redeemed: this.#data, repeated: newData});
     }
 
     async #unredeem() {
         this.#data.redeemed = undefined;
         RewardsData.update(this.#data);
         this.raiseEvent('RewardUnredeemed', this.#data);
-
-        await peelOutLeft({element: this, delay: 750, duration: 500, fill: 'forwards'});
-        await shiftUp({element: this, duration: 250});
-        this.remove();
     }
 
     #edit() {
@@ -220,12 +208,8 @@ export default class Reward extends CustomElement {
     }
 
     async #delete() {
-        RewardsData.remove(this.#data);
+        RewardsData.delete(this.#data);
         this.raiseEvent('RewardDeleted', this.#data);
-
-        await popOut({element: this, duration: 250, fill: 'forwards'});
-        await shiftUp({element: this, duration: 250});
-        this.remove();
     }
 }
 

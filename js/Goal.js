@@ -5,24 +5,20 @@ import GoalsData from './data/GoalsData.js';
 import Menu from './Menu.js';
 import Modal from './Modal.js';
 
-import {peelOutLeft, peelOutRight, popOut, shiftUp} from './animation.js';
 import {getNextRepeatStreak, repeat} from './repeat.js';
 
 const stylesheet = new CSSStyleSheet();
 
-stylesheet.replace(`@media (min-width: 544px) {
-    goal-component {
-        align-self: center;
-        width: 32em;
-    }
+stylesheet.replace(`goal-component {
+    display: block;
+    padding-bottom: 1em;
+    padding-left: 1.25em;
 }
 
 goal-component .content {
     background-color: #eee;
     border-radius: 1em;
     box-sizing: border-box;
-    margin-bottom: 1em;
-    margin-left: 1.25em;
     padding: 1em 1em 1em 2em;
     position: relative;
 
@@ -198,30 +194,22 @@ export default class Goal extends CustomElement {
     async #complete() {
         this.#data.completed = Date.now();
         GoalsData.update(this.#data);
-        this.raiseEvent('GoalCompleted', this.#data);
-
-        await peelOutRight({element: this, delay: 750, duration: 500, fill: 'forwards'});
-        await shiftUp({element: this, duration: 250});
-        this.remove();
 
         if (!this.#data.repeat) {
+            this.raiseEvent('GoalCompleted', this.#data);
             return;
         }
 
         const newData = repeat(this.#data);
         newData.repeatStreak = getNextRepeatStreak(this.#data);
         GoalsData.add(newData);
-        this.raiseEvent('GoalCreated', newData);
+        this.raiseEvent('GoalRepeated', {completed: this.#data, repeated: newData});
     }
 
     async #uncomplete() {
         this.#data.completed = undefined;
         GoalsData.update(this.#data);
         this.raiseEvent('GoalUncompleted', this.#data);
-
-        await peelOutLeft({element: this, delay: 750, duration: 500, fill: 'forwards'});
-        await shiftUp({element: this, duration: 250});
-        this.remove();
     }
 
     #edit() {
@@ -247,12 +235,8 @@ export default class Goal extends CustomElement {
     }
 
     async #delete() {
-        GoalsData.remove(this.#data);
+        GoalsData.delete(this.#data);
         this.raiseEvent('GoalDeleted', this.#data);
-
-        await popOut({element: this, duration: 250, fill: 'forwards'});
-        await shiftUp({element: this, duration: 250});
-        this.remove();
     }
 }
 

@@ -91,12 +91,13 @@ export default class CheckButton extends CustomElement {
 
         const $button = document.createElement('button');
 
-        $button.addEventListener('click', _ => {
-            this.#onClick();
-
+        $button.addEventListener('click', async _ => {
             if (this.classList.toggle('checked') && ConfigData.get('animations') === 'fancy') {
                 this.#renderStars();
             }
+
+            await Promise.all(this.getAnimations({subtree: true}).map(a => a.finished));
+            this.#onClick();
         });
 
         this.appendChild($button);

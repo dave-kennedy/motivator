@@ -25,7 +25,6 @@ if people are actually using it. So please give me your feedback!
 
 ## BUGS
 
-* Flex ordering breaks keyboard navigation
 * Moving any custom element with `append`, `before`, `after`, etc. causes it to
   be re-rendered, duplicating its contents
 
@@ -33,12 +32,8 @@ if people are actually using it. So please give me your feedback!
 
 * Analytics
 * Android app
-* Better data
-    * Cloud storage
-    * Incremental loading
+* Cloud sync
 * Better favicon
-* Better repeat animation
-    * Flip instead of swipe?
 * Import/export JSON
 * More unit tests
 * Recalculate repeat streak/repeated items when completed date is updated

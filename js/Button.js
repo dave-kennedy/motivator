@@ -2,7 +2,7 @@ import CustomElement from './CustomElement.js';
 
 const stylesheet = new CSSStyleSheet();
 
-stylesheet.replace(`button-component {
+stylesheet.replace(`button-component:not([hidden]) {
     display: block;
 }
 
@@ -85,10 +85,11 @@ export default class Button extends CustomElement {
     #label;
     #onClick;
     #title;
+    #type;
 
     $button;
 
-    constructor({className, icon, label, onClick, title}) {
+    constructor({className, icon, label, onClick, title, type}) {
         super();
 
         this.#className = className;
@@ -96,6 +97,7 @@ export default class Button extends CustomElement {
         this.#label = label;
         this.#onClick = onClick;
         this.#title = title;
+        this.#type = type;
     }
 
     connectedCallback() {
@@ -126,11 +128,15 @@ export default class Button extends CustomElement {
         }
 
         if (this.#onClick) {
-            this.addEventListener('click', event => this.#onClick(event));
+            this.$button.addEventListener('click', event => this.#onClick(event));
         }
 
         if (this.#title) {
-            this.title = this.#title;
+            this.$button.title = this.#title;
+        }
+
+        if (this.#type) {
+            this.$button.type = this.#type;
         }
     }
 
