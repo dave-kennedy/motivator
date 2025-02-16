@@ -5,7 +5,7 @@ import Modal from './Modal.js';
 import RewardEditor from './RewardEditor.js';
 import RewardsData from './data/RewardsData.js';
 
-import {fade, peelOut, shrink} from './animation.js';
+import {peelOutLeft, peelOutRight, popOut, shiftUp} from './animation.js';
 import {repeat} from './repeat.js';
 
 const stylesheet = new CSSStyleSheet();
@@ -174,8 +174,8 @@ export default class Reward extends CustomElement {
         RewardsData.update(this.#data);
         this.raiseEvent('RewardRedeemed', this.#data);
 
-        await peelOut({element: this, direction: 'right', delay: 750, duration: 500});
-        await shrink({element: this, dimension: 'height', duration: 250});
+        await peelOutRight({element: this, delay: 750, duration: 500, fill: 'forwards'});
+        await shiftUp({element: this, duration: 250});
         this.remove();
 
         if (!this.#data.repeat) {
@@ -192,8 +192,8 @@ export default class Reward extends CustomElement {
         RewardsData.update(this.#data);
         this.raiseEvent('RewardUnredeemed', this.#data);
 
-        await peelOut({element: this, direction: 'left', delay: 750, duration: 500});
-        await shrink({element: this, dimension: 'height', duration: 250});
+        await peelOutLeft({element: this, delay: 750, duration: 500, fill: 'forwards'});
+        await shiftUp({element: this, duration: 250});
         this.remove();
     }
 
@@ -223,8 +223,8 @@ export default class Reward extends CustomElement {
         RewardsData.remove(this.#data);
         this.raiseEvent('RewardDeleted', this.#data);
 
-        await fade({element: this, direction: 'out', duration: 250});
-        await shrink({element: this, dimension: 'height', duration: 250});
+        await popOut({element: this, duration: 250, fill: 'forwards'});
+        await shiftUp({element: this, duration: 250});
         this.remove();
     }
 }

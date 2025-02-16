@@ -18,50 +18,87 @@ document.addEventListener('ConfigUpdated', setBodyClass);
 mediaQuery.addEventListener('change', setBodyClass);
 setBodyClass();
 
-export function fade({element, direction, delay, duration}) {
+export function fadeIn({element, delay, direction, duration, fill}) {
     return element.animate({
-        opacity: direction === 'in' ? [0, 1] : [1, 0],
+        opacity: [0, 1],
     }, {
         delay: reduceMotion() ? 0 : delay,
+        direction,
         duration: reduceMotion() ? 1 : duration,
-        easing: 'ease',
-        fill: 'forwards',
+        easing: 'ease-in-out',
+        fill,
     }).finished;
 }
 
-export function grow({element, dimension, delay, duration}) {
-    const keyframes = dimension === 'height'
-        ? {height: [0, `${element.scrollHeight}px`]}
-        : {width: [0, `${element.scrollWidth}px`]};
-
-    return element.animate(keyframes, {
-        delay: reduceMotion() ? 0 : delay,
-        duration: reduceMotion() ? 1 : duration,
-        easing: 'ease',
-        fill: 'forwards',
-    }).finished;
+export function fadeOut(params) {
+    return fadeIn({direction: 'reverse', ...params});
 }
 
-export function peelOut({element, direction, delay, duration}) {
+export function peelOut({element, translation, delay, direction, duration, fill}) {
     return element.animate({
-        translate: [0, direction === 'left' ? '-100vw 0' : '100vw 0'],
+        translate: [0, translation],
     }, {
         delay: reduceMotion() ? 0 : delay,
+        direction,
         duration: reduceMotion() ? 1 : duration,
         easing: 'cubic-bezier(0.5, 0, 0.5, -0.5)',
-        fill: 'forwards',
+        fill,
     }).finished;
 }
 
-export function shrink({element, dimension, delay, duration}) {
-    const keyframes = dimension === 'height'
-        ? {height: [`${element.scrollHeight}px`, 0]}
-        : {width: [`${element.scrollWidth}px`, 0]};
+export function peelOutLeft(params) {
+    return peelOut({translation: '-100vw 0', ...params});
+}
 
-    return element.animate(keyframes, {
+export function peelOutRight(params) {
+    return peelOut({translation: '100vw 0', ...params});
+}
+
+export function popIn({element, delay, direction, duration, fill}) {
+    return element.animate({
+        opacity: [0, 1],
+        scale: [0.5, 1],
+    }, {
         delay: reduceMotion() ? 0 : delay,
+        direction,
         duration: reduceMotion() ? 1 : duration,
-        easing: 'ease',
-        fill: 'forwards',
+        easing: 'ease-in-out',
+        fill,
     }).finished;
+}
+
+export function popOut(params) {
+    return popIn({direction: 'reverse', ...params});
+}
+
+export function shiftDown({element, delay, direction, duration, fill}) {
+    return element.animate({
+        marginTop: [`-${element.scrollHeight}px`, 0],
+    }, {
+        delay: reduceMotion() ? 0 : delay,
+        direction,
+        duration: reduceMotion() ? 1 : duration,
+        easing: 'ease-in-out',
+        fill,
+    }).finished;
+}
+
+export function shiftUp(params) {
+    return shiftDown({direction: 'reverse', ...params});
+}
+
+export function slideOpen({element, delay, direction, duration, fill}) {
+    return element.animate({
+        height: [0, `${element.scrollHeight}px`],
+    }, {
+        delay: reduceMotion() ? 0 : delay,
+        direction,
+        duration: reduceMotion() ? 1 : duration,
+        easing: 'ease-in-out',
+        fill,
+    }).finished;
+}
+
+export function slideClose(params) {
+    return slideOpen({direction: 'reverse', ...params});
 }

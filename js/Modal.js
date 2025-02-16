@@ -1,7 +1,7 @@
 import Button from './Button.js';
 import CustomElement from './CustomElement.js';
 
-import {fade} from './animation.js';
+import {fadeIn, fadeOut} from './animation.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -118,7 +118,7 @@ export default class Modal extends CustomElement {
             }
         }
 
-        fade({element: this, direction: 'in', duration: 250});
+        fadeIn({element: this, duration: 250});
     }
 
     #onKeyDown = event => {
@@ -128,7 +128,7 @@ export default class Modal extends CustomElement {
     };
 
     close = async _ => {
-        await fade({element: this, direction: 'out', duration: 250});
+        await fadeOut({element: this, duration: 250});
         this.dispatchEvent(new Event('close'));
         this.remove();
     };

@@ -1,7 +1,7 @@
 import Button from './Button.js';
 import CustomElement from './CustomElement.js';
 
-import {grow, shrink} from './animation.js';
+import {slideClose, slideOpen} from './animation.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -80,7 +80,7 @@ export default class Menu extends CustomElement {
         document.removeEventListener('click', this.close);
         document.removeEventListener('keydown', this.#onKeyDown);
 
-        await shrink({element: this.$items, dimension: 'height', duration: 250});
+        await slideClose({element: this.$items, duration: 250});
         this.dispatchEvent(new Event('close'));
         this.classList.remove('open');
     };
@@ -88,7 +88,7 @@ export default class Menu extends CustomElement {
     open = async _ => {
         this.classList.add('open');
         this.dispatchEvent(new Event('open'));
-        await grow({element: this.$items, dimension: 'height', duration: 250});
+        await slideOpen({element: this.$items, duration: 250});
 
         addEventListener('hashchange', this.close);
         document.addEventListener('click', this.close);

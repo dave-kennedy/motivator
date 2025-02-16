@@ -5,7 +5,7 @@ import GoalsData from './data/GoalsData.js';
 import Menu from './Menu.js';
 import Modal from './Modal.js';
 
-import {fade, peelOut, shrink} from './animation.js';
+import {peelOutLeft, peelOutRight, popOut, shiftUp} from './animation.js';
 import {getNextRepeatStreak, repeat} from './repeat.js';
 
 const stylesheet = new CSSStyleSheet();
@@ -200,8 +200,8 @@ export default class Goal extends CustomElement {
         GoalsData.update(this.#data);
         this.raiseEvent('GoalCompleted', this.#data);
 
-        await peelOut({element: this, direction: 'right', delay: 750, duration: 500});
-        await shrink({element: this, dimension: 'height', duration: 250});
+        await peelOutRight({element: this, delay: 750, duration: 500, fill: 'forwards'});
+        await shiftUp({element: this, duration: 250});
         this.remove();
 
         if (!this.#data.repeat) {
@@ -219,8 +219,8 @@ export default class Goal extends CustomElement {
         GoalsData.update(this.#data);
         this.raiseEvent('GoalUncompleted', this.#data);
 
-        await peelOut({element: this, direction: 'left', delay: 750, duration: 500});
-        await shrink({element: this, dimension: 'height', duration: 250});
+        await peelOutLeft({element: this, delay: 750, duration: 500, fill: 'forwards'});
+        await shiftUp({element: this, duration: 250});
         this.remove();
     }
 
@@ -250,8 +250,8 @@ export default class Goal extends CustomElement {
         GoalsData.remove(this.#data);
         this.raiseEvent('GoalDeleted', this.#data);
 
-        await fade({element: this, direction: 'out', duration: 250});
-        await shrink({element: this, dimension: 'height', duration: 250});
+        await popOut({element: this, duration: 250, fill: 'forwards'});
+        await shiftUp({element: this, duration: 250});
         this.remove();
     }
 }
