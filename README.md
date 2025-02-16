@@ -23,6 +23,13 @@ data will be lost if you clear your browser cache. In fact, the whole data
 layer is extremely naive. I may do something different in the future but only
 if people are actually using it. So please give me your feedback!
 
+## BUGS
+
+* Flex ordering breaks keyboard navigation
+* Moving any custom element with `append`, `before`, `after`, etc. causes it to
+  be re-rendered, duplicating its contents
+* Repeat streak lost on edit
+
 ## TODO
 
 * Analytics
