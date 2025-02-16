@@ -30,6 +30,8 @@ export default class GoalEditor extends CustomElement {
     $repeat;
     $repeatDuration;
     $repeatFrequency;
+    $repeatStreak;
+    $created;
     $startDate;
     $completed;
 
@@ -77,19 +79,6 @@ export default class GoalEditor extends CustomElement {
 
         this.appendChild(this.$points);
 
-        if (this.#data.completed) {
-            this.$completed = new Input({
-                id: 'completed-input',
-                label: 'Completed',
-                required: true,
-                type: 'datetime-local',
-                value: this.#data.completed,
-            });
-
-            this.appendChild(this.$completed);
-            return;
-        }
-
         this.$repeat = new Input({
             className: 'row-reverse',
             id: 'repeat-input',
@@ -129,6 +118,29 @@ export default class GoalEditor extends CustomElement {
 
         $repeatOptions.appendChild(this.$repeatDuration);
 
+        if (this.#data.repeatStreak) {
+            this.$repeatStreak = new Input({
+                id: 'repeat-streak-input',
+                label: 'Repeat streak',
+                type: 'number',
+                value: this.#data.repeatStreak,
+            });
+
+            this.appendChild(this.$repeatStreak);
+        }
+
+        if (this.#data.created) {
+            this.$created = new Input({
+                id: 'created-input',
+                label: 'Created',
+                required: true,
+                type: 'datetime-local',
+                value: this.#data.created,
+            });
+
+            this.appendChild(this.$created);
+        }
+
         this.$startDate = new Input({
             id: 'start-date-input',
             label: 'Start date',
@@ -137,6 +149,18 @@ export default class GoalEditor extends CustomElement {
         });
 
         this.appendChild(this.$startDate);
+
+        if (this.#data.completed) {
+            this.$completed = new Input({
+                id: 'completed-input',
+                label: 'Completed',
+                required: true,
+                type: 'datetime-local',
+                value: this.#data.completed,
+            });
+
+            this.appendChild(this.$completed);
+        }
     }
 
     save() {
@@ -146,23 +170,19 @@ export default class GoalEditor extends CustomElement {
 
         const data = {
             id: this.#data.id || crypto.randomUUID(),
-            created: this.#data.created || Date.now(),
             name: this.$name.value,
             description: this.$description.value || undefined,
             points: this.$points.value,
+            repeat: this.$repeat.value || undefined,
+            repeatStreak: this.$repeatStreak?.value || undefined,
+            created: this.$created?.value || Date.now(),
+            startDate: this.$startDate.value || undefined,
+            completed: this.$completed?.value || undefined,
         };
 
-        if (this.#data.completed) {
-            data.repeat = this.#data.repeat;
-            data.repeatDuration = this.#data.repeatDuration;
-            data.repeatFrequency = this.#data.repeatFrequency;
-            data.startDate = this.#data.startDate;
-            data.completed = this.$completed.value;
-        } else {
-            data.repeat = this.$repeat.value || undefined;
+        if (data.repeat) {
             data.repeatDuration = this.$repeatDuration.value || undefined;
             data.repeatFrequency = this.$repeatFrequency.value || undefined;
-            data.startDate = this.$startDate.value || undefined;
         }
 
         if (!this.#data.id) {
@@ -181,6 +201,9 @@ export default class GoalEditor extends CustomElement {
             this.$name.validate(),
             this.$points.validate(),
             this.$repeatDuration?.validate(),
+            this.$repeatStreak?.validate(),
+            this.$created?.validate(),
+            this.$startDate?.validate(),
             this.$completed?.validate(),
         ].includes(false);
     }

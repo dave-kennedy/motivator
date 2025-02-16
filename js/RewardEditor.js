@@ -30,6 +30,7 @@ export default class RewardEditor extends CustomElement {
     $repeat;
     $repeatDuration;
     $repeatFrequency;
+    $created;
     $startDate;
     $redeemed;
 
@@ -77,19 +78,6 @@ export default class RewardEditor extends CustomElement {
 
         this.appendChild(this.$points);
 
-        if (this.#data.redeemed) {
-            this.$redeemed = new Input({
-                id: 'redeemed-input',
-                label: 'Redeemed',
-                required: true,
-                type: 'datetime-local',
-                value: this.#data.redeemed,
-            });
-
-            this.appendChild(this.$redeemed);
-            return;
-        }
-
         this.$repeat = new Input({
             className: 'row-reverse',
             id: 'repeat-input',
@@ -129,6 +117,18 @@ export default class RewardEditor extends CustomElement {
 
         $repeatOptions.appendChild(this.$repeatDuration);
 
+        if (this.#data.created) {
+            this.$created = new Input({
+                id: 'created-input',
+                label: 'Created',
+                required: true,
+                type: 'datetime-local',
+                value: this.#data.created,
+            });
+
+            this.appendChild(this.$created);
+        }
+
         this.$startDate = new Input({
             id: 'start-date-input',
             label: 'Start date',
@@ -137,6 +137,18 @@ export default class RewardEditor extends CustomElement {
         });
 
         this.appendChild(this.$startDate);
+
+        if (this.#data.redeemed) {
+            this.$redeemed = new Input({
+                id: 'redeemed-input',
+                label: 'Redeemed',
+                required: true,
+                type: 'datetime-local',
+                value: this.#data.redeemed,
+            });
+
+            this.appendChild(this.$redeemed);
+        }
     }
 
     save() {
@@ -146,23 +158,18 @@ export default class RewardEditor extends CustomElement {
 
         const data = {
             id: this.#data.id || crypto.randomUUID(),
-            created: this.#data.created || Date.now(),
             name: this.$name.value,
             description: this.$description.value || undefined,
             points: this.$points.value,
+            repeat: this.$repeat.value || undefined,
+            created: this.$created?.value || Date.now(),
+            startDate: this.$startDate.value || undefined,
+            redeemed: this.$redeemed?.value || undefined,
         };
 
-        if (this.#data.redeemed) {
-            data.repeat = this.#data.repeat;
-            data.repeatDuration = this.#data.repeatDuration;
-            data.repeatFrequency = this.#data.repeatFrequency;
-            data.startDate = this.#data.startDate;
-            data.redeemed = this.$redeemed.value;
-        } else {
-            data.repeat = this.$repeat.value || undefined;
+        if (data.repeat) {
             data.repeatDuration = this.$repeatDuration.value || undefined;
             data.repeatFrequency = this.$repeatFrequency.value || undefined;
-            data.startDate = this.$startDate.value || undefined;
         }
 
         if (!this.#data.id) {
@@ -181,6 +188,8 @@ export default class RewardEditor extends CustomElement {
             this.$name.validate(),
             this.$points.validate(),
             this.$repeatDuration?.validate(),
+            this.$created?.validate(),
+            this.$startDate?.validate(),
             this.$redeemed?.validate(),
         ].includes(false);
     }

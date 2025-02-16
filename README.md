@@ -28,7 +28,6 @@ if people are actually using it. So please give me your feedback!
 * Flex ordering breaks keyboard navigation
 * Moving any custom element with `append`, `before`, `after`, etc. causes it to
   be re-rendered, duplicating its contents
-* Repeat streak lost on edit
 
 ## TODO
 
@@ -42,4 +41,5 @@ if people are actually using it. So please give me your feedback!
     * Flip instead of swipe?
 * Import/export JSON
 * More unit tests
+* Recalculate repeat streak/repeated items when completed date is updated
 * User defined sorting
