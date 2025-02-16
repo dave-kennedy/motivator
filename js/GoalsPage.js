@@ -45,7 +45,7 @@ export default class GoalsPage extends CustomElement {
         document.removeEventListener('GoalUncompleted', this.#onDataChange);
     }
 
-    onPageTransitionStart() {
+    onPageVisible() {
         ActionButton.render({
             label: 'New Goal',
             onClick: _ => this.#newGoal(),
@@ -55,9 +55,7 @@ export default class GoalsPage extends CustomElement {
             this.#render();
             this.#rendered = true;
         }
-    }
 
-    onPageTransitionEnd() {
         this.raiseEvent('GoalsPageRendered');
     }
 

@@ -52,16 +52,14 @@ export default class HistoryPage extends CustomElement {
         document.removeEventListener('RewardUnredeemed', this.#onDataChange);
     }
 
-    onPageTransitionStart() {
+    onPageVisible() {
         ActionButton.remove();
 
         if (!this.#rendered) {
             this.#render();
             this.#rendered = true;
         }
-    }
 
-    onPageTransitionEnd() {
         this.raiseEvent('HistoryPageRendered');
     }
 

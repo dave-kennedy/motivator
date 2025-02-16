@@ -49,7 +49,7 @@ pager-component .pages > * {
 
     position: relative;
     left: calc(var(--page-index) * -100%);
-    transition: left 250ms;
+    transition: left 250ms, visibility 250ms;
 }
 
 pager-component .pages > .hidden {
@@ -123,10 +123,9 @@ export default class Pager extends CustomElement {
         for (const $page of this.#pages) {
             if ($page.pageId === pageId) {
                 $page.classList.remove('hidden');
-                $page.onPageTransitionStart();
-                $page.afterAnimations(_ => $page.onPageTransitionEnd());
+                $page.onPageVisible();
             } else {
-                $page.afterAnimations(_ => $page.classList.add('hidden'));
+                $page.classList.add('hidden');
             }
         }
 

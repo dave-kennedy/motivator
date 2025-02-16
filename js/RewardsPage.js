@@ -45,7 +45,7 @@ export default class RewardsPage extends CustomElement {
         document.removeEventListener('RewardUnredeemed', this.#onDataChange);
     }
 
-    onPageTransitionStart() {
+    onPageVisible() {
         ActionButton.render({
             label: 'New Reward',
             onClick: _ => this.#newReward(),
@@ -55,9 +55,7 @@ export default class RewardsPage extends CustomElement {
             this.#render();
             this.#rendered = true;
         }
-    }
 
-    onPageTransitionEnd() {
         this.raiseEvent('RewardsPageRendered');
     }
 

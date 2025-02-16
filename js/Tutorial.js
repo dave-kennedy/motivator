@@ -2,17 +2,21 @@ import ConfigData from './data/ConfigData.js';
 import Hint from './Hint.js';
 import Modal from './Modal.js';
 
+import {reduceMotion} from './animation.js';
+
 export default class Tutorial {
     static hints = {
         newGoal: {
             anchor: '#action-button',
             position: 'top-left',
             message: 'Click here to create a new goal',
+            delay: 250,
         },
         completeGoal: {
             anchor: 'goals-page-component check-button-component button',
             position: 'bottom-right',
             message: 'Click here to complete this goal',
+            delay: 500,
         },
         rewardsTab: {
             anchor: '#rewards-tab',
@@ -23,11 +27,13 @@ export default class Tutorial {
             anchor: '#action-button',
             position: 'top-left',
             message: 'Click here to create a new reward',
+            delay: 250,
         },
         redeemReward: {
             anchor: 'rewards-page-component check-button-component button',
             position: 'bottom-right',
             message: 'Click here to redeem this reward',
+            delay: 500,
         },
         historyTab: {
             anchor: '#history-tab',
@@ -38,6 +44,7 @@ export default class Tutorial {
             anchor: 'history-page-component check-button-component button',
             position: 'bottom-right',
             message: 'Accidentally hit the check button? Click here to undo',
+            delay: 250,
         },
     };
 
@@ -98,7 +105,7 @@ export default class Tutorial {
     static onRewardRedeemed = _ => this.displayHint('historyTab');
     static onHistoryPageRendered = _ => this.displayHint('undoCheck');
 
-    static displayHint(hint) {
+    static async displayHint(hint) {
         if (this.hintsDisplayed.includes(hint)) {
             return;
         }
@@ -107,9 +114,14 @@ export default class Tutorial {
             anchor,
             position,
             message,
+            delay,
         } = this.hints[hint];
 
-        const $anchor = document.querySelector(anchor);
+        const $anchor = await new Promise(resolve => {
+            setTimeout(_ => {
+                resolve(document.querySelector(anchor));
+            }, reduceMotion() ? 0 : delay);
+        });
 
         if (!$anchor) {
             return;
@@ -124,11 +136,9 @@ export default class Tutorial {
         document.querySelector('app-component').appendChild($hint);
         this.hintsDisplayed.push(hint);
 
-        $hint.addEventListener('close', _ => {
-            if (Object.keys(this.hints).every(hint => this.hintsDisplayed.includes(hint))) {
-                this.complete();
-            }
-        });
+        if (Object.keys(this.hints).every(hint => this.hintsDisplayed.includes(hint))) {
+            $hint.addEventListener('close', _ => this.complete());
+        }
     }
 
     static complete() {

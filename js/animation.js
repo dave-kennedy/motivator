@@ -2,7 +2,7 @@ import ConfigData from './data/ConfigData.js';
 
 const mediaQuery = matchMedia('(prefers-reduced-motion)');
 
-function reduceMotion() {
+export function reduceMotion() {
     return document.body.classList.contains('reduce-motion');
 }
 
