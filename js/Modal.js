@@ -133,8 +133,12 @@ export default class Modal extends CustomElement {
         this.remove();
     };
 
-    static render({content, buttons}) {
-        const $modal = new Modal({content, buttons});
+    static render(content, buttons) {
+        const $modal = new Modal({
+            content,
+            buttons: buttons || [{focus: true, label: 'OK'}],
+        });
+
         document.querySelector('app-component').appendChild($modal);
     }
 }

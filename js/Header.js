@@ -2,7 +2,6 @@ import About from './About.js';
 import CustomElement from './CustomElement.js';
 import HistoryData from './data/HistoryData.js';
 import Menu from './Menu.js';
-import Modal from './Modal.js';
 import SettingsEditor from './SettingsEditor.js';
 import Tutorial from './Tutorial.js';
 
@@ -82,11 +81,11 @@ export default class Header extends CustomElement {
             items: [{
                 icon: {src: 'img/info.svg'},
                 label: 'About',
-                onClick: _ => this.#showAbout(),
+                onClick: _ => About.render(),
             }, {
                 icon: {src: 'img/settings.svg'},
                 label: 'Settings',
-                onClick: _ => this.#showSettings(),
+                onClick: _ => SettingsEditor.render(),
             }, {
                 icon: {src: 'img/lightbulb.svg'},
                 label: 'Tutorial',
@@ -100,25 +99,6 @@ export default class Header extends CustomElement {
     #onDataChange = _ => {
         this.$points.textContent = HistoryData.points;
     };
-
-    #showAbout() {
-        Modal.render({
-            content: new About(),
-            buttons: [{focus: true, label: 'OK'}],
-        });
-    }
-
-    #showSettings() {
-        const $editor = new SettingsEditor();
-
-        Modal.render({
-            content: $editor,
-            buttons: [
-                {label: 'Cancel'},
-                {label: 'Save', onClick: _ => $editor.save()},
-            ],
-        });
-    }
 }
 
 customElements.define('header-component', Header);

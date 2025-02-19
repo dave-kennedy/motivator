@@ -4,7 +4,6 @@ import Goal from './Goal.js';
 import GoalEditor from './GoalEditor.js';
 import GoalsData from './data/GoalsData.js';
 import List from './List.js';
-import Modal from './Modal.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -48,7 +47,7 @@ export default class GoalsPage extends CustomElement {
     onPageVisible() {
         ActionButton.render({
             label: 'New Goal',
-            onClick: _ => this.#newGoal(),
+            onClick: _ => GoalEditor.render(),
         });
 
         if (!this.#rendered) {
@@ -101,18 +100,6 @@ export default class GoalsPage extends CustomElement {
         // GoalRepeated
         this.$list?.updateItem(event.detail.completed, event.detail.repeated);
     };
-
-    #newGoal() {
-        const $editor = new GoalEditor();
-
-        Modal.render({
-            content: $editor,
-            buttons: [
-                {label: 'Cancel'},
-                {label: 'Save', onClick: _ => $editor.save()},
-            ],
-        });
-    }
 }
 
 customElements.define('goals-page-component', GoalsPage);

@@ -180,7 +180,7 @@ export default class Goal extends CustomElement {
             items: [{
                 icon: {alt: 'Edit', src: 'img/edit.svg'},
                 label: 'Edit',
-                onClick: _ => this.#edit(),
+                onClick: _ => GoalEditor.render(this.#data),
             }, {
                 icon: {alt: 'Delete', src: 'img/delete.svg'},
                 label: 'Delete',
@@ -212,26 +212,11 @@ export default class Goal extends CustomElement {
         this.raiseEvent('GoalUncompleted', this.#data);
     }
 
-    #edit() {
-        const $editor = new GoalEditor(this.#data);
-
-        Modal.render({
-            content: $editor,
-            buttons: [
-                {label: 'Cancel'},
-                {label: 'Save', onClick: _ => $editor.save()},
-            ],
-        });
-    }
-
     #confirmDelete() {
-        Modal.render({
-            content: 'Are you sure you want to delete this goal?',
-            buttons: [
-                {label: 'No'},
-                {focus: true, label: 'Yes', onClick: _ => this.#delete()},
-            ],
-        });
+        Modal.render('Are you sure you want to delete this goal?', [
+            {label: 'No'},
+            {focus: true, label: 'Yes', onClick: _ => this.#delete()},
+        ]);
     }
 
     async #delete() {

@@ -1,5 +1,6 @@
 import CustomElement from './CustomElement.js';
 import Input from './Input.js';
+import Modal from './Modal.js';
 import RewardsData from './data/RewardsData.js';
 import Select from './Select.js';
 
@@ -200,6 +201,15 @@ export default class RewardEditor extends CustomElement {
             this.$startDate?.validate(),
             this.$redeemed?.validate(),
         ].includes(false);
+    }
+
+    static render(data) {
+        const $editor = new RewardEditor(data);
+
+        Modal.render($editor, [
+            {label: 'Cancel'},
+            {label: 'Save', onClick: _ => $editor.save()},
+        ]);
     }
 }
 

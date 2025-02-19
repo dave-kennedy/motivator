@@ -1,4 +1,5 @@
 import CustomElement from './CustomElement.js';
+import Modal from './Modal.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -30,6 +31,10 @@ export default class About extends CustomElement {
                     <img alt="Email" src="img/email.svg" /> motivator@dkennedy.io
                 </a>
             </p>`;
+    }
+
+    static render() {
+        Modal.render(new About());
     }
 }
 

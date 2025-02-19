@@ -1,6 +1,7 @@
 import CustomElement from './CustomElement.js';
 import GoalsData from './data/GoalsData.js';
 import Input from './Input.js';
+import Modal from './Modal.js';
 import Select from './Select.js';
 
 const stylesheet = new CSSStyleSheet();
@@ -214,6 +215,15 @@ export default class GoalEditor extends CustomElement {
             this.$startDate?.validate(),
             this.$completed?.validate(),
         ].includes(false);
+    }
+
+    static render(data) {
+        const $editor = new GoalEditor(data);
+
+        Modal.render($editor, [
+            {label: 'Cancel'},
+            {label: 'Save', onClick: _ => $editor.save()},
+        ]);
     }
 }
 

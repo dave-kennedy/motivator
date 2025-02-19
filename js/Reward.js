@@ -154,7 +154,7 @@ export default class Reward extends CustomElement {
             items: [{
                 icon: {alt: 'Edit', src: 'img/edit.svg'},
                 label: 'Edit',
-                onClick: _ => this.#edit(),
+                onClick: _ => RewardEditor.render(this.#data),
             }, {
                 icon: {alt: 'Delete', src: 'img/delete.svg'},
                 label: 'Delete',
@@ -185,26 +185,11 @@ export default class Reward extends CustomElement {
         this.raiseEvent('RewardUnredeemed', this.#data);
     }
 
-    #edit() {
-        const $editor = new RewardEditor(this.#data);
-
-        Modal.render({
-            content: $editor,
-            buttons: [
-                {label: 'Cancel'},
-                {label: 'Save', onClick: _ => $editor.save()},
-            ],
-        });
-    }
-
     #confirmDelete() {
-        Modal.render({
-            content: 'Are you sure you want to delete this reward?',
-            buttons: [
-                {label: 'No'},
-                {focus: true, label: 'Yes', onClick: _ => this.#delete()},
-            ],
-        });
+        Modal.render('Are you sure you want to delete this reward?', [
+            {label: 'No'},
+            {focus: true, label: 'Yes', onClick: _ => this.#delete()},
+        ]);
     }
 
     async #delete() {

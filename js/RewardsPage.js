@@ -1,7 +1,6 @@
 import ActionButton from './ActionButton.js';
 import CustomElement from './CustomElement.js';
 import List from './List.js';
-import Modal from './Modal.js';
 import Reward from './Reward.js';
 import RewardEditor from './RewardEditor.js';
 import RewardsData from './data/RewardsData.js';
@@ -48,7 +47,7 @@ export default class RewardsPage extends CustomElement {
     onPageVisible() {
         ActionButton.render({
             label: 'New Reward',
-            onClick: _ => this.#newReward(),
+            onClick: _ => RewardEditor.render(),
         });
 
         if (!this.#rendered) {
@@ -101,18 +100,6 @@ export default class RewardsPage extends CustomElement {
         // RewardRepeated
         this.$list?.updateItem(event.detail.redeemed, event.detail.repeated);
     };
-
-    #newReward() {
-        const $editor = new RewardEditor();
-
-        Modal.render({
-            content: $editor,
-            buttons: [
-                {label: 'Cancel'},
-                {label: 'Save', onClick: _ => $editor.save()},
-            ],
-        });
-    }
 }
 
 customElements.define('rewards-page-component', RewardsPage);

@@ -1,5 +1,6 @@
 import ConfigData from './data/ConfigData.js';
 import CustomElement from './CustomElement.js';
+import Modal from './Modal.js';
 import Select from './Select.js';
 
 const stylesheet = new CSSStyleSheet();
@@ -37,6 +38,15 @@ export default class SettingsEditor extends CustomElement {
         ConfigData.set('animations', data.animations);
         this.raiseEvent('ConfigUpdated', data);
         return true;
+    }
+
+    static render() {
+        const $editor = new SettingsEditor();
+
+        Modal.render($editor, [
+            {label: 'Cancel'},
+            {label: 'Save', onClick: _ => $editor.save()},
+        ]);
     }
 }
 

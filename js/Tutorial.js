@@ -55,13 +55,10 @@ export default class Tutorial {
             return;
         }
 
-        Modal.render({
-            content: 'Would you like to start the tutorial?',
-            buttons: [
-                {label: 'No', onClick: _ => this.skip()},
-                {focus: true, label: 'Yes', onClick: _ => this.start()},
-            ],
-        });
+        Modal.render('Would you like to start the tutorial?', [
+            {label: 'No', onClick: _ => this.skip()},
+            {focus: true, label: 'Yes', onClick: _ => this.start()},
+        ]);
     }
 
     static skip() {
@@ -142,12 +139,7 @@ export default class Tutorial {
     }
 
     static complete() {
-        Modal.render({
-            content: `That's the end of the tutorial. If you missed anything,
-                you can restart it from the settings menu in the top-right corner.`,
-            buttons: [
-                {focus: true, label: 'OK'},
-            ],
-        });
+        Modal.render(`That's the end of the tutorial. If you missed anything,
+            you can restart it from the menu in the top-right corner.`);
     }
 }
