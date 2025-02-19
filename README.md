@@ -34,7 +34,6 @@ if people are actually using it. So please give me your feedback!
 * Android app
 * Cloud sync
 * Better favicon
-* Import/export JSON
 * More unit tests
 * Recalculate repeat streak/repeated items when completed date is updated
 * User defined sorting

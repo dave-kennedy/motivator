@@ -2,6 +2,7 @@ import About from './About.js';
 import CustomElement from './CustomElement.js';
 import HistoryData from './data/HistoryData.js';
 import Menu from './Menu.js';
+import Modal from './Modal.js';
 import SettingsEditor from './SettingsEditor.js';
 import Tutorial from './Tutorial.js';
 
@@ -79,6 +80,14 @@ export default class Header extends CustomElement {
                 title: 'Menu',
             },
             items: [{
+                icon: {src: 'img/export.svg'},
+                label: 'Export',
+                onClick: _ => this.#exportData(),
+            }, {
+                icon: {src: 'img/import.svg'},
+                label: 'Import',
+                onClick: _ => this.#importConfirm(),
+            }, {
                 icon: {src: 'img/info.svg'},
                 label: 'About',
                 onClick: _ => About.render(),
@@ -99,6 +108,68 @@ export default class Header extends CustomElement {
     #onDataChange = _ => {
         this.$points.textContent = HistoryData.points;
     };
+
+    #exportData() {
+        const data = encodeURIComponent(JSON.stringify(localStorage));
+        const $link = document.createElement('a');
+        $link.download = `motivator-export-${Date.now()}.json`;
+        $link.href = `data:application/json;charset=UTF-8,${data}`;
+        $link.click();
+    }
+
+    #importConfirm() {
+        Modal.render('Importing will overwrite all data. Continue?', [
+            {label: 'No'},
+            {focus: true, label: 'Yes', onClick: _ => this.#importData()},
+        ]);
+    }
+
+    #importData() {
+        const $input = document.createElement('input');
+        $input.type = 'file';
+        $input.addEventListener('change', event => this.#onImportFileChange(event));
+        $input.click();
+    }
+
+    #onImportFileChange(event) {
+        const file = event.target.files[0];
+
+        if (!file) {
+            Modal.render('Please select a file.');
+            return;
+        }
+
+        if (file.type !== 'application/json') {
+            Modal.render('Unsupported file type. Please select a JSON file.');
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.addEventListener('error', _ => {
+            Modal.render('Unable to read file. Please make sure the file is accessible.');
+        });
+
+        reader.addEventListener('load', _ => this.#onImportFileLoad(reader.result));
+        reader.readAsText(file);
+    }
+
+    #onImportFileLoad(text) {
+        try {
+            const data = JSON.parse(text);
+
+            for (const key of ['config', 'goals', 'rewards']) {
+                if (data[key]) {
+                    localStorage.setItem(key, data[key]);
+                }
+            }
+
+            location.reload();
+        } catch (error) {
+            Modal.render('Unable to parse file. Please make sure the file is well-formed.');
+            throw error;
+        }
+    }
 }
 
 customElements.define('header-component', Header);
