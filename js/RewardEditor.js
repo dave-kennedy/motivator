@@ -149,7 +149,15 @@ export default class RewardEditor extends CustomElement {
 
             this.appendChild(this.$redeemed);
         }
+
+        this.addEventListener('keydown', this.#onKeyDown);
     }
+
+    #onKeyDown = event => {
+        if (event.key === 'Enter') {
+            this.save() && this.closest('modal-component').close();
+        }
+    };
 
     save() {
         if (!this.#validate()) {

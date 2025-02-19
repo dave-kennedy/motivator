@@ -161,7 +161,15 @@ export default class GoalEditor extends CustomElement {
 
             this.appendChild(this.$completed);
         }
+
+        this.addEventListener('keydown', this.#onKeyDown);
     }
+
+    #onKeyDown = event => {
+        if (event.key === 'Enter') {
+            this.save() && this.closest('modal-component').close();
+        }
+    };
 
     save() {
         if (!this.#validate()) {
