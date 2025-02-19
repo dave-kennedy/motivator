@@ -1,15 +1,10 @@
 export default class LocalStorage {
-    static load(key) {
+    static get(key) {
         const json = localStorage.getItem(key);
-
-        if (!json) {
-            return;
-        }
-
-        return JSON.parse(json);
+        return json ? JSON.parse(json) : undefined;
     }
 
-    static save(key, value) {
+    static set(key, value) {
         const json = JSON.stringify(value);
         localStorage.setItem(key, json);
         return value;

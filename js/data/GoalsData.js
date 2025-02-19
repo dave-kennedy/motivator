@@ -13,13 +13,13 @@ export default class GoalsData {
     }
 
     static #load() {
-        const items = LocalStorage.load('goals');
+        const items = LocalStorage.get('goals');
         return new ListData(items);
     }
 
     static #save() {
         const items = this.data.getItems();
-        LocalStorage.save('goals', items);
+        LocalStorage.set('goals', items);
     }
 
     static add(item) {

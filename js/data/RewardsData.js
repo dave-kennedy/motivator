@@ -13,13 +13,13 @@ export default class RewardsData {
     }
 
     static #load() {
-        const items = LocalStorage.load('rewards');
+        const items = LocalStorage.get('rewards');
         return new ListData(items);
     }
 
     static #save() {
         const items = this.data.getItems();
-        LocalStorage.save('rewards', items);
+        LocalStorage.set('rewards', items);
     }
 
     static add(item) {
