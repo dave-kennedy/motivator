@@ -33,7 +33,6 @@ if people are actually using it. So please give me your feedback!
 * Analytics
 * Android app
 * Cloud sync
-* Better favicon
 * More unit tests
 * Recalculate repeat streak/repeated items when completed date is updated
 * User defined sorting
