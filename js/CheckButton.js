@@ -107,7 +107,7 @@ export default class CheckButton extends CustomElement {
 
         $svg.innerHTML = `
             <circle class="outer-circle" cx="125" cy="125" r="46" fill="#fff" stroke="#0aa" stroke-width="8" />
-            <circle class="inner-circle" cx="125" cy="125" r="50" fill="#93c" />
+            <circle class="inner-circle" cx="125" cy="125" r="50" fill="#90c" />
             <path class="check-mark" d="m 90,125 25,25 45,-45" fill="none" stroke="#fff" stroke-width="8" />
         `;
 
