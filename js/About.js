@@ -3,12 +3,11 @@ import Modal from './Modal.js';
 
 const stylesheet = new CSSStyleSheet();
 
-stylesheet.replace(`about-component h1 {
-    margin: 0;
-}
-
-about-component img {
-    vertical-align: middle;
+stylesheet.replace(`about-component {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 1em;
 }`);
 
 export default class About extends CustomElement {
@@ -19,18 +18,23 @@ export default class About extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
-        this.innerHTML = `<h1>Motivator</h1>
-            <p>Version 2.2.0 © ${new Date().getFullYear()}</p>
-            <p>
-                <a href="https://github.com/dave-kennedy/motivator">
-                    <img alt="GitHub" src="img/github.svg" /> dave-kennedy/motivator
-                </a>
-            </p>
-            <p>
-                <a href="mailto:motivator@dkennedy.io">
-                    <img alt="Email" src="img/email.svg" /> motivator@dkennedy.io
-                </a>
-            </p>`;
+        this.innerHTML = `<img alt="Motivator" class="logo" src="img/logo.png" />
+            <div>Version 2.3.0 © ${new Date().getFullYear()}</div>
+            <div>
+                <a href="https://github.com/dave-kennedy/motivator-android">Android app source code</a>
+            </div>
+            <div>
+                <a href="https://github.com/dave-kennedy/motivator">Web app source code</a>
+            </div>
+            <div>
+                <a href="https://github.com/dave-kennedy/motivator/blob/main/PRIVACY.md">Privacy policy</a>
+            </div>
+            <div>
+                <a href="https://github.com/dave-kennedy/motivator/blob/main/LICENSE.txt">License/TOU</a>
+            </div>
+            <div>
+                <a href="mailto:motivator@dkennedy.io">Contact</a>
+            </div>`;
     }
 
     static render() {
