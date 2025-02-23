@@ -27,6 +27,10 @@ button-component button:is(:focus, :hover) {
     background-color: #088;
 }
 
+button-component button:active {
+    background-color: #066;
+}
+
 button-component img {
     height: 1.5rem;
     width: 1.5rem;
@@ -59,12 +63,8 @@ button-component.gray button:is(:focus, :hover) {
     background-color: #888;
 }
 
-button-component.red button {
-    background-color: #c33;
-}
-
-button-component.red button:is(:focus, :hover) {
-    background-color: #a11;
+button-component.gray button:active {
+    background-color: #aaa;
 }
 
 button-component.round button {
@@ -77,6 +77,10 @@ button-component.square button {
 
 button-component.transparent button {
     background-color: transparent;
+}
+
+button-component.transparent button:active {
+    background-color: rgba(0, 0, 0, 0.1);
 }`);
 
 export default class Button extends CustomElement {

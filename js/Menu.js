@@ -48,7 +48,7 @@ export default class Menu extends CustomElement {
         this.applyStylesheet(stylesheet);
 
         const $handle = new Button({
-            className: 'transparent',
+            className: 'round transparent',
             ...this.#handle
         });
 
