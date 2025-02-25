@@ -1,0 +1,28 @@
+html {
+    height: 100%;
+}
+
+body {
+    font-family: sans-serif;
+    height: 100%;
+    margin: 0;
+}
+
+body.reduce-motion *,
+body.reduce-motion ::before,
+body.reduce-motion ::after {
+    animation-delay: 0ms !important;
+    animation-duration: 1ms !important;
+    transition-delay: 0ms !important;
+    transition-duration: 1ms !important;
+}
+
+a {
+    color: #0aa;
+    text-decoration: none;
+    transition: color 250ms;
+}
+
+a:is(:focus, :hover) {
+    color: #088;
+}

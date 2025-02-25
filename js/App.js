@@ -7,7 +7,6 @@ const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`app-component {
     display: block;
-    font-family: sans-serif;
     height: 100%;
 }
 
