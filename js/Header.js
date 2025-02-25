@@ -74,32 +74,42 @@ export default class Header extends CustomElement {
         this.$points.textContent = HistoryData.points;
         this.appendChild(this.$points);
 
+        const items = [{
+            icon: {src: 'img/export.svg'},
+            label: 'Export',
+            onClick: _ => this.#exportData(),
+        }, {
+            icon: {src: 'img/import.svg'},
+            label: 'Import',
+            onClick: _ => this.#importConfirm(),
+        }, {
+            icon: {src: 'img/info.svg'},
+            label: 'About',
+            onClick: _ => About.render(),
+        }, {
+            icon: {src: 'img/settings.svg'},
+            label: 'Settings',
+            onClick: _ => SettingsEditor.render(),
+        }, {
+            icon: {src: 'img/lightbulb.svg'},
+            label: 'Tutorial',
+            onClick: _ => Tutorial.restart(),
+        }];
+
+        if (navigator.userAgent !== 'io.dkennedy.motivator') {
+            items.push({
+                icon: {src: 'img/play-store.svg'},
+                label: 'Get the app',
+                onClick: _ => open('https://play.google.com/store/apps/details?id=io.dkennedy.motivator'),
+            });
+        }
+
         const $menu = new Menu({
             handle: {
                 icon: {alt: 'Menu', src: 'img/menu.svg'},
                 title: 'Menu',
             },
-            items: [{
-                icon: {src: 'img/export.svg'},
-                label: 'Export',
-                onClick: _ => this.#exportData(),
-            }, {
-                icon: {src: 'img/import.svg'},
-                label: 'Import',
-                onClick: _ => this.#importConfirm(),
-            }, {
-                icon: {src: 'img/info.svg'},
-                label: 'About',
-                onClick: _ => About.render(),
-            }, {
-                icon: {src: 'img/settings.svg'},
-                label: 'Settings',
-                onClick: _ => SettingsEditor.render(),
-            }, {
-                icon: {src: 'img/lightbulb.svg'},
-                label: 'Tutorial',
-                onClick: _ => Tutorial.restart(),
-            }],
+            items,
         });
 
         this.appendChild($menu);

@@ -36,6 +36,10 @@ button-component img {
     width: 1.5rem;
 }
 
+button-component span {
+    white-space: nowrap;
+}
+
 button-component.big button {
     font-size: 2em;
 }
