@@ -10,6 +10,7 @@ stylesheet.replace(`input-component {
 }
 
 input-component input {
+    background-color: #fff;
     border: 1px solid #999;
     border-radius: 0.25em;
     box-sizing: border-box;
@@ -21,6 +22,11 @@ input-component input::placeholder,
 input-component input[disabled],
 input-component input[type^=date] {
     color: #757575;
+}
+
+input-component input[type^=date] {
+    /* Override user-agent style in Android WebView */
+    width: auto;
 }
 
 input-component input[type^=date].non-blank {

@@ -26,3 +26,8 @@ a {
 a:is(:focus, :hover) {
     color: #088;
 }
+
+a, button {
+    /* Disable tap highlight in Android WebView */
+    -webkit-tap-highlight-color: transparent;
+}
