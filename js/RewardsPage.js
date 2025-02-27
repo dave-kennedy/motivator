@@ -67,9 +67,10 @@ export default class RewardsPage extends CustomElement {
             itemFactory: data => new Reward(data),
             pageSize: 10,
             sort: (a, b) => {
-                if (a.startDate && b.startDate) return a.startDate - b.startDate;
-                if (a.startDate) return 1;
-                if (b.startDate) return -1;
+                const now = Date.now();
+                if (a.startDate > now && b.startDate > now) return a.startDate - b.startDate;
+                if (a.startDate > now) return 1;
+                if (b.startDate > now) return -1;
                 return a.created - b.created;
             },
         });
