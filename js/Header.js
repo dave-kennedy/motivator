@@ -4,7 +4,6 @@ import HistoryData from './data/HistoryData.js';
 import Menu from './Menu.js';
 import Modal from './Modal.js';
 import SettingsEditor from './SettingsEditor.js';
-import Tutorial from './Tutorial.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -90,10 +89,6 @@ export default class Header extends CustomElement {
             icon: {src: 'img/settings.svg'},
             label: 'Settings',
             onClick: _ => SettingsEditor.render(),
-        }, {
-            icon: {src: 'img/lightbulb.svg'},
-            label: 'Tutorial',
-            onClick: _ => Tutorial.restart(),
         }];
 
         if (navigator.userAgent !== 'io.dkennedy.motivator') {
