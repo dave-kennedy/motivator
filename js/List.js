@@ -6,7 +6,12 @@ import {popIn, popOut, shiftDown, shiftUp} from './animation.js';
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`list-component {
-    display: block;
+    display: flex;
+    flex-direction: column;
+}
+
+list-component > .load-button {
+    align-self: center;
 }
 
 list-component > .loading {
@@ -50,6 +55,7 @@ export default class List extends CustomElement {
         this.appendChild(this.$items);
 
         this.$loadButton = new Button({
+            className: 'load-button',
             label: 'Load more',
             onClick: _ => this.#loadPage(),
         });

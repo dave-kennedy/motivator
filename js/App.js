@@ -1,5 +1,7 @@
+import ConfigData from './data/ConfigData.js';
 import CustomElement from './CustomElement.js';
 import Header from './Header.js';
+import Intro from './Intro.js';
 import Pager from './Pager.js';
 
 const stylesheet = new CSSStyleSheet();
@@ -24,6 +26,10 @@ export default class App extends CustomElement {
 
     #render() {
         this.applyStylesheet(stylesheet);
+
+        if (!ConfigData.get('introFinished')) {
+            Intro.render();
+        }
 
         const $header = new Header();
         this.appendChild($header);

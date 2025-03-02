@@ -3,7 +3,7 @@ import CustomElement from './CustomElement.js';
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`button-component:not([hidden]) {
-    display: block;
+    display: inline-block;
 }
 
 button-component button {
@@ -69,6 +69,10 @@ button-component.gray button:is(:focus, :hover) {
 
 button-component.gray button:active {
     background-color: #aaa;
+}
+
+button-component.icon-right button {
+    flex-direction: row-reverse;
 }
 
 button-component.round button {
@@ -146,6 +150,10 @@ export default class Button extends CustomElement {
         if (this.#type) {
             this.$button.type = this.#type;
         }
+    }
+
+    click() {
+        this.$button.click();
     }
 
     focus() {
