@@ -34,19 +34,21 @@ export default class SettingsEditor extends CustomElement {
     }
 
     save() {
-        const data = {animations: this.$animations.value || undefined};
-        ConfigData.set('animations', data.animations);
-        this.raiseEvent('ConfigUpdated', data);
-        return true;
+        const animations = this.$animations.value || undefined;
+        ConfigData.set('animations', animations);
+        this.raiseEvent('ConfigUpdated', {animations});
     }
 
     static render() {
         const $editor = new SettingsEditor();
 
-        Modal.render($editor, [
-            {label: 'Cancel'},
-            {label: 'Save', onClick: _ => $editor.save()},
-        ]);
+        Modal.render({
+            content: $editor,
+            buttons: [
+                {label: 'Cancel'},
+                {label: 'Save', onClick: _ => $editor.save()},
+            ],
+        });
     }
 }
 

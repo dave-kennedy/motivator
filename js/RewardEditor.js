@@ -151,18 +151,16 @@ export default class RewardEditor extends CustomElement {
             this.appendChild(this.$redeemed);
         }
 
-        this.addEventListener('keydown', this.#onKeyDown);
+        this.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                this.save() && this.closest('modal-component').close();
+            }
+        });
     }
-
-    #onKeyDown = event => {
-        if (event.key === 'Enter') {
-            this.save() && this.closest('modal-component').close();
-        }
-    };
 
     save() {
         if (!this.#validate()) {
-            return;
+            return false;
         }
 
         const data = {
@@ -206,10 +204,13 @@ export default class RewardEditor extends CustomElement {
     static render(data) {
         const $editor = new RewardEditor(data);
 
-        Modal.render($editor, [
-            {label: 'Cancel'},
-            {label: 'Save', onClick: _ => $editor.save()},
-        ]);
+        Modal.render({
+            content: $editor,
+            buttons: [
+                {label: 'Cancel'},
+                {label: 'Save', onClick: _ => $editor.save()},
+            ],
+        });
     }
 }
 

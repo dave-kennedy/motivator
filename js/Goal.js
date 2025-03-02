@@ -165,7 +165,7 @@ export default class Goal extends CustomElement {
         $content.appendChild($menu);
     }
 
-    async #complete() {
+    #complete() {
         this.#data.completed = Date.now();
         GoalsData.update(this.#data);
 
@@ -179,20 +179,23 @@ export default class Goal extends CustomElement {
         this.raiseEvent('GoalRepeated', {completed: this.#data, repeated: newData});
     }
 
-    async #uncomplete() {
+    #uncomplete() {
         this.#data.completed = undefined;
         GoalsData.update(this.#data);
         this.raiseEvent('GoalUncompleted', this.#data);
     }
 
     #confirmDelete() {
-        Modal.render('Are you sure you want to delete this goal?', [
-            {label: 'No'},
-            {focus: true, label: 'Yes', onClick: _ => this.#delete()},
-        ]);
+        Modal.render({
+            content: 'Are you sure you want to delete this goal?',
+            buttons: [
+                {label: 'No'},
+                {focus: true, label: 'Yes', onClick: _ => this.#delete()},
+            ],
+        });
     }
 
-    async #delete() {
+    #delete() {
         GoalsData.delete(this.#data);
         this.raiseEvent('GoalDeleted', this.#data);
     }

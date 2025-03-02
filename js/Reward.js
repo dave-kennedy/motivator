@@ -165,7 +165,7 @@ export default class Reward extends CustomElement {
         $content.appendChild($menu);
     }
 
-    async #redeem() {
+    #redeem() {
         this.#data.redeemed = Date.now();
         RewardsData.update(this.#data);
 
@@ -179,20 +179,23 @@ export default class Reward extends CustomElement {
         this.raiseEvent('RewardRepeated', {redeemed: this.#data, repeated: newData});
     }
 
-    async #unredeem() {
+    #unredeem() {
         this.#data.redeemed = undefined;
         RewardsData.update(this.#data);
         this.raiseEvent('RewardUnredeemed', this.#data);
     }
 
     #confirmDelete() {
-        Modal.render('Are you sure you want to delete this reward?', [
-            {label: 'No'},
-            {focus: true, label: 'Yes', onClick: _ => this.#delete()},
-        ]);
+        Modal.render({
+            content: 'Are you sure you want to delete this reward?',
+            buttons: [
+                {label: 'No'},
+                {focus: true, label: 'Yes', onClick: _ => this.#delete()},
+            ],
+        });
     }
 
-    async #delete() {
+    #delete() {
         RewardsData.delete(this.#data);
         this.raiseEvent('RewardDeleted', this.#data);
     }

@@ -42,7 +42,7 @@ export default class About extends CustomElement {
     }
 
     static render() {
-        Modal.render(new About());
+        Modal.render({content: new About()});
     }
 }
 

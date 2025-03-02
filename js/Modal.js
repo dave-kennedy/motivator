@@ -24,10 +24,15 @@ modal-component .modal {
     border-radius: 1em;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
     box-sizing: border-box;
-    max-height: calc(100% - 2em);
-    max-width: calc(100% - 2em);
+    line-height: 1.5;
+    margin: auto;
     overflow: auto;
     padding: 1em;
+
+    height: fit-content;
+    width: fit-content;
+    max-height: calc(100% - 2em);
+    max-width: calc(100% - 2em);
 
     display: flex;
     flex-direction: column;
@@ -35,14 +40,11 @@ modal-component .modal {
 
     position: fixed;
     inset: 0;
-    height: fit-content;
-    width: fit-content;
-    margin: auto;
 }
 
-@media (min-width: 400px) {
+@media (min-width: 448px) {
     modal-component .modal {
-        max-width: 25em;
+        max-width: 26em;
     }
 }
 
@@ -56,7 +58,10 @@ export default class Modal extends CustomElement {
     #content;
     #buttons;
 
-    constructor({content, buttons}) {
+    constructor({
+        content,
+        buttons = [{focus: true, label: 'OK'}],
+    }) {
         super();
 
         this.#content = content;
@@ -103,11 +108,11 @@ export default class Modal extends CustomElement {
             const $button = new Button({
                 label,
                 onClick: event => {
-                    if (onClick) {
-                        onClick(event) && this.close();
-                    } else {
-                        this.close();
+                    if (onClick && onClick(event) === false) {
+                        return;
                     }
+
+                    this.close();
                 },
             });
 
@@ -133,12 +138,8 @@ export default class Modal extends CustomElement {
         this.remove();
     };
 
-    static render(content, buttons) {
-        const $modal = new Modal({
-            content,
-            buttons: buttons || [{focus: true, label: 'OK'}],
-        });
-
+    static render(...params) {
+        const $modal = new Modal(...params);
         document.querySelector('app-component').appendChild($modal);
     }
 }

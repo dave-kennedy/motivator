@@ -123,10 +123,13 @@ export default class Header extends CustomElement {
     }
 
     #importConfirm() {
-        Modal.render('Importing will overwrite all data. Continue?', [
-            {label: 'No'},
-            {focus: true, label: 'Yes', onClick: _ => this.#importData()},
-        ]);
+        Modal.render({
+            content: 'Importing will overwrite all data. Continue?',
+            buttons: [
+                {label: 'No'},
+                {focus: true, label: 'Yes', onClick: _ => this.#importData()},
+            ],
+        });
     }
 
     #importData() {
@@ -140,19 +143,21 @@ export default class Header extends CustomElement {
         const file = event.target.files[0];
 
         if (!file) {
-            Modal.render('Please select a file.');
+            Modal.render({content: 'Please select a file.'});
             return;
         }
 
         if (file.type !== 'application/json') {
-            Modal.render('Unsupported file type. Please select a JSON file.');
+            Modal.render({content: 'Unsupported file type. Please select a JSON file.'});
             return;
         }
 
         const reader = new FileReader();
 
         reader.addEventListener('error', _ => {
-            Modal.render('Unable to read file. Please make sure the file is accessible.');
+            Modal.render({
+                content: 'Unable to read file. Please make sure the file is accessible.',
+            });
         });
 
         reader.addEventListener('load', _ => this.#onImportFileLoad(reader.result));
@@ -171,7 +176,10 @@ export default class Header extends CustomElement {
 
             location.reload();
         } catch (error) {
-            Modal.render('Unable to parse file. Please make sure the file is well-formed.');
+            Modal.render({
+                content: 'Unable to parse file. Please make sure the file is well-formed.',
+            });
+
             throw error;
         }
     }
