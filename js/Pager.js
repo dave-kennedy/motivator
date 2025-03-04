@@ -95,7 +95,6 @@ export default class Pager extends CustomElement {
 
             const $label = document.createElement('a');
             $label.href = `#${$page.pageId}`;
-            $label.id = `${$page.pageId}-tab`;
             $label.textContent = $page.pageTitle;
             $tab.appendChild($label);
 

@@ -3,6 +3,7 @@ import CustomElement from './CustomElement.js';
 import Header from './Header.js';
 import Intro from './Intro.js';
 import Pager from './Pager.js';
+import Tour from './Tour.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -28,7 +29,7 @@ export default class App extends CustomElement {
         this.applyStylesheet(stylesheet);
 
         if (!ConfigData.get('introFinished')) {
-            Intro.render();
+            Intro.render().addEventListener('close', _ => Tour.prompt());
         }
 
         const $header = new Header();
