@@ -23,7 +23,7 @@ export default class About extends CustomElement {
         this.applyStylesheet(stylesheet);
 
         this.innerHTML = `<img alt="Motivator" class="logo" src="img/logo.png" />
-            <div>Version 2.3.1 © ${new Date().getFullYear()}</div>
+            <div>Version 2.4.0 © ${new Date().getFullYear()}</div>
             <div>
                 <a href="https://github.com/dave-kennedy/motivator-android">Android app source code</a>
             </div>

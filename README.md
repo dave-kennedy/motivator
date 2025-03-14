@@ -39,7 +39,7 @@ anything I've found in the Node ecosystem.
 
 * Analytics
 * Cloud sync
+* Dark mode/themes
 * Hints on editor/history
 * More unit tests
-* Recalculate repeat streak/repeated items when completed date is updated
 * User defined sorting
