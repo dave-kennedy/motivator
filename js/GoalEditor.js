@@ -31,7 +31,6 @@ export default class GoalEditor extends CustomElement {
     $repeat;
     $repeatDuration;
     $repeatFrequency;
-    $repeatStreak;
     $created;
     $startDate;
     $completed;
@@ -119,17 +118,6 @@ export default class GoalEditor extends CustomElement {
 
         $repeatOptions.appendChild(this.$repeatDuration);
 
-        if (this.#data.repeatStreak) {
-            this.$repeatStreak = new Input({
-                id: 'repeat-streak-input',
-                label: 'Repeat streak',
-                type: 'number',
-                value: this.#data.repeatStreak,
-            });
-
-            this.appendChild(this.$repeatStreak);
-        }
-
         if (this.#data.created) {
             this.$created = new Input({
                 id: 'created-input',
@@ -183,7 +171,6 @@ export default class GoalEditor extends CustomElement {
             description: this.$description.value || undefined,
             points: this.$points.value,
             repeat: this.$repeat.value || undefined,
-            repeatStreak: this.$repeatStreak?.value || undefined,
             created: this.$created?.value || Date.now(),
             startDate: this.$startDate.value || undefined,
             completed: this.$completed?.value || undefined,
@@ -210,7 +197,6 @@ export default class GoalEditor extends CustomElement {
             this.$name.validate(),
             this.$points.validate(),
             this.$repeatDuration?.validate(),
-            this.$repeatStreak?.validate(),
             this.$created?.validate(),
             this.$startDate?.validate(),
             this.$completed?.validate(),

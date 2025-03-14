@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {getNextRepeatStreak, getNextStartDate, repeat} from './repeat.js';
+import {getNextStartDate, repeat} from './repeat.js';
 
 function repeatTest(data) {
     data = {
@@ -76,64 +76,6 @@ test('repeat daily goal does not repeat after duration, starts next day', _ => {
     assert.equal(newData.repeatDuration, undefined);
     assert.equal(newData.repeatFrequency, undefined);
     assert.equal(newData.startDate, Date.parse('1/21/2025, 12:00:00 AM MST'));
-});
-
-test('getNextRepeatStreak starts new streak', _ => {
-    const data = {
-        created: Date.parse('1/20/2025, 12:00:00 PM MST'),
-        completed: Date.parse('1/20/2025, 11:59:59 PM MST'),
-    };
-
-    const result = getNextRepeatStreak(data);
-    assert.equal(result, 1);
-});
-
-test('getNextRepeatStreak completed after end date resets streak', _ => {
-    const data = {
-        created: Date.parse('1/20/2025, 12:00:00 PM MST'),
-        completed: Date.parse('1/21/2025, 12:00:01 AM MST'),
-        repeatStreak: 1,
-    };
-
-    const result = getNextRepeatStreak(data);
-    assert.equal(result, 1);
-});
-
-test('getNextRepeatStreak completed before end date increments streak', _ => {
-    const data = {
-        created: Date.parse('1/20/2025, 12:00:00 PM MST'),
-        completed: Date.parse('1/20/2025, 11:59:59 PM MST'),
-        repeatStreak: 1,
-    };
-
-    const result = getNextRepeatStreak(data);
-    assert.equal(result, 2);
-});
-
-test('getNextRepeatStreak weekly completed after end date resets streak', _ => {
-    const data = {
-        created: Date.parse('1/20/2025, 12:00:00 PM MST'),
-        startDate: Date.parse('1/26/2025, 12:00:00 AM MST'),
-        completed: Date.parse('2/2/2025, 12:00:01 AM MST'),
-        repeatFrequency: 'weekly',
-        repeatStreak: 1,
-    };
-
-    const result = getNextRepeatStreak(data);
-    assert.equal(result, 1);
-});
-
-test('getNextRepeatStreak weekly completed before end date increments streak', _ => {
-    const data = {
-        created: Date.parse('1/20/2025, 12:00:00 PM MST'),
-        startDate: Date.parse('1/26/2025, 12:00:00 AM MST'),
-        completed: Date.parse('2/1/2025, 11:59:59 PM MST'),
-        repeatFrequency: 'weekly',
-        repeatStreak: 1,
-    };
-
-    const result = getNextRepeatStreak(data);
-    assert.equal(result, 2);
 });
 
 test('getNextStartDate returns next day', _ => {

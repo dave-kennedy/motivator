@@ -23,20 +23,6 @@ export function repeat(data) {
     return newData;
 }
 
-export function getNextRepeatStreak(data) {
-    if (!data.repeatStreak) {
-        return 1;
-    }
-
-    const streakEndDate = getNextStartDate(data.startDate || data.created, data.repeatFrequency);
-
-    if (data.completed >= streakEndDate) {
-        return 1;
-    }
-
-    return data.repeatStreak + 1;
-}
-
 export function getNextStartDate(date, frequency) {
     const nextDate = new Date(date);
     nextDate.setHours(0, 0, 0, 0);
