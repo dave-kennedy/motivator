@@ -11,11 +11,9 @@ stylesheet.replace(`history-page-component {
     display: block;
 }
 
-@media (min-width: 544px) {
-    history-page-component list-component {
-        margin: auto;
-        width: 32em;
-    }
+history-page-component list-component {
+    margin: auto;
+    max-width: 32em;
 }`);
 
 export default class HistoryPage extends CustomElement {

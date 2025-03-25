@@ -11,11 +11,9 @@ stylesheet.replace(`rewards-page-component {
     display: block;
 }
 
-@media (min-width: 544px) {
-    rewards-page-component list-component {
-        margin: auto;
-        width: 32em;
-    }
+rewards-page-component list-component {
+    margin: auto;
+    max-width: 32em;
 }`);
 
 export default class RewardsPage extends CustomElement {

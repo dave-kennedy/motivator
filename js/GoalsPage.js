@@ -11,11 +11,9 @@ stylesheet.replace(`goals-page-component {
     display: block;
 }
 
-@media (min-width: 544px) {
-    goals-page-component list-component {
-        margin: auto;
-        width: 32em;
-    }
+goals-page-component list-component {
+    margin: auto;
+    max-width: 32em;
 }`);
 
 export default class GoalsPage extends CustomElement {
