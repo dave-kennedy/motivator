@@ -18,6 +18,7 @@ stylesheet.replace(`reward-component {
 reward-component .content {
     background-color: #eee;
     border-radius: 1em;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
     box-sizing: border-box;
     padding: 1em 1em 1em 2em;
     position: relative;
