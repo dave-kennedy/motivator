@@ -16,7 +16,7 @@ stylesheet.replace(`goal-component {
 }
 
 goal-component .content {
-    background-color: #eee;
+    background-color: var(--item-bg-color);
     border-radius: 1em;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
     box-sizing: border-box;

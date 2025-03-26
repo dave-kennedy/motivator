@@ -16,7 +16,7 @@ pager-component .tabs {
 }
 
 pager-component .tabs::after {
-    background-color: #0aa;
+    background-color: var(--accent-color);
     content: '';
     display: block;
     height: 2px;

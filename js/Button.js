@@ -7,16 +7,15 @@ stylesheet.replace(`button-component:not([hidden]) {
 }
 
 button-component button {
+    background-color: var(--accent-color);
     border: none;
     border-radius: 0.25em;
-    color: #fff;
+    color: var(--button-text-color);
     cursor: pointer;
     font: inherit;
     padding: 0.5em;
+    transition: filter 250ms;
     width: 100%;
-
-    background-color: #0aa;
-    transition: background-color 250ms;
 
     display: flex;
     align-items: center;
@@ -24,11 +23,11 @@ button-component button {
 }
 
 button-component button:is(:focus, :hover) {
-    background-color: #088;
+    filter: brightness(1.2);
 }
 
 button-component button:active {
-    background-color: #066;
+    filter: brightness(1.4);
 }
 
 button-component img {
@@ -59,18 +58,6 @@ button-component.fab button {
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
 }
 
-button-component.gray button {
-    background-color: #666;
-}
-
-button-component.gray button:is(:focus, :hover) {
-    background-color: #888;
-}
-
-button-component.gray button:active {
-    background-color: #aaa;
-}
-
 button-component.icon-right button {
     flex-direction: row-reverse;
 }
@@ -85,10 +72,7 @@ button-component.square button {
 
 button-component.transparent button {
     background-color: transparent;
-}
-
-button-component.transparent button:active {
-    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--accent-color);
 }`);
 
 export default class Button extends CustomElement {

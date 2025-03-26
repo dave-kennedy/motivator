@@ -17,13 +17,16 @@ stylesheet.replace(`check-button-component button {
 }
 
 check-button-component .outer-circle {
+    fill: var(--body-bg-color);
     opacity: 1;
     scale: 1;
+    stroke: var(--accent-color);
     transform-origin: center;
     transition: opacity 500ms 500ms, scale 500ms 500ms;
 }
 
 check-button-component .inner-circle {
+    fill: var(--accent-color);
     scale: 0;
     transform-origin: center;
     transition: scale 500ms 500ms;

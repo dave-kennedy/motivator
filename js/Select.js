@@ -10,10 +10,11 @@ stylesheet.replace(`select-component {
 }
 
 select-component select {
-    background-color: #fff;
-    border: 1px solid #999;
+    background-color: transparent;
+    border: 1px solid var(--input-border-color);
     border-radius: 0.25em;
     box-sizing: border-box;
+    color: inherit;
     font: inherit;
     padding: 0.5em;
 }
@@ -21,11 +22,11 @@ select-component select {
 select-component select[disabled],
 select-component select:has(option[value='']:checked),
 select-component option[value=''] {
-    color: #757575;
+    color: var(--input-placeholder-color);
 }
 
 select-component option:not([value='']) {
-    color: initial;
+    color: inherit;
 }
 
 select-component .error {
@@ -33,7 +34,7 @@ select-component .error {
 }
 
 select-component:has(:invalid) .error {
-    color: #c00;
+    color: var(--input-error-color);
     display: block;
 }
 

@@ -12,8 +12,8 @@ stylesheet.replace(`tip-component {
 }
 
 tip-component .tip {
-    background-color: #fff;
-    border: 1px solid #999;
+    background-color: var(--tip-bg-color);
+    border: 1px solid var(--tip-border-color);
     border-radius: 1em;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
     box-sizing: border-box;
@@ -62,7 +62,7 @@ tip-component .footer > :last-child {
 }
 
 tip-component .caret {
-    background-color: #fff;
+    background-color: var(--tip-bg-color);
     rotate: 45deg;
 
     height: 1em;
@@ -72,13 +72,13 @@ tip-component .caret {
 }
 
 tip-component .caret.up {
-    border-left: 1px solid #999;
-    border-top: 1px solid #999;
+    border-left: 1px solid var(--tip-border-color);
+    border-top: 1px solid var(--tip-border-color);
 }
 
 tip-component .caret.down {
-    border-bottom: 1px solid #999;
-    border-right: 1px solid #999;
+    border-bottom: 1px solid var(--tip-border-color);
+    border-right: 1px solid var(--tip-border-color);
 }`);
 
 export default class Tip extends CustomElement {

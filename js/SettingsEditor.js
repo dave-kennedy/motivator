@@ -13,6 +13,7 @@ stylesheet.replace(`settings-editor-component {
 
 export default class SettingsEditor extends CustomElement {
     $animations;
+    $theme;
 
     connectedCallback() {
         this.#render();
@@ -26,17 +27,32 @@ export default class SettingsEditor extends CustomElement {
             id: 'animations-select',
             label: 'Animations',
             options: ['fancy', 'reduced'],
-            placeholder: 'normal',
+            placeholder: 'default',
             value: ConfigData.get('animations'),
         });
 
         this.appendChild(this.$animations);
+
+        this.$theme = new Select({
+            className: 'row',
+            id: 'theme-select',
+            label: 'Theme',
+            options: ['light', 'dark'],
+            placeholder: 'default',
+            value: ConfigData.get('theme'),
+        });
+
+        this.appendChild(this.$theme);
     }
 
     save() {
         const animations = this.$animations.value || undefined;
         ConfigData.set('animations', animations);
-        this.raiseEvent('ConfigUpdated', {animations});
+
+        const theme = this.$theme.value || undefined;
+        ConfigData.set('theme', theme);
+
+        this.raiseEvent('ConfigUpdated', {animations, theme});
     }
 
     static render() {
@@ -46,7 +62,7 @@ export default class SettingsEditor extends CustomElement {
             content: $editor,
             buttons: [
                 {label: 'Cancel'},
-                {label: 'Save', onClick: _ => $editor.save()},
+                {focus: true, label: 'Save', onClick: _ => $editor.save()},
             ],
         });
     }

@@ -3,9 +3,45 @@ html {
 }
 
 body {
+    --accent-color: #90c;
+    --body-bg-color: #fff;
+    --body-text-color: #111;
+    --button-text-color: #fff;
+    --input-border-color: #ccc;
+    --input-error-color: #f33;
+    --input-placeholder-color: #888;
+    --item-bg-color: #eee;
+    --menu-bg-color: #eee;
+    --menu-border-color: #ccc;
+    --modal-backdrop-color: rgba(0, 0, 0, 0.2);
+    --modal-bg-color: #fff;
+    --modal-border-color: #ccc;
+    --tip-bg-color: #eee;
+    --tip-border-color: #ccc;
+
+    background-color: var(--body-bg-color);
+    color: var(--body-text-color);
     font-family: sans-serif;
     height: 100%;
     margin: 0;
+}
+
+body.dark-theme {
+    --accent-color: #0aa;
+    --body-bg-color: #222;
+    --body-text-color: #eee;
+    --button-text-color: #fff;
+    --input-border-color: #666;
+    --input-error-color: #f33;
+    --input-placeholder-color: #888;
+    --item-bg-color: #333;
+    --menu-bg-color: #333;
+    --menu-border-color: #666;
+    --modal-backdrop-color: rgba(255, 255, 255, 0.2);
+    --modal-bg-color: #222;
+    --modal-border-color: #666;
+    --tip-bg-color: #333;
+    --tip-border-color: #666;
 }
 
 body.reduce-motion *,
@@ -18,13 +54,17 @@ body.reduce-motion ::after {
 }
 
 a {
-    color: #0aa;
+    color: var(--accent-color);
     text-decoration: none;
-    transition: color 250ms;
+    transition: filter 250ms;
 }
 
 a:is(:focus, :hover) {
-    color: #088;
+    filter: brightness(1.2);
+}
+
+a:active {
+    filter: brightness(1.4);
 }
 
 a, button {

@@ -10,10 +10,11 @@ stylesheet.replace(`input-component {
 }
 
 input-component input {
-    background-color: #fff;
-    border: 1px solid #999;
+    background-color: transparent;
+    border: 1px solid var(--input-border-color);
     border-radius: 0.25em;
     box-sizing: border-box;
+    color: inherit;
     font: inherit;
     padding: 0.5em;
 }
@@ -21,7 +22,7 @@ input-component input {
 input-component input::placeholder,
 input-component input[disabled],
 input-component input[type^=date] {
-    color: #757575;
+    color: var(--input-placeholder-color);
 }
 
 input-component input[type^=date] {
@@ -30,7 +31,7 @@ input-component input[type^=date] {
 }
 
 input-component input[type^=date].non-blank {
-    color: initial;
+    color: inherit;
 }
 
 input-component .error {
@@ -38,7 +39,7 @@ input-component .error {
 }
 
 input-component:has(:invalid) .error {
-    color: #c00;
+    color: var(--input-error-color);
     display: block;
 }
 

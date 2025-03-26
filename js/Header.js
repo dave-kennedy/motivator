@@ -9,9 +9,7 @@ import Tour from './Tour.js';
 const stylesheet = new CSSStyleSheet();
 
 stylesheet.replace(`header-component {
-    background-color: #666;
     box-sizing: border-box;
-    color: #fff;
     padding: 1em;
 
     display: flex;

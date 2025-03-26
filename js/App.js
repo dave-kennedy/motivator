@@ -21,17 +21,20 @@ app-component pager-component {
 }`);
 
 export default class App extends CustomElement {
+    #darkThemeQuery = matchMedia('(prefers-color-scheme: dark)');
     #reduceMotionQuery = matchMedia('(prefers-reduced-motion)');
 
     connectedCallback() {
         this.#render();
 
         document.addEventListener('ConfigUpdated', this.#setBodyClass);
+        this.#darkThemeQuery.addEventListener('change', this.#setBodyClass);
         this.#reduceMotionQuery.addEventListener('change', this.#setBodyClass);
     }
 
     disconnectedCallback() {
         document.removeEventListener('ConfigUpdated', this.#setBodyClass);
+        this.#darkThemeQuery.removeEventListener('change', this.#setBodyClass);
         this.#reduceMotionQuery.removeEventListener('change', this.#setBodyClass);
     }
 
@@ -52,6 +55,12 @@ export default class App extends CustomElement {
     }
 
     #setBodyClass = _ => {
+        if (this.#darkThemeQuery.matches || ConfigData.get('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+
         if (this.#reduceMotionQuery.matches || ConfigData.get('animations') === 'reduced') {
             document.body.classList.add('reduce-motion');
         } else {

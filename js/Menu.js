@@ -11,8 +11,8 @@ stylesheet.replace(`menu-component {
 }
 
 menu-component .items {
-    background-color: #666;
-    border: 1px solid #999;
+    background-color: var(--menu-bg-color);
+    border: 1px solid var(--menu-border-color);
     border-radius: 0.5em;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
     display: none;
@@ -61,7 +61,7 @@ export default class Menu extends CustomElement {
 
         for (const item of this.#items) {
             const $item = new Button({
-                className: 'gray square',
+                className: 'square transparent',
                 ...item
             });
 
