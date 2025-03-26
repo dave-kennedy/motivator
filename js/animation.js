@@ -1,22 +1,6 @@
-import ConfigData from './data/ConfigData.js';
-
-const mediaQuery = matchMedia('(prefers-reduced-motion)');
-
 export function reduceMotion() {
     return document.body.classList.contains('reduce-motion');
 }
-
-function setBodyClass() {
-    if (mediaQuery.matches || ConfigData.get('animations') === 'reduced') {
-        document.body.classList.add('reduce-motion');
-    } else {
-        document.body.classList.remove('reduce-motion');
-    }
-}
-
-document.addEventListener('ConfigUpdated', setBodyClass);
-mediaQuery.addEventListener('change', setBodyClass);
-setBodyClass();
 
 export function fadeIn({element, delay, direction, duration, fill}) {
     return element.animate({

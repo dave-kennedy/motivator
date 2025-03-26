@@ -21,8 +21,18 @@ app-component pager-component {
 }`);
 
 export default class App extends CustomElement {
+    #reduceMotionQuery = matchMedia('(prefers-reduced-motion)');
+
     connectedCallback() {
         this.#render();
+
+        document.addEventListener('ConfigUpdated', this.#setBodyClass);
+        this.#reduceMotionQuery.addEventListener('change', this.#setBodyClass);
+    }
+
+    disconnectedCallback() {
+        document.removeEventListener('ConfigUpdated', this.#setBodyClass);
+        this.#reduceMotionQuery.removeEventListener('change', this.#setBodyClass);
     }
 
     #render() {
@@ -37,7 +47,17 @@ export default class App extends CustomElement {
 
         const $pager = new Pager();
         this.appendChild($pager);
+
+        this.#setBodyClass();
     }
+
+    #setBodyClass = _ => {
+        if (this.#reduceMotionQuery.matches || ConfigData.get('animations') === 'reduced') {
+            document.body.classList.add('reduce-motion');
+        } else {
+            document.body.classList.remove('reduce-motion');
+        }
+    };
 }
 
 customElements.define('app-component', App);
