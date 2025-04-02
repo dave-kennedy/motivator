@@ -459,7 +459,7 @@ export default class Intro extends CustomElement {
 
         if (index > 0) {
             const $backButton = new Button({
-                icon: {src: 'img/arrow-left.svg'},
+                icon: 'arrow-left',
                 label: 'Back',
                 onClick: _ => {
                     $content.remove();
@@ -474,7 +474,7 @@ export default class Intro extends CustomElement {
 
         const $nextButton = new Button({
             className: 'icon-right',
-            icon: {src: 'img/arrow-right.svg'},
+            icon: 'arrow-right',
             label: 'Next',
             onClick: _ => {
                 if (!$input.validate()) {

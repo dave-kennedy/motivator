@@ -2,6 +2,7 @@ import CheckButton from './CheckButton.js';
 import CustomElement from './CustomElement.js';
 import GoalEditor from './GoalEditor.js';
 import GoalsData from './data/GoalsData.js';
+import Icon from './Icon.js';
 import Menu from './Menu.js';
 import Modal from './Modal.js';
 
@@ -32,26 +33,13 @@ goal-component .name {
     font-weight: bold;
 }
 
-goal-component .points::before,
-goal-component .repeat::before,
-goal-component .start-date::before,
-goal-component .completed::before {
-    display: inline-block;
-    margin-right: 0.25em;
-    vertical-align: middle;
-}
-
-goal-component .points::before {
-    content: url('img/star.svg');
-}
-
-goal-component .repeat::before {
-    content: url('img/repeat.svg');
-}
-
-goal-component .start-date::before,
-goal-component .completed::before {
-    content: url('img/calendar.svg');
+goal-component .points,
+goal-component .repeat,
+goal-component .start-date,
+goal-component .completed {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
 }
 
 goal-component check-button-component {
@@ -104,7 +92,7 @@ export default class Goal extends CustomElement {
 
         const $points = document.createElement('div');
         $points.className = 'points';
-        $points.textContent = `${this.#data.points} points`;
+        $points.append(new Icon('star'), `${this.#data.points} points`);
         $content.appendChild($points);
 
         if (this.#data.repeat) {
@@ -121,21 +109,25 @@ export default class Goal extends CustomElement {
                 textParts.push(`x ${this.#data.repeatDuration}`);
             }
 
-            $repeat.textContent = textParts.join(' ');
+            $repeat.append(new Icon('repeat'), textParts.join(' '));
             $content.appendChild($repeat);
         }
 
         if (this.#data.startDate > Date.now()) {
             const $startDate = document.createElement('div');
             $startDate.className = 'start-date';
-            $startDate.textContent = `Starts ${new Date(this.#data.startDate).toLocaleDateString()}`;
+
+            const date = new Date(this.#data.startDate).toLocaleDateString();
+            $startDate.append(new Icon('calendar'), `Starts ${date}`);
             $content.appendChild($startDate);
         }
 
         if (this.#data.completed) {
             const $completed = document.createElement('div');
             $completed.className = 'completed';
-            $completed.textContent = `Completed ${new Date(this.#data.completed).toLocaleDateString()}`;
+
+            const date = new Date(this.#data.completed).toLocaleDateString();
+            $completed.append(new Icon('calendar'), `Completed ${date}`);
             $content.appendChild($completed);
         }
 
@@ -149,15 +141,15 @@ export default class Goal extends CustomElement {
 
         const $menu = new Menu({
             handle: {
-                icon: {alt: 'Menu', src: 'img/more.svg'},
+                icon: 'more',
                 title: 'Menu',
             },
             items: [{
-                icon: {alt: 'Edit', src: 'img/edit.svg'},
+                icon: 'edit',
                 label: 'Edit',
                 onClick: _ => GoalEditor.render(this.#data),
             }, {
-                icon: {alt: 'Delete', src: 'img/delete.svg'},
+                icon: 'delete',
                 label: 'Delete',
                 onClick: _ => this.#confirmDelete(),
             }],

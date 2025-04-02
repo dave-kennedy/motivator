@@ -6,7 +6,7 @@ export default class ActionButton {
     static render({label, onClick}) {
         const $newButton = new Button({
             className: 'big fab round',
-            icon: {alt: label, src: 'img/add.svg'},
+            icon: 'add',
             onClick: onClick,
             title: label,
         });

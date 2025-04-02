@@ -1,4 +1,5 @@
 import CustomElement from './CustomElement.js';
+import Icon from './Icon.js';
 
 const stylesheet = new CSSStyleSheet();
 
@@ -30,21 +31,14 @@ button-component button:active {
     filter: brightness(1.4);
 }
 
-button-component img {
-    height: 1.5rem;
-    width: 1.5rem;
-}
-
 button-component span {
     white-space: nowrap;
 }
 
 button-component.big button {
     font-size: 2em;
-}
-
-button-component.big img {
-    scale: 2;
+    gap: 0.25em;
+    padding: 0.25em;
 }
 
 button-component.fab {
@@ -111,9 +105,7 @@ export default class Button extends CustomElement {
         this.appendChild(this.$button);
 
         if (this.#icon) {
-            const $icon = document.createElement('img');
-            $icon.alt = this.#icon.alt;
-            $icon.src = this.#icon.src;
+            const $icon = new Icon(this.#icon);
             this.$button.appendChild($icon);
         }
 

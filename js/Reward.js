@@ -1,5 +1,6 @@
 import CheckButton from './CheckButton.js';
 import CustomElement from './CustomElement.js';
+import Icon from './Icon.js';
 import Menu from './Menu.js';
 import Modal from './Modal.js';
 import RewardEditor from './RewardEditor.js';
@@ -32,26 +33,13 @@ reward-component .name {
     font-weight: bold;
 }
 
-reward-component .points::before,
-reward-component .repeat::before,
-reward-component .start-date::before,
-reward-component .redeemed::before {
-    display: inline-block;
-    margin-right: 0.25em;
-    vertical-align: middle;
-}
-
-reward-component .points::before {
-    content: url('img/star.svg');
-}
-
-reward-component .repeat::before {
-    content: url('img/repeat.svg');
-}
-
-reward-component .start-date::before,
-reward-component .redeemed::before {
-    content: url('img/calendar.svg');
+reward-component .points,
+reward-component .repeat,
+reward-component .start-date,
+reward-component .redeemed {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
 }
 
 reward-component check-button-component {
@@ -104,7 +92,7 @@ export default class Reward extends CustomElement {
 
         const $points = document.createElement('div');
         $points.className = 'points';
-        $points.textContent = `${this.#data.points} points`;
+        $points.append(new Icon('star'), `${this.#data.points} points`);
         $content.appendChild($points);
 
         if (this.#data.repeat) {
@@ -121,21 +109,25 @@ export default class Reward extends CustomElement {
                 textParts.push(`x ${this.#data.repeatDuration}`);
             }
 
-            $repeat.textContent = textParts.join(' ');
+            $repeat.append(new Icon('repeat'), textParts.join(' '));
             $content.appendChild($repeat);
         }
 
         if (this.#data.startDate > Date.now()) {
             const $startDate = document.createElement('div');
             $startDate.className = 'start-date';
-            $startDate.textContent = `Starts ${new Date(this.#data.startDate).toLocaleDateString()}`;
+
+            const date = new Date(this.#data.startDate).toLocaleDateString();
+            $startDate.append(new Icon('calendar'), `Starts ${date}`);
             $content.appendChild($startDate);
         }
 
         if (this.#data.redeemed) {
             const $redeemed = document.createElement('div');
             $redeemed.className = 'redeemed';
-            $redeemed.textContent = `Redeemed ${new Date(this.#data.redeemed).toLocaleDateString()}`;
+
+            const date = new Date(this.#data.redeemed).toLocaleDateString();
+            $redeemed.append(new Icon('calendar'), `Redeemed ${date}`);
             $content.appendChild($redeemed);
         }
 
@@ -149,15 +141,15 @@ export default class Reward extends CustomElement {
 
         const $menu = new Menu({
             handle: {
-                icon: {alt: 'Menu', src: 'img/more.svg'},
+                icon: 'more',
                 title: 'Menu',
             },
             items: [{
-                icon: {alt: 'Edit', src: 'img/edit.svg'},
+                icon: 'edit',
                 label: 'Edit',
                 onClick: _ => RewardEditor.render(this.#data),
             }, {
-                icon: {alt: 'Delete', src: 'img/delete.svg'},
+                icon: 'delete',
                 label: 'Delete',
                 onClick: _ => this.#confirmDelete(),
             }],

@@ -49,7 +49,7 @@ export default class Tour {
 
         const backButton = index > 0
             ? {
-                icon: {src: 'img/arrow-left.svg'},
+                icon: 'arrow-left',
                 label: 'Back',
                 onClick: _ => this.#showHint(index - 1),
             }
@@ -57,7 +57,7 @@ export default class Tour {
 
         const nextButton = {
             className: 'icon-right',
-            icon: {src: 'img/arrow-right.svg'},
+            icon: 'arrow-right',
             label: 'Next',
             onClick: _ => this.#showHint(index + 1),
         };

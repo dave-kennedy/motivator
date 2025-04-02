@@ -73,30 +73,30 @@ export default class Header extends CustomElement {
         this.appendChild(this.$points);
 
         const items = [{
-            icon: {src: 'img/export.svg'},
+            icon: 'export',
             label: 'Export',
             onClick: _ => this.#exportData(),
         }, {
-            icon: {src: 'img/import.svg'},
+            icon: 'import',
             label: 'Import',
             onClick: _ => this.#importConfirm(),
         }, {
-            icon: {src: 'img/info.svg'},
+            icon: 'info',
             label: 'About',
             onClick: _ => About.render(),
         }, {
-            icon: {src: 'img/settings.svg'},
+            icon: 'settings',
             label: 'Settings',
             onClick: _ => SettingsEditor.render(),
         }, {
-            icon: {src: 'img/tour.svg'},
+            icon: 'tour',
             label: 'Tour',
             onClick: _ => Tour.start(),
         }];
 
         if (navigator.userAgent !== 'io.dkennedy.motivator') {
             items.push({
-                icon: {src: 'img/play-store.svg'},
+                icon: 'play-store',
                 label: 'Get the app',
                 onClick: _ => open('https://play.google.com/store/apps/details?id=io.dkennedy.motivator'),
             });
@@ -104,7 +104,7 @@ export default class Header extends CustomElement {
 
         const $menu = new Menu({
             handle: {
-                icon: {alt: 'Menu', src: 'img/menu.svg'},
+                icon: 'menu',
                 title: 'Menu',
             },
             items,
