@@ -38,8 +38,13 @@ anything I've found in the Node ecosystem.
 ## TODO
 
 * Analytics
+* Animate FAB and points
 * Cloud sync
-* Dark mode/themes
+* Display message when goals/rewards list is empty
+* Display motivational quotes
 * Hints on editor/history
 * More unit tests
+* Scenic theme
+* Tip jar/donate link
 * User defined sorting
+* What's new?
