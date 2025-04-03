@@ -1,5 +1,5 @@
+import Hint from './Hint.js';
 import Modal from './Modal.js';
-import Tip from './Tip.js';
 
 export default class Tour {
     static #hints = [{
@@ -62,7 +62,7 @@ export default class Tour {
             onClick: _ => this.#showHint(index + 1),
         };
 
-        Tip.render({
+        Hint.render({
             anchor,
             content,
             backButton,

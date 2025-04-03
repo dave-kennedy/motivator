@@ -5,15 +5,25 @@ import {fadeIn, fadeOut} from './animation.js';
 
 const stylesheet = new CSSStyleSheet();
 
-stylesheet.replace(`tip-component {
+stylesheet.replace(`hint-component {
     position: fixed;
     inset: 0;
     z-index: 10;
 }
 
-tip-component .tip {
-    background-color: var(--tip-bg-color);
-    border: 1px solid var(--tip-border-color);
+hint-component .backdrop {
+    background-color: var(--hint-backdrop-color);
+    mask-composite: exclude;
+    mask-image: linear-gradient(black, black), url(img/circle.svg);
+    mask-repeat: no-repeat;
+
+    position: fixed;
+    inset: 0;
+}
+
+hint-component .hint {
+    background-color: var(--hint-bg-color);
+    border: 1px solid var(--hint-border-color);
     border-radius: 1em;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
     box-sizing: border-box;
@@ -35,34 +45,34 @@ tip-component .tip {
 }
 
 @media (min-width: 448px) {
-    tip-component .tip {
+    hint-component .hint {
         max-width: 26em;
     }
 }
 
-tip-component .footer {
+hint-component .footer {
     display: flex;
     align-items: center;
     gap: 1em;
 }
 
-tip-component .footer > :first-child {
+hint-component .footer > :first-child {
     flex: 1;
     text-align: left;
 }
 
-tip-component .footer > :nth-child(2) {
+hint-component .footer > :nth-child(2) {
     flex: 1;
     text-align: center;
 }
 
-tip-component .footer > :last-child {
+hint-component .footer > :last-child {
     flex: 1;
     text-align: right;
 }
 
-tip-component .caret {
-    background-color: var(--tip-bg-color);
+hint-component .caret {
+    background-color: var(--hint-bg-color);
     rotate: 45deg;
 
     height: 1em;
@@ -71,17 +81,17 @@ tip-component .caret {
     position: fixed;
 }
 
-tip-component .caret.up {
-    border-left: 1px solid var(--tip-border-color);
-    border-top: 1px solid var(--tip-border-color);
+hint-component .caret.up {
+    border-left: 1px solid var(--hint-border-color);
+    border-top: 1px solid var(--hint-border-color);
 }
 
-tip-component .caret.down {
-    border-bottom: 1px solid var(--tip-border-color);
-    border-right: 1px solid var(--tip-border-color);
+hint-component .caret.down {
+    border-bottom: 1px solid var(--hint-border-color);
+    border-right: 1px solid var(--hint-border-color);
 }`);
 
-export default class Tip extends CustomElement {
+export default class Hint extends CustomElement {
     #anchor;
     #content;
     #backButton;
@@ -113,17 +123,22 @@ export default class Tip extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
-        const $tip = document.createElement('div');
-        $tip.className = 'tip';
-        this.appendChild($tip);
+        const $backdrop = document.createElement('div');
+        $backdrop.addEventListener('click', this.close);
+        $backdrop.className = 'backdrop';
+        this.appendChild($backdrop);
+
+        const $hint = document.createElement('div');
+        $hint.className = 'hint';
+        this.appendChild($hint);
 
         const $content = document.createElement('div');
         $content.innerHTML = this.#content;
-        $tip.appendChild($content);
+        $hint.appendChild($content);
 
         const $footer = document.createElement('div');
         $footer.className = 'footer';
-        $tip.appendChild($footer);
+        $hint.appendChild($footer);
 
         const $footerLeft = document.createElement('div');
         const $footerMid = document.createElement('div');
@@ -156,7 +171,7 @@ export default class Tip extends CustomElement {
         $nextButton.focus();
 
         if (!this.#anchor) {
-            $tip.style.inset = 0;
+            $hint.style.inset = 0;
             fadeIn({element: this, duration: 250});
             return;
         }
@@ -173,17 +188,23 @@ export default class Tip extends CustomElement {
         } = $anchor.getBoundingClientRect();
 
         const anchorMidX = anchorLeft + (anchorWidth / 2);
-        const marginX = 8;
-        const tipHalfWidth = $tip.offsetWidth / 2;
-        const tipMinMidX = marginX + tipHalfWidth;
-        const tipMaxMidX = innerWidth - marginX - tipHalfWidth;
+        const anchorMidY = anchorTop + (anchorHeight / 2);
+        const maskRadius = 50;
 
-        if (anchorMidX < tipMinMidX) {
-            $tip.style.left = `${marginX}px`;
-        } else if (anchorMidX > tipMaxMidX) {
-            $tip.style.right = `${marginX}px`;
+        $backdrop.style.maskPosition = `0 0,
+            ${anchorMidX - maskRadius}px ${anchorMidY - maskRadius}px`;
+
+        const marginX = 8;
+        const hintHalfWidth = $hint.offsetWidth / 2;
+        const hintMinMidX = marginX + hintHalfWidth;
+        const hintMaxMidX = innerWidth - marginX - hintHalfWidth;
+
+        if (anchorMidX < hintMinMidX) {
+            $hint.style.left = `${marginX}px`;
+        } else if (anchorMidX > hintMaxMidX) {
+            $hint.style.right = `${marginX}px`;
         } else {
-            $tip.style.left = `${anchorMidX - tipHalfWidth}px`;
+            $hint.style.left = `${anchorMidX - hintHalfWidth}px`;
         }
 
         const $caret = document.createElement('div');
@@ -196,12 +217,12 @@ export default class Tip extends CustomElement {
             const anchorBottom = anchorTop + anchorHeight;
             $caret.classList.add('up');
             $caret.style.top = `${anchorBottom}px`;
-            $tip.style.top = `${anchorBottom + ($caret.offsetHeight / 2)}px`;
+            $hint.style.top = `${anchorBottom + ($caret.offsetHeight / 2)}px`;
         } else {
             const anchorOffset = innerHeight - anchorTop;
             $caret.classList.add('down');
             $caret.style.bottom = `${anchorOffset}px`;
-            $tip.style.bottom = `${anchorOffset + ($caret.offsetHeight / 2)}px`;
+            $hint.style.bottom = `${anchorOffset + ($caret.offsetHeight / 2)}px`;
         }
 
         fadeIn({element: this, duration: 250});
@@ -220,10 +241,10 @@ export default class Tip extends CustomElement {
     };
 
     static render(...params) {
-        const $tip = new Tip(...params);
-        document.querySelector('app-component').appendChild($tip);
-        return $tip;
+        const $hint = new Hint(...params);
+        document.querySelector('app-component').appendChild($hint);
+        return $hint;
     }
 }
 
-customElements.define('tip-component', Tip);
+customElements.define('hint-component', Hint);

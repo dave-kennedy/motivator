@@ -7,6 +7,9 @@ body {
     --body-bg-color: #fff;
     --body-text-color: #111;
     --button-text-color: #fff;
+    --hint-backdrop-color: rgba(0, 0, 0, 0.2);
+    --hint-bg-color: #fff;
+    --hint-border-color: #ccc;
     --input-border-color: #ccc;
     --input-error-color: #f33;
     --input-placeholder-color: #888;
@@ -16,8 +19,6 @@ body {
     --modal-backdrop-color: rgba(0, 0, 0, 0.2);
     --modal-bg-color: #fff;
     --modal-border-color: #ccc;
-    --tip-bg-color: #eee;
-    --tip-border-color: #ccc;
 
     background-color: var(--body-bg-color);
     color: var(--body-text-color);
@@ -31,6 +32,9 @@ body.dark-theme {
     --body-bg-color: #222;
     --body-text-color: #eee;
     --button-text-color: #fff;
+    --hint-backdrop-color: rgba(255, 255, 255, 0.2);
+    --hint-bg-color: #222;
+    --hint-border-color: #666;
     --input-border-color: #666;
     --input-error-color: #f33;
     --input-placeholder-color: #888;
@@ -40,8 +44,6 @@ body.dark-theme {
     --modal-backdrop-color: rgba(255, 255, 255, 0.2);
     --modal-bg-color: #222;
     --modal-border-color: #666;
-    --tip-bg-color: #333;
-    --tip-border-color: #666;
 }
 
 body.reduce-motion *,
