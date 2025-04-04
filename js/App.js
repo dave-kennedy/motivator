@@ -55,13 +55,21 @@ export default class App extends CustomElement {
     }
 
     #setBodyClass = _ => {
-        if (this.#darkThemeQuery.matches || ConfigData.get('theme') === 'dark') {
+        if (ConfigData.get('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+        } else if (ConfigData.get('theme') === 'light') {
+            document.body.classList.remove('dark-theme');
+        } else if (this.#darkThemeQuery.matches) {
             document.body.classList.add('dark-theme');
         } else {
             document.body.classList.remove('dark-theme');
         }
 
-        if (this.#reduceMotionQuery.matches || ConfigData.get('animations') === 'reduced') {
+        if (ConfigData.get('animations') === 'reduced') {
+            document.body.classList.add('reduce-motion');
+        } else if (ConfigData.get('animations') === 'fancy') {
+            document.body.classList.remove('reduce-motion');
+        } else if (this.#reduceMotionQuery.matches) {
             document.body.classList.add('reduce-motion');
         } else {
             document.body.classList.remove('reduce-motion');
