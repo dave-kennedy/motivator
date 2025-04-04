@@ -50,7 +50,7 @@ export default class RewardEditor extends CustomElement {
 
         this.$name = new Input({
             id: 'name-input',
-            label: 'Name',
+            label: 'Reward name',
             required: true,
             type: 'text',
             value: this.#data.name,

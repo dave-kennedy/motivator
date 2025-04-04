@@ -160,9 +160,7 @@ export default class Header extends CustomElement {
         const reader = new FileReader();
 
         reader.addEventListener('error', _ => {
-            Modal.render({
-                content: 'Unable to read file. Please make sure the file is accessible.',
-            });
+            Modal.render({content: `Unable to read file. Please make sure it's accessible.`});
         });
 
         reader.addEventListener('load', _ => this.#onImportFileLoad(reader.result));
@@ -181,10 +179,7 @@ export default class Header extends CustomElement {
 
             location.reload();
         } catch (error) {
-            Modal.render({
-                content: 'Unable to parse file. Please make sure the file is well-formed.',
-            });
-
+            Modal.render({content: `Unable to parse file. Please make sure it's correctly formatted.`});
             throw error;
         }
     }

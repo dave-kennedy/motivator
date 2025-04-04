@@ -246,7 +246,7 @@ export default class Intro extends CustomElement {
 
     #scenes = [{
         content: [
-            `Let's start by defining a goal.`,
+            `Let's start by creating a goal.`,
             `It can be anything from saving a dollar to climbing a mountain.`,
             `Dreading a big task? Start with just a small part of it.`,
         ],

@@ -50,7 +50,7 @@ export default class GoalEditor extends CustomElement {
 
         this.$name = new Input({
             id: 'name-input',
-            label: 'Name',
+            label: 'Goal name',
             required: true,
             type: 'text',
             value: this.#data.name,
