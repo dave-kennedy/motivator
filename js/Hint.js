@@ -111,20 +111,20 @@ export default class Hint extends CustomElement {
     connectedCallback() {
         this.#render();
 
+        addEventListener('hashchange', this.#onHashChange);
         document.addEventListener('keydown', this.#onKeyDown);
-        addEventListener('hashchange', this.close);
     }
 
     disconnectedCallback() {
+        removeEventListener('hashchange', this.#onHashChange);
         document.removeEventListener('keydown', this.#onKeyDown);
-        removeEventListener('hashchange', this.close);
     }
 
     #render() {
         this.applyStylesheet(stylesheet);
 
         const $backdrop = document.createElement('div');
-        $backdrop.addEventListener('click', this.close);
+        $backdrop.addEventListener('click', _ => this.close('Backdrop'));
         $backdrop.className = 'backdrop';
         this.appendChild($backdrop);
 
@@ -150,7 +150,7 @@ export default class Hint extends CustomElement {
                 ...this.#backButton,
                 onClick: event => {
                     this.#backButton.onClick(event);
-                    this.close();
+                    this.close('Back');
                 },
             });
 
@@ -163,7 +163,7 @@ export default class Hint extends CustomElement {
             ...this.#nextButton,
             onClick: event => {
                 this.#nextButton.onClick(event);
-                this.close();
+                this.close('Next');
             },
         });
 
@@ -228,15 +228,33 @@ export default class Hint extends CustomElement {
         fadeIn({element: this, duration: 250});
     }
 
+    #onHashChange = _ => this.close('Navigate');
+
     #onKeyDown = event => {
         if (event.key === 'Escape') {
-            this.close();
+            this.close('Escape');
         }
     };
 
-    close = async _ => {
+    close = async reason => {
+        const beforeCloseEvent = new CustomEvent('beforeclose', {
+            cancelable: true,
+            detail: {reason},
+        });
+
+        this.dispatchEvent(beforeCloseEvent);
+
+        if (beforeCloseEvent.defaultPrevented) {
+            return;
+        }
+
         await fadeOut({element: this, duration: 250});
-        this.dispatchEvent(new Event('close'));
+
+        const closeEvent = new CustomEvent('close', {
+            detail: {reason},
+        });
+
+        this.dispatchEvent(closeEvent);
         this.remove();
     };
 

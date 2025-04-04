@@ -68,6 +68,11 @@ export default class Tour {
             backButton,
             nextButton,
             progress: `${index + 1} of ${this.#hints.length}`,
+        }).addEventListener('beforeclose', event => {
+            // Assuming they don't want to exit the tour
+            if (event.detail.reason === 'Backdrop') {
+                this.#showHint(index + 1);
+            }
         });
     }
 

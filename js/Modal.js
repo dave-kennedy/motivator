@@ -71,13 +71,13 @@ export default class Modal extends CustomElement {
     connectedCallback() {
         this.#render();
 
-        document.addEventListener('keydown', this.#onKeyDown);
         addEventListener('hashchange', this.close);
+        document.addEventListener('keydown', this.#onKeyDown);
     }
 
     disconnectedCallback() {
-        document.removeEventListener('keydown', this.#onKeyDown);
         removeEventListener('hashchange', this.close);
+        document.removeEventListener('keydown', this.#onKeyDown);
     }
 
     #render() {
