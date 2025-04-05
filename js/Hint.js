@@ -12,7 +12,7 @@ stylesheet.replace(`hint-component {
 }
 
 hint-component .backdrop {
-    background-color: var(--hint-backdrop-color);
+    background-color: var(--backdrop-color);
     mask-composite: exclude;
     mask-image: linear-gradient(black, black), url(img/circle.svg);
     mask-repeat: no-repeat;
@@ -23,7 +23,7 @@ hint-component .backdrop {
 
 hint-component .hint {
     background-color: var(--hint-bg-color);
-    border: 1px solid var(--hint-border-color);
+    border: 1px solid var(--border-color);
     border-radius: 1em;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
     box-sizing: border-box;
@@ -82,13 +82,13 @@ hint-component .caret {
 }
 
 hint-component .caret.up {
-    border-left: 1px solid var(--hint-border-color);
-    border-top: 1px solid var(--hint-border-color);
+    border-left: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-color);
 }
 
 hint-component .caret.down {
-    border-bottom: 1px solid var(--hint-border-color);
-    border-right: 1px solid var(--hint-border-color);
+    border-bottom: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
 }`);
 
 export default class Hint extends CustomElement {

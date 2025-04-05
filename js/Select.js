@@ -11,7 +11,7 @@ stylesheet.replace(`select-component {
 
 select-component select {
     background-color: transparent;
-    border: 1px solid var(--input-border-color);
+    border: 1px solid var(--border-color);
     border-radius: 0.25em;
     box-sizing: border-box;
     color: inherit;
@@ -22,7 +22,7 @@ select-component select {
 select-component select[disabled],
 select-component select:has(option[value='']:checked),
 select-component option[value=''] {
-    color: var(--input-placeholder-color);
+    color: var(--placeholder-color);
 }
 
 select-component option:not([value='']) {
@@ -34,7 +34,7 @@ select-component .error {
 }
 
 select-component:has(:invalid) .error {
-    color: var(--input-error-color);
+    color: var(--error-color);
     display: block;
 }
 

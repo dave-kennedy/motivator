@@ -11,7 +11,7 @@ stylesheet.replace(`input-component {
 
 input-component input {
     background-color: transparent;
-    border: 1px solid var(--input-border-color);
+    border: 1px solid var(--border-color);
     border-radius: 0.25em;
     box-sizing: border-box;
     color: inherit;
@@ -22,7 +22,7 @@ input-component input {
 input-component input::placeholder,
 input-component input[disabled],
 input-component input[type^=date] {
-    color: var(--input-placeholder-color);
+    color: var(--placeholder-color);
 }
 
 input-component input[type^=date] {
@@ -39,7 +39,7 @@ input-component .error {
 }
 
 input-component:has(:invalid) .error {
-    color: var(--input-error-color);
+    color: var(--error-color);
     display: block;
 }
 

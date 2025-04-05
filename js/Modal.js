@@ -12,7 +12,7 @@ stylesheet.replace(`modal-component {
 }
 
 modal-component .backdrop {
-    background-color: var(--modal-backdrop-color);
+    background-color: var(--backdrop-color);
 
     position: fixed;
     inset: 0;
@@ -20,7 +20,7 @@ modal-component .backdrop {
 
 modal-component .modal {
     background-color: var(--modal-bg-color);
-    border: 1px solid var(--modal-border-color);
+    border: 1px solid var(--border-color);
     border-radius: 1em;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
     box-sizing: border-box;

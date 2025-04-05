@@ -4,21 +4,17 @@ html {
 
 body {
     --accent-color: #90c;
+    --backdrop-color: rgba(0, 0, 0, 0.2);
     --body-bg-color: #fff;
     --body-text-color: #111;
+    --border-color: #ccc;
     --button-text-color: #fff;
-    --hint-backdrop-color: rgba(0, 0, 0, 0.2);
+    --error-color: #f33;
     --hint-bg-color: #fff;
-    --hint-border-color: #ccc;
-    --input-border-color: #ccc;
-    --input-error-color: #f33;
-    --input-placeholder-color: #888;
     --item-bg-color: #eee;
     --menu-bg-color: #eee;
-    --menu-border-color: #ccc;
-    --modal-backdrop-color: rgba(0, 0, 0, 0.2);
     --modal-bg-color: #fff;
-    --modal-border-color: #ccc;
+    --placeholder-color: #888;
 
     background-color: var(--body-bg-color);
     color: var(--body-text-color);
@@ -29,21 +25,17 @@ body {
 
 body.dark-theme {
     --accent-color: #0aa;
+    --backdrop-color: rgba(255, 255, 255, 0.2);
     --body-bg-color: #222;
     --body-text-color: #eee;
+    --border-color: #666;
     --button-text-color: #fff;
-    --hint-backdrop-color: rgba(255, 255, 255, 0.2);
+    --error-color: #f33;
     --hint-bg-color: #222;
-    --hint-border-color: #666;
-    --input-border-color: #666;
-    --input-error-color: #f33;
-    --input-placeholder-color: #888;
     --item-bg-color: #333;
     --menu-bg-color: #333;
-    --menu-border-color: #666;
-    --modal-backdrop-color: rgba(255, 255, 255, 0.2);
     --modal-bg-color: #222;
-    --modal-border-color: #666;
+    --placeholder-color: #888;
 }
 
 body.reduce-motion *,

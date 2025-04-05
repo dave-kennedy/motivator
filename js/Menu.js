@@ -12,7 +12,7 @@ stylesheet.replace(`menu-component {
 
 menu-component .items {
     background-color: var(--menu-bg-color);
-    border: 1px solid var(--menu-border-color);
+    border: 1px solid var(--border-color);
     border-radius: 0.5em;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
     display: none;
