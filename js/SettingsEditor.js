@@ -1,3 +1,4 @@
+import ColorPicker from './ColorPicker.js';
 import ConfigData from './data/ConfigData.js';
 import CustomElement from './CustomElement.js';
 import Modal from './Modal.js';
@@ -12,6 +13,7 @@ stylesheet.replace(`settings-editor-component {
 }`);
 
 export default class SettingsEditor extends CustomElement {
+    $accentColor;
     $animations;
     $theme;
 
@@ -22,8 +24,16 @@ export default class SettingsEditor extends CustomElement {
     #render() {
         this.applyStylesheet(stylesheet);
 
+        this.$accentColor = new ColorPicker({
+            id: 'accent-color-picker',
+            label: 'Accent color',
+            placeholder: this.#getThemeColor('--accent-color'),
+            value: ConfigData.get('accentColor'),
+        });
+
+        this.appendChild(this.$accentColor);
+
         this.$animations = new Select({
-            className: 'row',
             id: 'animations-select',
             label: 'Animations',
             options: ['fancy', 'reduced'],
@@ -34,7 +44,6 @@ export default class SettingsEditor extends CustomElement {
         this.appendChild(this.$animations);
 
         this.$theme = new Select({
-            className: 'row',
             id: 'theme-select',
             label: 'Theme',
             options: ['light', 'dark'],
@@ -45,14 +54,38 @@ export default class SettingsEditor extends CustomElement {
         this.appendChild(this.$theme);
     }
 
+    #getThemeColor(name) {
+        const customColor = getComputedStyle(this).getPropertyValue(name);
+        document.body.style.removeProperty(name);
+
+        const themeColor = getComputedStyle(this).getPropertyValue(name);
+        document.body.style.setProperty(name, customColor);
+
+        if (!themeColor) {
+            return;
+        }
+
+        if (themeColor.startsWith('#') && themeColor.length === 4) {
+            const rr = themeColor[1].repeat(2);
+            const gg = themeColor[2].repeat(2);
+            const bb = themeColor[3].repeat(2);
+            return `#${rr}${gg}${bb}`;
+        }
+
+        return themeColor;
+    }
+
     save() {
+        const accentColor = this.$accentColor.value || undefined;
+        ConfigData.set('accentColor', accentColor);
+
         const animations = this.$animations.value || undefined;
         ConfigData.set('animations', animations);
 
         const theme = this.$theme.value || undefined;
         ConfigData.set('theme', theme);
 
-        this.raiseEvent('ConfigUpdated', {animations, theme});
+        this.raiseEvent('ConfigUpdated', {accentColor, animations, theme});
     }
 
     static render() {

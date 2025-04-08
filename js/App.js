@@ -55,6 +55,14 @@ export default class App extends CustomElement {
     }
 
     #setBodyClass = _ => {
+        const accentColor = ConfigData.get('accentColor');
+
+        if (accentColor) {
+            document.body.style.setProperty('--accent-color', accentColor);
+        } else {
+            document.body.style.removeProperty('--accent-color', accentColor);
+        }
+
         if (ConfigData.get('theme') === 'dark') {
             document.body.classList.add('dark-theme');
         } else if (ConfigData.get('theme') === 'light') {
